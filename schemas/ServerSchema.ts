@@ -466,5 +466,9 @@ export interface IServer{
             blacklist: string[]
         },
     },
-    logger: ILogger
+    logger: ILogger,
+    createdAt: Date,
+    updatedAt: Date,
+    '__v': number,
+    '_id': string
 }
