@@ -5,6 +5,6 @@ export default abstract class AbstractModule{
         this.name = name;
         this.data = data;
     }
-    public abstract init();
-    public abstract destroy();
+    public abstract init(): void;
+    public abstract destroy(): void;
 }

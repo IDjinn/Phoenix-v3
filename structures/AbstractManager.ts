@@ -3,6 +3,6 @@ export default abstract class AbstractManager{
     constructor(name: string) {
         this.name = name;
     }
-    public abstract init();
-    public abstract destroy();
+    public abstract init(): void;
+    public abstract destroy(): void;
 }

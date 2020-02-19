@@ -10,7 +10,7 @@ export default class PingCommand extends AbstractCommand{
             false,
             true);
     }
-    public run({ message }): Promise<void> {
-        return message.channel.send(message.client.ping);
+    public run({ message }: ICommandParameters) {
+        message.channel.send(message.client.ping.toFixed(0) + 'ms.');
     }
 }

@@ -1,4 +1,6 @@
 import { GuildMember, PermissionResolvable, Snowflake, Message } from "discord.js";
+import Server from "./Server";
+import PhoenixUser from "./PhoenixUser";
 
 export default abstract class AbstractCommand{
     public readonly name: string;
@@ -19,7 +21,7 @@ export default abstract class AbstractCommand{
         this.enabled = enabled;
     }
 
-    public abstract run(params: ICommandParameters): Promise<void>;
+    public abstract run(params: ICommandParameters): void;
     public memberHasPermissions(member: GuildMember): boolean{
         if (this.permissionsNeed.length == 0)
             return true;
@@ -36,6 +38,6 @@ export default abstract class AbstractCommand{
 export interface ICommandParameters{
     message: Message;
     args?: string[];
-    server?: string;
-    phoenixUser?: string;
+    server?: Server;
+    phoenixUser?: PhoenixUser;
 }
