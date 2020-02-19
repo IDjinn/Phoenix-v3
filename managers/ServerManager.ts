@@ -1,39 +1,33 @@
 import AbstractManager from "../structures/AbstractManager";
 import ServerSchema, { IServer } from "../schemas/ServerSchema";
 import Server from "../structures/Server";
+import { Collection } from "discord.js";
 
-export default class ServerManager extends AbstractManager{
-    private servers: Map<string, Server> = new Map<string, Server>();
-    constructor(){
+export default class ServerManager extends AbstractManager {
+    private servers: Collection<string, Server> = new Collection<string, Server>();
+    constructor() {
         super('ServerManager');
-        this.init();
     }
     public init() {
         this.servers.clear();
         ServerSchema.find({}).then((servers: any[]) => {
-            if(servers){
+            if (servers) {
                 servers.map(serverData => this.createServer(serverData));
             }
         }).catch(console.error);
-    }    
-    public destroy() {
-        for(let server of this.servers.values()){
-            if(!server)
-                continue;
-
-            server.destroy();
-        }
     }
-    private createServer(serverData: any){
-        Promise.resolve(() => {
-            let server = new Server(serverData as IServer);
-            if(server){
-                this.servers.set(server.id, server);
-            }
-            else{
-                console.log('parece que a data do servidor n é compatível com a interface.' + serverData);
-                //wtf? why im here?
-            }
-        });
+    public destroy() {
+        this.servers.map(server => server.destroy());
+    }
+    public createServer(serverData: any) {
+        this.servers.set(serverData.id, new Server(serverData));
+    }
+
+    public getServer(id: string): Server | undefined {
+        return this.servers.get(id);
+    }
+
+    public getServers(): Collection<string, Server> {
+        return this.servers;
     }
 }
