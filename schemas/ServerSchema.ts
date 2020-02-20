@@ -1,5 +1,8 @@
 import {Schema, model} from 'mongoose';
 import { ILogger } from '../modules/LoggerModule';
+import { IAutomod } from '../modules/AutomodModule';
+import { IRole } from '../modules/PermissionsModule';
+import { ICounter } from '../modules/CounterModule';
 
 const ServerSchema = new Schema({
         id: {
@@ -202,7 +205,7 @@ const ServerSchema = new Schema({
                 },
             }
         },
-        automot:{
+        automod:{
             invites: {
                 enabled: {
                     type: Boolean,
@@ -381,12 +384,7 @@ export default model('Servers', ServerSchema);
 
 export interface IServer{
     id: string;
-    prefix: string
-    levels: {
-        enabled: boolean
-        channel: string
-        embed: JSON
-    },
+    prefix: string,
     punishment: {
         enabled: boolean
         channel: string
@@ -403,23 +401,7 @@ export interface IServer{
         blacklist: string[]
         embed: JSON
     },
-    counter: {
-        users: {
-            enabled: boolean
-            channel: string
-            name: string
-        },
-        bots: {
-            enabled: boolean
-            channel: string
-            name: string
-        },
-        channels: {
-            enabled: boolean
-            channel: string
-            name: string
-        }
-    },
+    counter: ICounter,
     welcome: {
         join: {
             enabled: boolean
@@ -436,12 +418,7 @@ export interface IServer{
         enabled: boolean
         roles: string[]
     },
-    roles: {
-        moderador: string[]
-        administrador:string[]
-        convites:string[]
-        links: string[]
-    },
+    roles: IRole,
     invites:{
         enabled: boolean
         channel: string
@@ -454,18 +431,7 @@ export interface IServer{
             valor: number
         }
     },
-    automod:{
-        invites: {
-            enabled: boolean
-            whitelist: string[],
-            blacklist: string[]
-        },
-        links: {
-            enabled: boolean
-            whitelist: string[],
-            blacklist: string[]
-        },
-    },
+    automod: IAutomod,
     logger: ILogger,
     createdAt: Date,
     updatedAt: Date,
