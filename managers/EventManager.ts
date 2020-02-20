@@ -23,6 +23,9 @@ export default class EventManager extends AbstractManager{
             
             let server = Phoenix.getServerManager().getServer(message.guild.id);
             if (server instanceof Server) {
+                if (server.getAutomodModule().messageFiltred(message, message.member.roles.map(role => role.id)))
+                    return;
+                
                 Phoenix.getCommandManager().handledCommand(message, server);
             }
         });
