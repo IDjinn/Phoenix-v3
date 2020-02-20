@@ -1,7 +1,8 @@
 import AbstractManager from "../structures/AbstractManager";
 import ServerSchema, { IServer } from "../schemas/ServerSchema";
 import Server from "../structures/Server";
-import { Collection } from "discord.js";
+import { Collection, Guild } from "discord.js";
+import Phoenix from "../Phoenix";
 
 export default class ServerManager extends AbstractManager {
     private servers: Collection<string, Server> = new Collection<string, Server>();
@@ -12,7 +13,8 @@ export default class ServerManager extends AbstractManager {
         this.servers.clear();
         ServerSchema.find({}).then((servers: any[]) => {
             if (servers) {
-                servers.map(serverData => this.createServer(serverData));
+                //todo: recode this?
+                Promise.all(servers.map(serverData => this.createServer(serverData))).catch(console.error);
             }
         }).catch(console.error);
     }
@@ -20,7 +22,17 @@ export default class ServerManager extends AbstractManager {
         this.servers.map(server => server.destroy());
     }
     public createServer(serverData: any) {
-        this.servers.set(serverData.id, new Server(serverData));
+        return new Promise((resolve, reject) => {
+            if (Phoenix.getClient().guilds.has(serverData.id)) {
+                let guild = Phoenix.getClient().guilds.get(serverData.id);
+                if (guild instanceof Guild) {
+                    this.servers.set(serverData.id, new Server(guild, serverData));
+                    resolve(true);
+                }
+            }
+            reject(false);
+            //todo: delete this server, guild not found
+        });
     }
 
     public getServer(id: string): Server | undefined {
