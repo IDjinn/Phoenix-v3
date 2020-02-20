@@ -2,13 +2,10 @@ import AbstractCommand, { ICommandParameters } from "../../structures/AbstractCo
 
 export default class PingCommand extends AbstractCommand{
     constructor() {
-        super('ping',
-            'Show the bot latency',
-            [],
-            [],
-            [],
-            false,
-            true);
+        super({
+            name: 'ping',
+            description: 'Show the bot latency.'
+        });
     }
     public run({ message }: ICommandParameters) {
         message.channel.send(message.client.ping.toFixed(0) + 'ms.');

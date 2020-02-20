@@ -3,6 +3,7 @@ import { ILogger } from '../modules/LoggerModule';
 import { IAutomod } from '../modules/AutomodModule';
 import { IRole } from '../modules/PermissionsModule';
 import { ICounter } from '../modules/CounterModule';
+import { ILevelModule } from '../modules/LevelModule';
 
 const ServerSchema = new Schema({
         id: {
@@ -401,6 +402,7 @@ export interface IServer{
         blacklist: string[]
         embed: JSON
     },
+    level: ILevelModule,
     counter: ICounter,
     welcome: {
         join: {
@@ -418,7 +420,7 @@ export interface IServer{
         enabled: boolean
         roles: string[]
     },
-    roles: IRole,
+    roles: IRole[],
     invites:{
         enabled: boolean
         channel: string

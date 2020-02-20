@@ -11,17 +11,18 @@ export default abstract class AbstractCommand{
     public readonly onlyOwner: boolean;
     public readonly enabled: boolean;
 
-    constructor(name: string, description: string, aliases: string[], permissionsNeed: PermissionResolvable[], botPermissionsNeed: PermissionResolvable[], onlyOwner: boolean, enabled: boolean) {
-        this.name = name;
-        this.description = description;
-        this.aliases = aliases;
-        this.permissionsNeed = permissionsNeed;
-        this.botPermissionsNeed = botPermissionsNeed;
-        this.onlyOwner = onlyOwner;
-        this.enabled = enabled;
+    constructor(props: ICommandProps) {
+        this.name = props.name;
+        this.description = props.description;
+        this.aliases = props.aliases || [];
+        this.permissionsNeed = props.permissionsNeed || [];
+        this.botPermissionsNeed = props.botPermissionsNeed || [];
+        this.onlyOwner = props.onlyOwner || false;
+        this.enabled = props.enabled || true;
     }
 
     public abstract run(params: ICommandParameters): void;
+    
     public memberHasPermissions(member: GuildMember): boolean{
         if (this.permissionsNeed.length == 0)
             return true;
@@ -33,6 +34,16 @@ export default abstract class AbstractCommand{
     public enabledForMemberId(id: Snowflake): boolean{
         return this.enabled || (this.onlyOwner && id === '376460601909706773');
     }
+}
+
+export interface ICommandProps{
+    name: string;
+    description: string;
+    aliases?: string[];
+    permissionsNeed?: PermissionResolvable[];
+    botPermissionsNeed?: PermissionResolvable[];
+    onlyOwner?: boolean;
+    enabled?: boolean;
 }
 
 export interface ICommandParameters{
