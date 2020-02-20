@@ -28,9 +28,9 @@ export default class CommandManager extends AbstractManager {
         if (prefix.length <= 0)
             return false;
 
-        let args = message.content.slice(prefix.length).split(' ');
-        let command = args.shift();
-        let cmd = this.commands.get(command) || this.commands.get(this.aliases.get(command));
+        const args = message.content.slice(prefix.length).split(' ');
+        const command = args.shift();
+        const cmd = this.commands.get(command) || this.commands.get(this.aliases.get(command));
         if (cmd instanceof AbstractCommand)
             cmd.run({ message, server });
         
