@@ -1,8 +1,11 @@
 import AbstractModule from "../structures/AbstractModule";
+import Server from "../structures/Server";
 
 export default class LoggerModule extends AbstractModule{
-    constructor(data: ILogger){
-        super('LoggerModule', data);
+    public readonly config: any;
+    constructor(data: ILogger, server: Server){
+        super('LoggerModule', server);
+        this.config = data;
     }
     public init() {
         
