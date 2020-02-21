@@ -4,6 +4,7 @@ import CommandManager from './managers/CommandManager';
 import EventManager from './managers/EventManager';
 import DatabaseManager from './managers/DatabaseManager';
 import ServerManager from './managers/ServerManager';
+import PhoenixUserManager from './managers/PhoenixUserManager';
 
 export default class Phoenix {
     private static configuration: IConfig = require('../config.json') as IConfig;
@@ -11,6 +12,7 @@ export default class Phoenix {
     private static eventManager = new EventManager();
     private static databaseManager = new DatabaseManager();
     private static serverManager = new ServerManager();
+    private static phoenixUserManager = new PhoenixUserManager();
     private static client: Client = new Client({
         disableEveryone: true,
         disabledEvents: [
@@ -30,10 +32,11 @@ export default class Phoenix {
     });
 
     public init() {
-        Phoenix.getCommandManager().init();
-        Phoenix.getEventManager().init();
         Phoenix.getDatabaseManager().init();
         Phoenix.getServerManager().init();
+        Phoenix.getPhoenixUserManager().init();
+        Phoenix.getEventManager().init();
+        Phoenix.getCommandManager().init();
         Phoenix.client.login(Phoenix.getConfig().token).then(() => console.log('Logged on discord!')).catch(console.error);
     }
     
@@ -59,6 +62,10 @@ export default class Phoenix {
   
     public static getServerManager() {
         return this.serverManager;
+    }
+
+    public static getPhoenixUserManager() {
+        return this.phoenixUserManager;
     }
 
     public static getConfig() {
