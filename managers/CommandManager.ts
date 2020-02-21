@@ -4,10 +4,12 @@ import PingCommand from "../commands/others/Ping";
 import { Message } from "discord.js";
 import Phoenix from "../Phoenix";
 import Server from "../structures/Server";
+import PhoenixUser from "../structures/PhoenixUser";
 
 export default class CommandManager extends AbstractManager {
     private commands = new Map();
     private aliases = new Map();
+    //private cooldown = new Map();
     constructor() {
         super('CommandManager');
     }
@@ -17,9 +19,10 @@ export default class CommandManager extends AbstractManager {
     public destroy() {
         this.commands.clear();
         this.aliases.clear();
+        //this.cooldown.clear(); 
     }
 
-    public handledCommand(message: Message, server: Server): boolean {
+    public handledCommand(message: Message, server: Server, phoenixUser: PhoenixUser): boolean {
         let prefix = '';
         for (const thisPrefix of [Phoenix.getConfig().defaultPrefix, server.prefix, `<@!${message.guild.me.id}> `]) {
             if (message.content.startsWith(thisPrefix)) prefix = thisPrefix;
@@ -31,8 +34,10 @@ export default class CommandManager extends AbstractManager {
         const args = message.content.slice(prefix.length).split(' ');
         const command = args.shift();
         const cmd = this.commands.get(command) || this.commands.get(this.aliases.get(command));
-        if (cmd instanceof AbstractCommand)
-            cmd.run({ message, server });
+        if (cmd instanceof AbstractCommand) {
+            //todo: implements cooldown
+            cmd.run({ message, server, phoenixUser });
+        }
         
         return true;
     }

@@ -1,7 +1,7 @@
 import AbstractModule from "../structures/AbstractModule";
 import Server from "../structures/Server";
 
-export default class CounterModule extends AbstractModule{
+export default class CounterModule extends AbstractModule {
     public config: ICounter;
     constructor(data: ICounter, server: Server) {
         super('Counter', server);
@@ -13,6 +13,7 @@ export default class CounterModule extends AbstractModule{
         this.updateCounter(this.config.bots.channel, this.config.bots.name.replace(/{bot}/gi, this.getServer().getGuild().members.filter(member => member.user.bot).size.toString()))
         this.updateCounter(this.config.channels.channel, this.config.channels.name.replace(/{channels}/gi, this.getServer().getGuild().channels.size.toString()))
     }
+
     public destroy(): void {
         
     }

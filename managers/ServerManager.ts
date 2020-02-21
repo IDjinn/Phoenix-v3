@@ -9,6 +9,7 @@ export default class ServerManager extends AbstractManager {
     constructor() {
         super('ServerManager');
     }
+
     public init() {
         this.servers.clear();
         ServerSchema.find({}).then((servers: any[]) => {
@@ -18,17 +19,17 @@ export default class ServerManager extends AbstractManager {
             }
         }).catch(console.error);
     }
+
     public destroy() {
         this.servers.map(server => server.destroy());
     }
+
     public createServer(serverData: any) {
         return new Promise((resolve, reject) => {
-            if (Phoenix.getClient().guilds.has(serverData.id)) {
-                let guild = Phoenix.getClient().guilds.get(serverData.id);
-                if (guild instanceof Guild) {
-                    this.servers.set(serverData.id, new Server(guild, serverData));
-                    resolve(true);
-                }
+            let guild = Phoenix.getClient().guilds.get(serverData.id);
+            if (guild instanceof Guild) {
+                this.servers.set(serverData.id, new Server(guild, serverData));
+                resolve(true);
             }
             reject(false);
             //todo: delete this server, guild not found

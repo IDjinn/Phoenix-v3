@@ -1,71 +1,56 @@
 import AbstractModule from "../structures/AbstractModule";
 import Server from "../structures/Server";
+import { Message, GuildAuditLogsAction, Guild, GuildAuditLogs, TextChannel, StoreChannel, NewsChannel, RichEmbed } from "discord.js";
+import { EmbedWithTitle } from "../util/EmbedFactory";
 
-export default class LoggerModule extends AbstractModule{
-    public readonly config: any;
-    constructor(data: ILogger, server: Server){
+export default class LoggerModule extends AbstractModule {
+    public readonly config: ILogger;
+    constructor(data: ILogger, server: Server) {
         super('LoggerModule', server);
         this.config = data;
     }
+
     public init() {
         
     }
+
     public destroy() {
         
     }
+/* todo: make this
+    private async fechAuditLog(type: GuildAuditLogsAction, guild: Guild) {
+        return await guild.fetchAuditLogs({ type, limit: 1 });
+    }*/
+
+    private sendEmbed(guild: Guild, embed: RichEmbed) {
+        let channel = guild.channels.get(this.config.logChannelId);
+        if (channel instanceof TextChannel)
+            channel.send({ embed }).catch();
+    }
+
+    public onMessageUpdated(oldMessage: Message, newMessage: Message) {
+        if (this.config.messageDeletedEnabled) {
+            this.sendEmbed(oldMessage.guild, new EmbedWithTitle('Message Updated', `Old content: \`\`\`${oldMessage.cleanContent}\`\`\`\n\nNew Content: \`\`\`${newMessage.cleanContent}\`\`\``));
+        }
+    }
+
+    public onMessageDeleted(message: Message) {
+        if (this.config.messageDeletedEnabled) {
+            this.sendEmbed(message.guild, new EmbedWithTitle('Message Deleted', `Content: \`\`\`${message.cleanContent}\`\`\``));
+        }
+    }
 }
 
-export interface ILogger{
-    logger: {
-        messageDeleted: {
-            enabled: boolean
-            channel: string
-            embed: JSON
-        },
-        messageUpdated: {
-            enabled: boolean
-            channel: string
-            embed: JSON
-        },
-        guildUpdated: {
-            enabled: boolean
-            channel: string
-            embed: JSON
-        },
-        roleUpdated: {
-            enabled: boolean
-            channel: string
-            embed: JSON
-        },
-        roleCreated: {
-            enabled: boolean
-            channel: string
-            embed: JSON
-        },
-        roleDeleted: {
-            enabled: boolean
-            channel: string
-            embed: JSON
-        },
-        memberUpdated: {
-            enabled: boolean
-            channel: string
-            embed: JSON
-        },
-        channelCreated: {
-            enabled: boolean
-            channel: string
-            embed: JSON
-        },
-        channelUpdated: {
-            enabled: boolean
-            channel: string
-            embed: JSON
-        },
-        channelDeleted: {
-            enabled: boolean
-            channel: string
-            embed: JSON
-        },
-    }
+export interface ILogger {
+    logChannelId: string;
+    messageDeletedEnabled: boolean;
+    messageUpdatedEnabled: boolean;
+    guildUpdatedEnabled: boolean;
+    roleUpdatedEnabled: boolean;
+    roleCreatedEnabled: boolean;
+    roleDeletedEnabled: boolean;
+    memberUpdatedEnabled: boolean;
+    channelCreatedEnabled: boolean;
+    channelUpdatedEnabled: boolean;
+    channelDeletedEnabled: boolean;
 }
