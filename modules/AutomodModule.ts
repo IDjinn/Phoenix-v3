@@ -34,14 +34,14 @@ export default class AutomodModule extends AbstractModule {
     }
 
     public hasInvites(message: Message, roles: string[]): boolean {
+        if (!message.cleanContent.match(discordInvitesPattern))
+            return false;
+        
         if (this.config.invites.whitelist.includes(message.channel.id))
             return false;
         
         if (this.config.invites.blacklist.includes(message.channel.id) &&
             !this.getServer().getPermissionsModule().hasPermission(roles, RolePermissions.sendInivites))
-            return false;
-        
-        if (!message.cleanContent.match(discordInvitesPattern))
             return false;
         
         message.delete().catch();

@@ -42,11 +42,11 @@ export enum RolePermissions {
     sendLinks,
     sendInivites,
     canWarn,
-    bypassAutomod,
-    ignoreLog,
-    bypassChannelCommand,
     canWonXp,
     canAnnounce,
     canManageCurrency,
+    bypassChannelCommand,
+    bypassAutomod,
+    bypassLogger,
     bypassXpChannels
 }
