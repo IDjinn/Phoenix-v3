@@ -22,21 +22,21 @@ export default class LoggerModule extends AbstractModule {
         return await guild.fetchAuditLogs({ type, limit: 1 });
     }*/
 
-    private sendEmbed(guild: Guild, embed: RichEmbed) {
-        let channel = guild.channels.get(this.config.logChannelId);
+    private sendEmbed(embed: RichEmbed) {
+        let channel = this.getServer().getGuild().channels.get(this.config.logChannelId);
         if (channel instanceof TextChannel)
             channel.send({ embed }).catch();
     }
 
     public onMessageUpdated(oldMessage: Message, newMessage: Message) {
         if (this.config.messageDeletedEnabled) {
-            this.sendEmbed(oldMessage.guild, new EmbedWithTitle('Message Updated', `Old content: \`\`\`${oldMessage.cleanContent}\`\`\`\n\nNew Content: \`\`\`${newMessage.cleanContent}\`\`\``));
+            this.sendEmbed(new EmbedWithTitle('Message Updated', `Old content: \`\`\`${oldMessage.cleanContent}\`\`\`\n\nNew Content: \`\`\`${newMessage.cleanContent}\`\`\``));
         }
     }
 
     public onMessageDeleted(message: Message) {
         if (this.config.messageDeletedEnabled) {
-            this.sendEmbed(message.guild, new EmbedWithTitle('Message Deleted', `Content: \`\`\`${message.cleanContent}\`\`\``));
+            this.sendEmbed(new EmbedWithTitle('Message Deleted', `Content: \`\`\`${message.cleanContent}\`\`\``));
         }
     }
 }
