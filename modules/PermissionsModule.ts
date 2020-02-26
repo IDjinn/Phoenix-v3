@@ -11,7 +11,7 @@ export default class PermissionsModule extends AbstractModule {
     }
 
     public init(): void {
-        for (let role of this.config) {
+        for (let role of this.config || []) {
             this.roles.set(role.id, role)
         }
     }
@@ -20,12 +20,10 @@ export default class PermissionsModule extends AbstractModule {
         this.roles.clear();
     }
 
-    public hasPermission(roles: string[] | string, permission: RolePermissions): boolean {
-        if (typeof roles === 'string')
-            roles = [roles];
-            for (let role of roles) {
-            if (this.roles.has(role)) {
-                if ((this.roles.get(role) as IRole).permissions.indexOf(permission) > -1)
+    public hasPermission(roles: Role[], permission: RolePermissions): boolean {
+        for (let role of roles || []) {
+            if (this.roles.has(role.id)) {
+                if ((this.roles.get(role.id) as IRole).permissions.indexOf(permission) > -1)
                     return true;
             }
         }
