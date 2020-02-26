@@ -15,7 +15,7 @@ export default class ServerManager extends AbstractManager {
         ServerSchema.find({}).then((servers: any[]) => {
             if (servers) {
                 //todo: recode this?
-                Promise.all(servers.map(serverData => this.createServer(serverData))).catch(console.error);
+                Promise.all(servers.map(serverData => this.createServer(serverData, Phoenix.getClient().guilds.get(serverData.id)))).catch(console.error);
             }
         }).catch(console.error);
     }
@@ -24,22 +24,40 @@ export default class ServerManager extends AbstractManager {
         this.servers.map(server => server.destroy());
     }
 
-    public createServer(serverData: any) {
+    public createServer(serverData: any, guild?: Guild) : Promise<Server> {
         return new Promise((resolve, reject) => {
-            let guild = Phoenix.getClient().guilds.get(serverData.id);
             if (guild instanceof Guild) {
-                this.servers.set(serverData.id, new Server(guild, serverData));
-                resolve(true);
+                let server = new Server(guild, serverData);
+                this.servers.set(serverData.id, server);
+                resolve(server);
             }
-            reject(false);
-            //todo: delete this server, guild not found
+            reject(ServerSchema.deleteMany({ id: serverData.id }));
         });
     }
 
-    public getServer(id: string): Server | undefined {
+    public getServer(id: string) : Server | undefined {
         return this.servers.get(id);
     }
+    
+    public getOrCreateServer(id: string, guild: Guild) : Server{
+        let server = this.getServer(id);
+        if (server)
+            return server;
+        
+        let serverData = new ServerSchema({ id: id }).save() as any;
+        this.servers.set(id, new Server(guild, serverData));
+        return this.getServer(id) as Server;
+    }  
 
+    public deleteServer(id: string): void {
+        let server = this.servers.get(id);
+        if (server) {
+            server.destroy();
+            this.servers.delete(id);
+        }
+        ServerSchema.deleteMany({ id: id });
+    }
+    
     public getServers(): Collection<string, Server> {
         return this.servers;
     }

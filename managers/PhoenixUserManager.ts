@@ -28,13 +28,22 @@ export default class PhoenixUserManager extends AbstractManager {
             if (user instanceof User) {
                 resolve(this.users.set(user.id, new PhoenixUser(user, userData)));
             }
-            //todo delete this user, him not found
-            reject(false);
+            reject(PhoenixUserSchema.deleteMany({ id: userData.id }));
         });
     }
 
     public getUser(id: string): PhoenixUser | undefined {
         return this.users.get(id);
+    }
+
+    public getOrCreateUser(id: string, user: User): PhoenixUser {
+        let phoenixUser = this.getUser(id);
+        if (phoenixUser)
+            return phoenixUser;
+        
+        let userData = new PhoenixUserSchema({ id: id }).save() as any;
+        this.users.set(id, new PhoenixUser(user, userData));
+        return this.getUser(id) as PhoenixUser;
     }
 
     public getUsers(): Collection<string, PhoenixUser> {
