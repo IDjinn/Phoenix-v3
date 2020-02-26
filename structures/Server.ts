@@ -5,6 +5,7 @@ import AutomodModule from "../modules/AutomodModule";
 import { Guild } from "discord.js";
 import LevelModule from "../modules/LevelModule";
 import CounterModule from "../modules/CounterModule";
+import WelcomeModule from "../modules/WelcomeModule";
 
 export default class Server {
     private data: IServer;
@@ -16,6 +17,7 @@ export default class Server {
     private automodModule: AutomodModule;
     private levelModule: LevelModule;
     private counterModule: CounterModule;
+    private welcomeModule: WelcomeModule;
     constructor(guild: Guild, data: IServer) {
         this.data = data;
         this.guild = guild;
@@ -26,17 +28,26 @@ export default class Server {
         this.automodModule = new AutomodModule(this.data.automod, this);
         this.counterModule = new CounterModule(this.data.counter, this);
         this.levelModule = new LevelModule(this.data.level, this);
+        this.welcomeModule = new WelcomeModule(this.data.welcome, this);
         this.init();
     }
 
     public init() {
         this.loggerModule.init();
         this.permissionsModule.init();
+        this.automodModule.init();
+        this.counterModule.init();
+        this.levelModule.init();
+        this.welcomeModule.init();
     }
 
     public destroy() {
         this.loggerModule.destroy();
         this.permissionsModule.destroy();
+        this.automodModule.destroy();
+        this.counterModule.destroy();
+        this.levelModule.destroy();
+        this.welcomeModule.destroy();
     }
 
     public getLoggerModule(): LoggerModule {
@@ -57,6 +68,10 @@ export default class Server {
 
     public getCounterModule(): CounterModule {
         return this.counterModule;
+    }
+
+    public getWelcomeModule(): WelcomeModule {
+        return this.welcomeModule;
     }
 
     public getGuild(): Guild {
