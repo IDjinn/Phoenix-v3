@@ -41,7 +41,11 @@ export default class Phoenix {
     }
     
     public destroy() {
+        Phoenix.getServerManager().destroy();
+        Phoenix.getPhoenixUserManager().destroy();
+        Phoenix.getEventManager().destroy();
         Phoenix.getCommandManager().destroy();
+        Phoenix.getDatabaseManager().destroy();
     }
 
     public static getClient() {
