@@ -40,10 +40,10 @@ export default class LevelModule extends AbstractModule{
         //server multiplier === donator server, more xp per message? todo this. (max xp p/ message ~ 15?)
         const winXp = Math.floor(Math.random() * 3 + 1) * user.getXpMultiplier() *
             (currentILevel ? currentILevel.xpMultiplier * this.config.serverXpMultiplier : this.config.serverXpMultiplier);
-        user.setXp(user.getXp() + winXp, true);
+        user.setXp(user.getXp() + winXp);
         if (user.getXp() > Constants.getXpFromLevel(user.getLevel() + 1)) {
             //todo user level up
-            user.setLevel(user.getLevel() + 1, true);
+            user.setLevel(user.getLevel() + 1);
             let newILevel = this.levels.get(user.getLevel());
             if (newILevel) {
                 message.member.addRoles(newILevel.giveRoles).catch();

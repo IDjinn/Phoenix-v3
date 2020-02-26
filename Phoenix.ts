@@ -40,7 +40,7 @@ export default class Phoenix {
         Phoenix.client.login(Phoenix.getConfig().token).then(() => console.log('Logged on discord!')).catch(console.error);
     }
     
-    public destroy() {
+    public static destroy() {
         Phoenix.getServerManager().destroy();
         Phoenix.getPhoenixUserManager().destroy();
         Phoenix.getEventManager().destroy();

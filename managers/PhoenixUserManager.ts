@@ -19,7 +19,9 @@ export default class PhoenixUserManager extends AbstractManager {
     }
 
     public destroy(): void {
-        this.users.clear();
+        let user;
+        while (user = this.users.values().next().value as PhoenixUser)
+            user.destroy();
     }
 
     public createUser(userData: any) {

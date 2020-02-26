@@ -40,12 +40,23 @@ export default class PhoenixUser{
     public setXp(xp: number, updateDatabase?: boolean) {
         this.xp = xp;
         if (updateDatabase)
-            PhoenixUserSchema.findOneAndUpdate({ id: this.getUser().id }, { xp: this.getXp() }).catch();
+            PhoenixUserSchema.findOneAndUpdate({ id: this.id }, { xp: this.getXp() }).catch();
     }
 
     public setLevel(level: number, updateDatabase?: boolean) {
         this.level = level;
         if (updateDatabase)
-            PhoenixUserSchema.findOneAndUpdate({ id: this.getUser().id }, { level: this.getLevel() }).catch();
+            PhoenixUserSchema.findOneAndUpdate({ id: this.id }, { level: this.getLevel() }).catch();
+    }
+
+    public destroy() {
+        PhoenixUserSchema.findByIdAndUpdate({ id: this.id }, {
+            level: this.level,
+            xp: this.xp,
+            xpMultiplier: this.xpMultiplier,
+            coins: this.coins,
+            rep: this.rep,
+            bio: this.bio
+        }).catch();
     }
 }
