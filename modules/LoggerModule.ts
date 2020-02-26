@@ -24,19 +24,20 @@ export default class LoggerModule extends AbstractModule {
 
     private sendEmbed(embed: RichEmbed) {
         let channel = this.getServer().getGuild().channels.get(this.config.logChannelId);
-        if (channel instanceof TextChannel)
-            channel.send({ embed }).catch();
+        if (channel instanceof TextChannel) {
+            channel.send(embed).catch();
+        }
     }
 
     public onMessageUpdated(oldMessage: Message, newMessage: Message) {
-        if (this.config.messageDeletedEnabled) {
-            this.sendEmbed(new EmbedWithTitle('Message Updated', `Old content: \`\`\`${oldMessage.cleanContent}\`\`\`\n\nNew Content: \`\`\`${newMessage.cleanContent}\`\`\``));
+        if (this.config.messageUpdatedEnabled) {
+            this.sendEmbed(EmbedWithTitle('Message Updated', `Old content: \`\`\`${oldMessage.cleanContent}\`\`\`\n\nNew Content: \`\`\`${newMessage.cleanContent}\`\`\``));
         }
     }
 
     public onMessageDeleted(message: Message) {
         if (this.config.messageDeletedEnabled) {
-            this.sendEmbed(new EmbedWithTitle('Message Deleted', `Content: \`\`\`${message.cleanContent}\`\`\``));
+            this.sendEmbed(EmbedWithTitle('Message Deleted', `Content: \`\`\`${message.cleanContent}\`\`\``));
         }
     }
 }

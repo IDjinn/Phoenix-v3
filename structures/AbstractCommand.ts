@@ -1,6 +1,7 @@
-import { GuildMember, PermissionResolvable, Snowflake, Message } from "discord.js";
+import { GuildMember, PermissionResolvable, Message } from "discord.js";
 import Server from "./Server";
 import PhoenixUser from "./PhoenixUser";
+import Constants from "../util/Constants";
 
 export default abstract class AbstractCommand{
     public readonly name: string;
@@ -31,8 +32,8 @@ export default abstract class AbstractCommand{
     public botHasPermissions(member: GuildMember): boolean{
         return this.memberHasPermissions(member);
     }
-    public enabledForMemberId(id: Snowflake): boolean{
-        return this.enabled || (this.onlyOwner && id === '376460601909706773');
+    public enabledForMemberId(id: string): boolean{
+        return this.enabled || (this.onlyOwner && Constants.ownersList.includes(id));
     }
 }
 

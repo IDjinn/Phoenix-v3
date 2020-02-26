@@ -1,20 +1,134 @@
-import {Schema, model} from 'mongoose';
+import {Schema, model, SchemaType} from 'mongoose';
 import { ILogger } from '../modules/LoggerModule';
-import { IAutomod } from '../modules/AutomodModule';
+import { IAutomod, IAutomodAction } from '../modules/AutomodModule';
 import { IRole } from '../modules/PermissionsModule';
 import { ICounter } from '../modules/CounterModule';
 import { ILevelModule } from '../modules/LevelModule';
+import { IWelcome } from '../modules/WelcomeModule';
 
 const ServerSchema = new Schema({
-        id: {
-            type: String,
-            required: true
+    id: {
+        type: String,
+        required: true
+    },
+    prefix: {
+        type: String,
+        default: '>'
+    },
+    level: {
+        enabled: {
+            type: Boolean,
+            default: false
         },
-        prefix: {
+        serverXpMultiplier: {
+            type: Number,
+            default: 0
+        },
+        channel: {
             type: String,
-            default: '>'
+            default: ''
+        },
+        embed: {
+            type: JSON,
+            default: ''
         },
         levels: {
+            type: Array,
+            default: []
+        }
+    },
+    punishment: {
+        enabled: {
+            type: Boolean,
+            default: false
+        },
+        channel: {
+            type: String,
+            default: ''
+        },
+        embed: {
+            type: JSON,
+            default: ''
+        }
+    },
+    announce: {
+        enabled: {
+            type: Boolean,
+            default: false
+        },
+        channel: {
+            type: String,
+            default: ''
+        },
+        embed: {
+            type: JSON,
+            default: ''
+        }
+    },
+    commands: {
+        enabled: {
+            type: Boolean,
+            default: false
+        },
+        whitelist: {
+            type: Array,
+            default: []
+        },
+        blacklist: {
+            type: Array,
+            default: []
+        },
+        embed: {
+            type: JSON,
+            default: ''
+        }
+    },
+    counter: {
+        users: {
+            enabled: {
+                type: Boolean,
+                default: false
+            },
+            channel: {
+                type: String,
+                default: ''
+            },
+            name: {
+                type: String,
+                default: ''
+            }
+        },
+        bots: {
+            enabled: {
+                type: Boolean,
+                default: false
+            },
+            channel: {
+                type: String,
+                default: ''
+            },
+            name: {
+                type: String,
+                default: ''
+            }
+        },
+        channels: {
+            enabled: {
+                type: Boolean,
+                default: false
+            },
+            channel: {
+                type: String,
+                default: ''
+            },
+            name: {
+                type: String,
+                default: ''
+            }
+        }
+    },
+    welcome: {
+        join: {
             enabled: {
                 type: Boolean,
                 default: false
@@ -28,7 +142,7 @@ const ServerSchema = new Schema({
                 default: ''
             }
         },
-        punishment: {
+        leave: {
             enabled: {
                 type: Boolean,
                 default: false
@@ -41,112 +155,6 @@ const ServerSchema = new Schema({
                 type: JSON,
                 default: ''
             }
-        },
-        announce: {
-            enabled: {
-                type: Boolean,
-                default: false
-            },
-            channel: {
-                type: String,
-                default: ''
-            },
-            embed: {
-                type: JSON,
-                default: ''
-            }
-        },
-        commands: {
-            enabled: {
-                type: Boolean,
-                default: false
-            },
-            whitelist: {
-                type: Array,
-                default: []
-            },
-            blacklist: {
-                type: Array,
-                default: []
-            },
-            embed: {
-                type: JSON,
-                default: ''
-            }
-        },
-        counter: {
-            users: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                channel: {
-                    type: String,
-                    default: ''
-                },
-                name: {
-                    type: String,
-                    default: ''
-                }
-            },
-            bots: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                channel: {
-                    type: String,
-                    default: ''
-                },
-                name: {
-                    type: String,
-                    default: ''
-                }
-            },
-            channels: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                channel: {
-                    type: String,
-                    default: ''
-                },
-                name: {
-                    type: String,
-                    default: ''
-                }
-            }
-        },
-        welcome: {
-            join: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                channel: {
-                    type: String,
-                    default: ''
-                },
-                embed: {
-                    type: JSON,
-                    default: ''
-                }
-            },
-            leave: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                channel: {
-                    type: String,
-                    default: ''
-                },
-                embed: {
-                    type: JSON,
-                    default: ''
-                }
-            },
         },
         autorole: {
             enabled: {
@@ -158,228 +166,127 @@ const ServerSchema = new Schema({
                 default: []
             },
         },
-        roles: {
-            moderator: {
-                type: Array,
-                default: []
-            },
-            administrator:{
-                type: Array,
-                default: []
-            },
-            invites:{
-                type: Array,
-                default: []
-            },
-            links:{
-                type: Array,
-                default: []
-            }
+    },
+    roles: {
+        type: Array,
+        default: []
+    },
+    invites: {
+        enabled: {
+            type: Boolean,
+            default: false
         },
-        invites:{
+        channel: {
+            type: String,
+            default: ''
+        },
+        embed: {
+            type: JSON,
+            default: ''
+        },
+    },
+    economy: {
+        currency: {
+            singular: {
+                type: String,
+                default: 'dolar'
+            },
+            plural: {
+                type: String,
+                default: 'dolars'
+            },
+            valor: {
+                type: Number,
+                default: 10
+            },
+        }
+    },
+    automod: {
+        invites: {
             enabled: {
                 type: Boolean,
                 default: false
             },
-            channel: {
-                type: String,
-                default: ''
+            whitelist: {
+                type: Array,
+                default: []
             },
-            embed: {
-                type: JSON,
-                default: ''
-            },
-        },
-        economy: {
-            currency: {
-                singular: {
-                    type: String,
-                    default: 'dolar'
-                },
-                plural: {
-                    type: String,
-                    default: 'dolars'
-                },
-                valor: {
-                    type: Number,
-                    default: 10
-                },
+            blacklist: {
+                type: Array,
+                default: []
             }
         },
-        automod:{
-            invites: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                whitelist: {
-                    type: Array,
-                    default: []
-                },
-                blacklist: {
-                    type: Array,
-                    default: []
-                }
+        links: {
+            enabled: {
+                type: Boolean,
+                default: false
             },
-            links: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                whitelist: {
-                    type: Array,
-                    default: []
-                },
-                blacklist: {
-                    type: Array,
-                    default: []
-                }
+            whitelist: {
+                type: Array,
+                default: []
             },
+            blacklist: {
+                type: Array,
+                default: []
+            }
         },
-        logger: {
-            messageDeleted: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                channel: {
-                    type: String,
-                    default: ''
-                },
-                embed: {
-                    type: JSON,
-                    default: ''
-                }
-            },
-            messageUpdated: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                channel: {
-                    type: String,
-                    default: ''
-                },
-                embed: {
-                    type: JSON,
-                    default: ''
-                }
-            },
-            guildUpdated: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                channel: {
-                    type: String,
-                    default: ''
-                },
-                embed: {
-                    type: JSON,
-                    default: ''
-                }
-            },
-            roleUpdated: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                channel: {
-                    type: String,
-                    default: ''
-                },
-                embed: {
-                    type: JSON,
-                    default: ''
-                }
-            },
-            roleCreated: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                channel: {
-                    type: String,
-                    default: ''
-                },
-                embed: {
-                    type: JSON,
-                    default: ''
-                }
-            },
-            roleDeleted: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                channel: {
-                    type: String,
-                    default: ''
-                },
-                embed: {
-                    type: JSON,
-                    default: ''
-                }
-            },
-            memberUpdated: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                channel: {
-                    type: String,
-                    default: ''
-                },
-                embed: {
-                    type: JSON,
-                    default: ''
-                }
-            },
-            channelCreated: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                channel: {
-                    type: String,
-                    default: ''
-                },
-                embed: {
-                    type: JSON,
-                    default: ''
-                }
-            },
-            channelUpdated: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                channel: {
-                    type: String,
-                    default: ''
-                },
-                embed: {
-                    type: JSON,
-                    default: ''
-                }
-            },
-            channelDeleted: {
-                enabled: {
-                    type: Boolean,
-                    default: false
-                },
-                channel: {
-                    type: String,
-                    default: ''
-                },
-                embed: {
-                    type: JSON,
-                    default: ''
-                }
-            },
-        }
+        actions: {
+            type: Array,
+            default: []
+        },
+        warnsChannel: {
+            type: String,
+            default: ''
+        },
+    },
+    logger: {
+        logChannelId: {
+            type: String,
+            default: ''
+        },
+        messageDeletedEnabled: {
+            type: Boolean,
+            default: false
+        },
+        messageUpdatedEnabled: {
+            type: Boolean,
+            default: false
+        },
+        guildUpdatedEnabled: {
+            type: Boolean,
+            default: false
+        },
+        roleUpdatedEnabled: {
+            type: Boolean,
+            default: false
+        },
+        roleCreatedEnabled: {
+            type: Boolean,
+            default: false
+        },
+        roleDeletedEnabled: {
+            type: Boolean,
+            default: false
+        },
+        memberUpdatedEnabled: {
+            type: Boolean,
+            default: false
+        },
+        channelCreatedEnabled: {
+            type: Boolean,
+            default: false
+        },
+        channelUpdatedEnabled: {
+            type: Boolean,
+            default: false
+        },
+        channelDeletedEnabled: {
+            type: Boolean,
+            default: false
+        },
     }
-, {timestamps: true});
+}, { timestamps: true });
+
 
 export default model('Servers', ServerSchema);
 
@@ -404,23 +311,8 @@ export interface IServer{
     },
     level: ILevelModule,
     counter: ICounter,
-    welcome: {
-        join: {
-            enabled: boolean
-            channel: string
-            embed: JSON
-        },
-        leave: {
-            enabled: boolean
-            channel: string
-            embed: JSON
-        },
-    },
-    autorole: {
-        enabled: boolean
-        roles: string[]
-    },
     roles: IRole[],
+    welcome: IWelcome,
     invites:{
         enabled: boolean
         channel: string
