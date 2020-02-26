@@ -81,7 +81,7 @@ export default class EventManager extends AbstractManager {
                         return;
                         
                     if (!server.getPermissionsModule().hasPermission(newMessage.member.roles.array(), RolePermissions.bypassLogger))
-                        server.getLoggerModule().onMessageUpdated(newMessage, newMessage);
+                        server.getLoggerModule().onMessageUpdated(oldMessage, newMessage);
                     
                     if (Phoenix.getCommandManager().handledCommand(newMessage, server, user))
                         return;
