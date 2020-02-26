@@ -1,18 +1,9 @@
 import { RichEmbed } from "discord.js";
 
-export class SimpleEmbed extends RichEmbed{
-    constructor(message: string) {
-        super();
-        this.setDescription(message);
-        this.setColor('#fff');
-    }
+export function SimpleEmbed(message: string): RichEmbed {
+    return new RichEmbed().setDescription(message).setColor('#fff');
 }
 
-export class EmbedWithTitle extends RichEmbed{
-    constructor(title: string, message: string, color?: string) {
-        super();
-        this.setTitle(title);
-        this.setDescription(message);
-        this.setColor(`#${color ? color : 'fff'}`);
-    }
+export function EmbedWithTitle(title: string, message: string, color?: string): RichEmbed {
+    return new RichEmbed().setTitle(title).setDescription(message).setColor(`#${color ? color : 'fff'}`);
 }
