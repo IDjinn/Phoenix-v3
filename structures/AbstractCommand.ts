@@ -33,7 +33,7 @@ export default abstract class AbstractCommand{
         return this.memberHasPermissions(member);
     }
     public enabledForMemberId(id: string): boolean{
-        return this.enabled || (this.onlyOwner && Constants.ownersList.includes(id));
+        return this.enabled || (this.onlyOwner && Constants.OWNERS_LIST.includes(id));
     }
 }
 
