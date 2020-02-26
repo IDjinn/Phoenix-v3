@@ -4,6 +4,7 @@ const PhoenixUserSchema = new Schema({
     id: { type: String, required: true },
     level: { type: Number, default: 1 },
     xp: { type: Number, default: 0 },
+    xpMultiplier: { type: Number, default: 0 },
     coins: { type: Number, default: 0 },
     rep: { type: Number, default: 0 },
     bio: { type: String, default: '' }
@@ -18,4 +19,5 @@ export interface IPhoenixUser{
     coins: number;
     rep: number;
     bio: string;
+    xpMultiplier: number;
 }

@@ -14,7 +14,7 @@ export default class LevelModule extends AbstractModule{
         this.config = data;
     }
     public init(): void {
-        for (let i in this.config.levels) {
+        for (let i in this.config.levels || []) {
             this.levels.set(this.config.levels[i].level, this.config.levels[i]);
         }
     }
@@ -23,29 +23,31 @@ export default class LevelModule extends AbstractModule{
     }
     
     public giveMessageXp(message: Message, user: PhoenixUser) {
-        if (message.cleanContent.length <= 5 || !user ||
+        if (!this.config.enabled || message.cleanContent.length <= 5 || !user ||
             !this.getServer().getPermissionsModule().hasPermission(
-                message.member.roles.map(role => role.id), RolePermissions.canWonXp))
+                message.member.roles.array(), RolePermissions.canWonXp))
             return;
         
         if (!this.config.whitelist.includes(message.channel.id))
             return;
 
         if (this.config.blacklist.includes(message.channel.id) &&
-            !this.getServer().getPermissionsModule().hasPermission(message.member.roles.map(role => role.id),
+            !this.getServer().getPermissionsModule().hasPermission(message.member.roles.array(),
                 RolePermissions.bypassXpChannels))
             return;
         
-        let iLevel = this.levels.get(user.getLevel());
-        const winXp = Math.floor(Math.random() * 3 + 1) * (iLevel ? iLevel.xpMultiplier * this.config.serverXpMultiplier : this.config.serverXpMultiplier);
+        let currentILevel = this.levels.get(user.getLevel());
+        //server multiplier === donator server, more xp per message? todo this. (max xp p/ message ~ 15?)
+        const winXp = Math.floor(Math.random() * 3 + 1) * user.getXpMultiplier() *
+            (currentILevel ? currentILevel.xpMultiplier * this.config.serverXpMultiplier : this.config.serverXpMultiplier);
         user.setXp(user.getXp() + winXp, true);
         if (user.getXp() > Constants.getXpFromLevel(user.getLevel() + 1)) {
             //todo user level up
             user.setLevel(user.getLevel() + 1, true);
-            iLevel = this.levels.get(user.getLevel());
-            if (iLevel) {
-                message.member.addRoles(iLevel.giveRoles).catch();
-                message.member.removeRoles(iLevel.takeRoles).catch();
+            let newILevel = this.levels.get(user.getLevel());
+            if (newILevel) {
+                message.member.addRoles(newILevel.giveRoles).catch();
+                message.member.removeRoles(newILevel.takeRoles).catch();
             }
             message.channel.send(`you've level up ` + user.getLevel());
         }
@@ -53,10 +55,13 @@ export default class LevelModule extends AbstractModule{
 }
 
 export interface ILevelModule{
+    enabled: boolean;
     serverXpMultiplier: number;
+    channel: string;
     whitelist: string[];
     blacklist: string[];
     levels: ILevel[];
+    embed: JSON;
 }
 
 export interface ILevel{

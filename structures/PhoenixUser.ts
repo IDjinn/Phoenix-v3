@@ -2,10 +2,11 @@ import { User } from "discord.js";
 import PhoenixUserSchema, { IPhoenixUser } from "../schemas/PhoenixUserSchema";
 
 export default class PhoenixUser{
+    private id: string;
     private user: User;
     private level: number;
     private xp: number;
-    private id: string;
+    private xpMultiplier: number;
     private coins: number;
     private rep: number;
     private bio: string;
@@ -17,6 +18,7 @@ export default class PhoenixUser{
         this.bio = userData.bio;
         this.level = userData.level;
         this.xp = userData.xp;
+        this.xpMultiplier = userData.xpMultiplier;
     }
 
     public getLevel(): number{
@@ -29,6 +31,10 @@ export default class PhoenixUser{
 
     public getUser(): User{
         return this.user;
+    }
+
+    public getXpMultiplier(): number{
+        return this.xpMultiplier;
     }
 
     public setXp(xp: number, updateDatabase?: boolean) {
