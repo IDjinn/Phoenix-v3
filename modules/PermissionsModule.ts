@@ -12,7 +12,7 @@ export default class PermissionsModule extends AbstractModule {
 
     public init(): void {
         for (let role of this.config || []) {
-            this.roles.set(role.id, role)
+            this.roles.set(role.id, role);
         }
     }
 
