@@ -10,7 +10,7 @@ export default class CounterModule extends AbstractModule {
     
     public init(): void {
         this.updateCounter(this.config.users.channel, this.config.users.name.replace(/{users}/gi, this.getServer().getGuild().memberCount.toString()))
-        this.updateCounter(this.config.bots.channel, this.config.bots.name.replace(/{bot}/gi, this.getServer().getGuild().members.filter(member => member.user.bot).size.toString()))
+        this.updateCounter(this.config.bots.channel, this.config.bots.name.replace(/{bots}/gi, this.getServer().getGuild().members.filter(member => member.user.bot).size.toString()))
         this.updateCounter(this.config.channels.channel, this.config.channels.name.replace(/{channels}/gi, this.getServer().getGuild().channels.size.toString()))
     }
 
@@ -20,9 +20,8 @@ export default class CounterModule extends AbstractModule {
 
     private updateCounter(id: string, name: string) {
         let channel = this.getServer().getGuild().channels.get(id);
-        if (channel) {
+        if (channel)
             channel.setName(name).catch();
-        }
     }
 }
 
