@@ -24,7 +24,7 @@ export default class CounterModule extends AbstractModule {
 
     private updateChannelName(id: string, name: string) {
         let channel = this.getServer().getGuild().channels.get(id);
-        if (channel)
+        if (channel && channel.name !== name)
             channel.setName(name).catch();
     }
 }
