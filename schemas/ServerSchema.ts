@@ -230,6 +230,36 @@ const ServerSchema = new Schema({
                 default: []
             }
         },
+        dupChars: {
+            enabled: {
+                type: Boolean,
+                default: true
+            },
+            percent: {
+                type: Number,
+                default: 0.1
+            }
+        },
+        capsLock: {
+            enabled: {
+                type: Boolean,
+                default: true
+            },
+            percent: {
+                type: Number,
+                default: 0.1
+            }
+        },
+        massMention: {
+            enabled: {
+                type: Boolean,
+                default: true
+            },
+            count: {
+                type: Number,
+                default: 5
+            }
+        },
         actions: {
             type: Array,
             default: []
@@ -238,6 +268,10 @@ const ServerSchema = new Schema({
             type: String,
             default: ''
         },
+        whitelist: {
+            type: Array,
+            default: []
+        }
     },
     logger: {
         logChannelId: {
