@@ -1,10 +1,8 @@
 import AbstractManager from "../structures/AbstractManager";
 import Phoenix from "../Phoenix";
-import { Guild, GuildChannel, TextChannel, NewsChannel, StoreChannel, Role } from "discord.js";
-import ServerSchema from "../schemas/ServerSchema";
+import { GuildChannel } from "discord.js";
 import Server from "../structures/Server";
 import PhoenixUser from "../structures/PhoenixUser";
-import PhoenixUserSchema from "../schemas/PhoenixUserSchema";
 import { RolePermissions } from "../modules/PermissionsModule";
 import sleep from "../util/Sleep";
 
@@ -145,7 +143,7 @@ export default class EventManager extends AbstractManager {
             }
         });
 
-        Phoenix.getClient().on('guildUpdate', async (oldGuild, newGuild) => {
+        Phoenix.getClient().on('guildUpdate', async (_oldGuild, newGuild) => {
             let changes = '';
             const auditLogs = await newGuild.fetchAuditLogs({ type: 'GUILD_UPDATE', limit: 1 });
             const log = auditLogs.entries.first();

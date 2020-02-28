@@ -1,6 +1,6 @@
 import AbstractModule from "../structures/AbstractModule";
 import Server from "../structures/Server";
-import { Message, GuildAuditLogsAction, Guild, GuildAuditLogs, TextChannel, StoreChannel, NewsChannel, RichEmbed, GuildChannel, Role } from "discord.js";
+import { Message, TextChannel, RichEmbed, GuildChannel, Role } from "discord.js";
 import { EmbedWithTitle } from "../util/EmbedFactory";
 
 export default class LoggerModule extends AbstractModule {
@@ -17,10 +17,6 @@ export default class LoggerModule extends AbstractModule {
     public destroy() {
         
     }
-/* todo: make this
-    private async fechAuditLog(type: GuildAuditLogsAction, guild: Guild) {
-        return await guild.fetchAuditLogs({ type, limit: 1 });
-    }*/
 
     private sendEmbed(embed: RichEmbed) {
         let channel = this.getServer().getGuild().channels.get(this.config.logChannelId);

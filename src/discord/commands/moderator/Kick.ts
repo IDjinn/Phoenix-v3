@@ -11,7 +11,7 @@ export default class KickCommand extends AbstractCommand {
             aliases: ['expulsar', 'kickar', 'chutar']
         });
     }
-    public run({ message, args }: ICommandParameters) {
+    public async run({ message, args }: ICommandParameters) {
         if (!args)
             return message.channel.send(SimpleEmbed('You need put member id or mention it.'));
         
@@ -20,7 +20,8 @@ export default class KickCommand extends AbstractCommand {
             return message.channel.send(SimpleEmbed('You need put member id or mention it.'));
         
         if (member.kickable && member.highestRole < message.member.highestRole) {
-            member.kick('pq sim').catch().then();
+            member.kick('pq sim').catch();//todo make messages when sucess or error while kicking
         }
+        return message.channel.send(SimpleEmbed('You dont have permissions to kick this member.'));
     }
 }

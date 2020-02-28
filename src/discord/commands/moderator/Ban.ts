@@ -20,7 +20,8 @@ export default class BanCommand extends AbstractCommand {
             return message.channel.send(SimpleEmbed('You need put member id or mention it.'));
         
         if (member.bannable && member.highestRole < message.member.highestRole) {
-            member.ban('pq sim').catch().then();
+            member.ban('pq sim').catch().then();//todo message sucess or error
         }
+        return message.channel.send(SimpleEmbed('You dont have permissions to ban this member.'));
     }
 }

@@ -5,4 +5,7 @@ export default abstract class AbstractManager{
     }
     public abstract init(): void;
     public abstract destroy(): void;
+    public getName(): string {
+        return this.name;
+    }
 }

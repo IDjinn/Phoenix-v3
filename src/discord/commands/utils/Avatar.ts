@@ -1,5 +1,5 @@
 import AbstractCommand, { ICommandParameters } from "../../structures/AbstractCommand";
-import { EmbedWithTitle, SimpleEmbed } from "../../util/EmbedFactory";
+import { SimpleEmbed } from "../../util/EmbedFactory";
 
 export default class AvatarCommand extends AbstractCommand{
     constructor() {
@@ -9,8 +9,8 @@ export default class AvatarCommand extends AbstractCommand{
         });
     }
 
-    public run({ message, args }: ICommandParameters) {
+    public async run({ message, args }: ICommandParameters) {
         const member = message.mentions.members.first() || (args ? message.guild.members.get(args[0]) : message.member);
-        message.reply(SimpleEmbed(`${member.displayName}'s Avatar`).setImage(member.user.displayAvatarURL)).catch();
+        return message.reply(SimpleEmbed(`${member.displayName}'s Avatar`).setImage(member.user.displayAvatarURL)).catch();
     }
 }

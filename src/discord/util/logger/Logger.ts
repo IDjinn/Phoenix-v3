@@ -6,7 +6,7 @@ export default class Logger {
     constructor(className: string){
         this.className = className;
     }
-    public debug(message: string, args?: string[]) {
+    public debug(message: string, _args?: string[]) {
         if (Phoenix.getConfig().logLevel < LogLevel.DEBUG)
             return;
         

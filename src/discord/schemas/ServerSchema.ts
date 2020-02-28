@@ -1,6 +1,6 @@
-import {Schema, model, SchemaType} from 'mongoose';
+import {Schema, model} from 'mongoose';
 import { ILogger } from '../modules/LoggerModule';
-import { IAutomod, IAutomodAction } from '../modules/AutomodModule';
+import { IAutomod } from '../modules/AutomodModule';
 import { IRole } from '../modules/PermissionsModule';
 import { ICounter } from '../modules/CounterModule';
 import { ILevelModule } from '../modules/LevelModule';

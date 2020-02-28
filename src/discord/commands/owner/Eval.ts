@@ -1,6 +1,5 @@
 import AbstractCommand, { ICommandParameters } from "../../structures/AbstractCommand";
-import { SimpleEmbed } from "../../util/EmbedFactory";
-import { RichEmbed } from "discord.js";
+import { SimpleEmbed, EmbedWithTitle } from "../../util/EmbedFactory";
 import Phoenix from "../../Phoenix";
 import { inspect } from 'util';
 
@@ -29,15 +28,15 @@ export default class EvalCommand extends AbstractCommand {
         });
     }
 
-    public run({ message, args }: ICommandParameters) {
+    public async run({ message, args }: ICommandParameters) {
         try {
             if (!args)
                 return message.channel.send(SimpleEmbed('Você precisa colocar algum código para ser executado!'));
             
             const evaled = inspect(eval(args.join(' ')))
-            message.reply(SimpleEmbed(`Entrada \`\`\`${message.content}\`\`\`\n\nSaída:\`\`\`${cleanEvaledCode(evaled)}\`\`\``));
+            return message.reply(EmbedWithTitle('Sucesso', `Entrada \`\`\`${message.content}\`\`\`\n\nSaída:\`\`\`${cleanEvaledCode(evaled)}\`\`\``));
         } catch (err) {
-            message.reply(SimpleEmbed(`Entrada \`\`\`${message.content}\`\`\`\n\nSaída:\`\`\`${cleanEvaledCode(err)}\`\`\``));
+            return message.reply(EmbedWithTitle('Erro', `Entrada \`\`\`${message.content}\`\`\`\n\nSaída:\`\`\`${cleanEvaledCode(err)}\`\`\``));
         }
     }
 }

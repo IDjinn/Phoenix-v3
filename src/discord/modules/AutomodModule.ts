@@ -1,5 +1,5 @@
 import AbstractModule from "../structures/AbstractModule";
-import { Message, Role, User, Guild, TextChannel, GuildMember } from "discord.js";
+import { Message, Role, TextChannel, GuildMember } from "discord.js";
 import Server from "../structures/Server";
 import { RolePermissions } from "./PermissionsModule";
 import { Collection } from "discord.js";
@@ -114,7 +114,7 @@ export default class AutomodModule extends AbstractModule {
         return false;
     }
 
-    public hasMassMention(message: Message, memberRoles: Role[]) {
+    public hasMassMention(message: Message, memberRoles: Role[]): boolean {
         if (this.getServer().getPermissionsModule().hasPermission(memberRoles, RolePermissions.ignoreCapsLock))
             return false;
         
@@ -123,7 +123,9 @@ export default class AutomodModule extends AbstractModule {
         if (totalMentions > this.config.massMention.count) {
             message.delete().catch();
             this.warn(message.member, message.guild.me, `Mass Mentions (${totalMentions})`);
+            return true;
         }
+        return false;
     }
 
     public warn(member: GuildMember, punisher: GuildMember, reason?: string) {

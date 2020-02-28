@@ -22,7 +22,7 @@ export default abstract class AbstractCommand{
         this.enabled = props.enabled || true;
     }
 
-    public abstract run(params: ICommandParameters): void;
+    public abstract run(params: ICommandParameters): Promise<Message | Message[]> | boolean | Error | void;
     
     public memberHasPermissions(member: GuildMember): boolean{
         if (this.permissionsNeed.length == 0)

@@ -1,5 +1,5 @@
 import AbstractManager from "../structures/AbstractManager";
-import ServerSchema, { IServer } from "../schemas/ServerSchema";
+import ServerSchema from "../schemas/ServerSchema";
 import Server from "../structures/Server";
 import { Collection, Guild } from "discord.js";
 import Phoenix from "../Phoenix";

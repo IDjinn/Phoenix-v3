@@ -7,7 +7,7 @@ export default class PingCommand extends AbstractCommand{
             description: 'Show the bot latency.'
         });
     }
-    public run({ message }: ICommandParameters) {
-        message.channel.send(message.client.ping.toFixed(0) + 'ms.');
+    public async run({ message }: ICommandParameters) {
+        return message.channel.send(message.client.ping.toFixed(0) + 'ms.');
     }
 }

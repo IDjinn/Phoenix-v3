@@ -46,7 +46,10 @@ export default class CommandManager extends AbstractManager {
         const cmd = this.commands.get(command) || this.commands.get(this.aliases.get(command));
         if (cmd instanceof AbstractCommand) {
             //todo: implements cooldown
-            cmd.run({ message, server, phoenixUser, args });
+            const callback = cmd.run({ message, server, phoenixUser, args });
+            if (callback instanceof Error)
+                console.error(callback) // todo send to user error message
+            //else = command executed?
         }
         
         return true;
