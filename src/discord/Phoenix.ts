@@ -1,4 +1,4 @@
-import IConfig from './IConfig';
+import IConfig from '../../IConfig';
 import { Client } from 'discord.js';
 import CommandManager from './managers/CommandManager';
 import EventManager from './managers/EventManager';
@@ -7,7 +7,7 @@ import ServerManager from './managers/ServerManager';
 import PhoenixUserManager from './managers/PhoenixUserManager';
 
 export default class Phoenix {
-    private static configuration: IConfig = require('../config.json') as IConfig;
+    private static configuration: IConfig = require('../../../config.json') as IConfig;
     private static commandManager = new CommandManager();
     private static eventManager = new EventManager();
     private static databaseManager = new DatabaseManager();
@@ -76,5 +76,3 @@ export default class Phoenix {
         return this.configuration;
     }
 }
-
-new Phoenix().init();

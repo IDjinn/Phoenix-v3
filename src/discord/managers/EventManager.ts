@@ -6,6 +6,7 @@ import Server from "../structures/Server";
 import PhoenixUser from "../structures/PhoenixUser";
 import PhoenixUserSchema from "../schemas/PhoenixUserSchema";
 import { RolePermissions } from "../modules/PermissionsModule";
+import sleep from "../util/Sleep";
 
 export default class EventManager extends AbstractManager {
     constructor() {
@@ -13,7 +14,12 @@ export default class EventManager extends AbstractManager {
     }
 
     public init() {
-        Phoenix.getClient().on('ready', () => console.log('ready'));
+        Phoenix.getClient().on('ready', async () => {
+            await sleep(1500);
+            console.log('ready');
+            if (Phoenix.getConfig().website.enabled)
+                require('../../website/website'); //Loading website
+        });
 
         Phoenix.getClient().on('guildCreate', guild => Phoenix.getServerManager().getOrCreateServer(guild.id, guild));
 
@@ -22,7 +28,7 @@ export default class EventManager extends AbstractManager {
         Phoenix.getClient().on('message', async message => {
             if (message.author.bot || ['dm', 'voice', 'category', 'group'].includes(message.channel.type) || message.type !== 'DEFAULT')
                 return;
-            
+                       
             let user = Phoenix.getPhoenixUserManager().getOrCreateUser(message.author.id, message.author);
             if (user instanceof PhoenixUser) {
                 let server = Phoenix.getServerManager().getOrCreateServer(message.guild.id, message.guild);
@@ -121,8 +127,8 @@ export default class EventManager extends AbstractManager {
         });
 
         Phoenix.getClient().on('channelUpdate', async(oldChannel, newChannel) => {
-            if (newChannel instanceof GuildChannel) {
-                let changes = ''
+            if (newChannel instanceof GuildChannel && oldChannel !== newChannel) {
+                let changes = '';
                 const auditLogs = await newChannel.guild.fetchAuditLogs({ type: 'CHANNEL_UPDATE', limit: 1 });
                 const log = auditLogs.entries.first();
                 for (const change of log.changes) {

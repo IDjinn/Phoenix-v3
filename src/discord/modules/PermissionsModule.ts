@@ -46,5 +46,8 @@ export enum RolePermissions {
     bypassChannelCommand,
     bypassAutomod,
     bypassLogger,
-    bypassXpChannels
+    bypassXpChannels,
+    ignoreDupChars,
+    ignoreCapsLock,
+    ignoreMassMention
 }

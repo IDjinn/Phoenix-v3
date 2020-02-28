@@ -5,6 +5,11 @@ import { Message } from "discord.js";
 import Phoenix from "../Phoenix";
 import Server from "../structures/Server";
 import PhoenixUser from "../structures/PhoenixUser";
+import KickCommand from "../commands/moderator/Kick";
+import BanCommand from "../commands/moderator/Ban";
+import BotinfoCommand from "../commands/others/Botinfo";
+import AvatarCommand from "../commands/utils/Avatar";
+import EvalCommand from "../commands/owner/Eval";
 
 export default class CommandManager extends AbstractManager {
     private commands = new Map();
@@ -15,6 +20,11 @@ export default class CommandManager extends AbstractManager {
     }
     public init() {
         this.addCommand(new PingCommand());
+        this.addCommand(new KickCommand());
+        this.addCommand(new BanCommand());
+        this.addCommand(new BotinfoCommand());
+        this.addCommand(new AvatarCommand());
+        this.addCommand(new EvalCommand());
     }
     public destroy() {
         this.commands.clear();
@@ -36,7 +46,7 @@ export default class CommandManager extends AbstractManager {
         const cmd = this.commands.get(command) || this.commands.get(this.aliases.get(command));
         if (cmd instanceof AbstractCommand) {
             //todo: implements cooldown
-            cmd.run({ message, server, phoenixUser });
+            cmd.run({ message, server, phoenixUser, args });
         }
         
         return true;

@@ -49,7 +49,7 @@ export default class PhoenixUser{
             PhoenixUserSchema.findOneAndUpdate({ id: this.id }, { level: this.getLevel() }).catch();
     }
 
-    public destroy() {
+    public save() {
         PhoenixUserSchema.findByIdAndUpdate({ id: this.id }, {
             level: this.level,
             xp: this.xp,
