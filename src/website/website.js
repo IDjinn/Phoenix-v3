@@ -11,12 +11,12 @@ class Website {
         this.app.set('view engine', 'ejs');
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: true }));
-        this.app.use(express.static(`${__dirname}/public`, { maxAge: 7 * 24 * 60 * 60 * 1000 }));
+        this.app.use('/public', express.static(`${__dirname}/public`, { maxAge: 7 * 24 * 60 * 60 * 1000 }));
         this.app.use(routes);
         this.app.listen(this.app.get('port'), () => console.log('website ready'));
     }
 }
 
-new Website();
+const website = new Website();
 
-module.exports = Website;
+module.exports = website;

@@ -5,6 +5,7 @@ import EventManager from './managers/EventManager';
 import DatabaseManager from './managers/DatabaseManager';
 import ServerManager from './managers/ServerManager';
 import PhoenixUserManager from './managers/PhoenixUserManager';
+import TextManager from './managers/TextManager';
 
 export default class Phoenix {
     private static configuration: IConfig = require('../../../config.json') as IConfig;
@@ -13,6 +14,8 @@ export default class Phoenix {
     private static databaseManager = new DatabaseManager();
     private static serverManager = new ServerManager();
     private static phoenixUserManager = new PhoenixUserManager();
+    private static textManager = new TextManager();
+    public static INVITE: string;
     private static client: Client = new Client({
         disableEveryone: true,
         disabledEvents: [
@@ -31,13 +34,15 @@ export default class Phoenix {
         messageSweepInterval: 480
     });
 
-    public init() {
+    public async init() {
         Phoenix.getDatabaseManager().init();
         Phoenix.getServerManager().init();
         Phoenix.getPhoenixUserManager().init();
         Phoenix.getEventManager().init();
         Phoenix.getCommandManager().init();
-        Phoenix.client.login(Phoenix.getConfig().token).then(() => console.log('Logged on discord!')).catch(console.error);
+        Phoenix.getTextManager().init();
+        await Phoenix.getClient().login(Phoenix.getConfig().token).then(() => console.log('Logged on discord!')).catch(console.error);
+        Phoenix.INVITE = await Phoenix.getClient().generateInvite('ADMINISTRATOR');
     }
     
     public static destroy() {
@@ -45,6 +50,7 @@ export default class Phoenix {
         Phoenix.getPhoenixUserManager().destroy();
         Phoenix.getEventManager().destroy();
         Phoenix.getCommandManager().destroy();
+        Phoenix.getTextManager().destroy();
         Phoenix.getDatabaseManager().destroy();
     }
 
@@ -70,6 +76,10 @@ export default class Phoenix {
 
     public static getPhoenixUserManager() {
         return this.phoenixUserManager;
+    }
+
+    public static getTextManager() {
+        return this.textManager;
     }
 
     public static getConfig() {

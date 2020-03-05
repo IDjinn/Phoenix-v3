@@ -6,12 +6,15 @@ import { Guild } from "discord.js";
 import LevelModule from "../modules/LevelModule";
 import CounterModule from "../modules/CounterModule";
 import WelcomeModule from "../modules/WelcomeModule";
+import { Language } from "../managers/TextManager";
+import Phoenix from "../Phoenix";
 
 export default class Server {
     private data: IServer;
     private guild: Guild;
     public readonly id: string;
     public readonly prefix: string;
+    public readonly lang: Language;
     private loggerModule: LoggerModule;
     private permissionsModule: PermissionsModule;
     private automodModule: AutomodModule;
@@ -23,6 +26,7 @@ export default class Server {
         this.guild = guild;
         this.id = this.data.id;
         this.prefix = this.data.prefix;
+        this.lang = this.data.language;
         this.loggerModule = new LoggerModule(this.data.logger, this);
         this.permissionsModule = new PermissionsModule(this.data.roles, this);
         this.automodModule = new AutomodModule(this.data.automod, this);
@@ -48,6 +52,10 @@ export default class Server {
         this.counterModule.destroy();
         this.levelModule.destroy();
         this.welcomeModule.destroy();
+    }
+
+    public t(key: string, ...args: any): string {
+        return Phoenix.getTextManager().t(this.lang, key, args);
     }
 
     public getLoggerModule(): LoggerModule {

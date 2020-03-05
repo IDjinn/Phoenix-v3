@@ -5,6 +5,7 @@ import { IRole } from '../modules/PermissionsModule';
 import { ICounter } from '../modules/CounterModule';
 import { ILevelModule } from '../modules/LevelModule';
 import { IWelcome } from '../modules/WelcomeModule';
+import { Language } from '../managers/TextManager';
 
 const ServerSchema = new Schema({
     id: {
@@ -14,6 +15,10 @@ const ServerSchema = new Schema({
     prefix: {
         type: String,
         default: '>'
+    },
+    language: {
+        type: Number,
+        default: 0
     },
     level: {
         enabled: {
@@ -326,7 +331,8 @@ export default model('Servers', ServerSchema);
 
 export interface IServer{
     id: string;
-    prefix: string,
+    prefix: string;
+    language: Language;
     punishment: {
         enabled: boolean
         channel: string
@@ -359,10 +365,10 @@ export interface IServer{
             valor: number
         }
     },
-    automod: IAutomod,
-    logger: ILogger,
-    createdAt: Date,
-    updatedAt: Date,
-    '__v': number,
-    '_id': string
+    automod: IAutomod;
+    logger: ILogger;
+    createdAt: Date;
+    updatedAt: Date;
+    '__v': number;
+    '_id': string;
 }

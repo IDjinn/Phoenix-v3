@@ -1,5 +1,4 @@
 import AbstractCommand, { ICommandParameters } from "../../structures/AbstractCommand";
-import { SimpleEmbed } from "../../util/EmbedFactory";
 
 export default class KickCommand extends AbstractCommand {
     constructor() {
@@ -11,17 +10,25 @@ export default class KickCommand extends AbstractCommand {
             aliases: ['expulsar', 'kickar', 'chutar']
         });
     }
-    public async run({ message, args }: ICommandParameters) {
+    public run({ message, args, t }: ICommandParameters) {
         if (!args)
-            return message.channel.send(SimpleEmbed('You need put member id or mention it.'));
+            return message.reply(t('commands:kick.errors.no-member'));
         
         const member = message.mentions.members.first() || message.guild.members.get(args[0]);
         if (!member)
-            return message.channel.send(SimpleEmbed('You need put member id or mention it.'));
+            return message.reply(t('commands:kick.errors.member-not-found'));
         
-        if (member.kickable && member.highestRole < message.member.highestRole) {
-            member.kick('pq sim').catch();//todo make messages when sucess or error while kicking
+        const reason = args.slice(1).join(' ') || t('commands:kick.generic.no-reason');
+        if (member.kickable) {
+            member.kick(reason).catch(error => {
+                return message.reply(t('commands:kick.erros.discord-api-error', error.message));
+            }).then(() => {
+                return message.reply(t('commands:kick.sucess'))
+            });
         }
-        return message.channel.send(SimpleEmbed('You dont have permissions to kick this member.'));
+        else {
+            return message.reply(t('commands:kick.errors.cant-kickable'));
+        }
+        return;
     }
 }

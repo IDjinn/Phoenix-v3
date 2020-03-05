@@ -1,6 +1,6 @@
 import AbstractModule from "../structures/AbstractModule";
 import Server from "../structures/Server";
-import { Message, TextChannel, RichEmbed, GuildChannel, Role } from "discord.js";
+import { Message, TextChannel, RichEmbed, GuildChannel, Role, NewsChannel } from "discord.js";
 import { EmbedWithTitle } from "../util/EmbedFactory";
 
 export default class LoggerModule extends AbstractModule {
@@ -20,7 +20,7 @@ export default class LoggerModule extends AbstractModule {
 
     private sendEmbed(embed: RichEmbed) {
         let channel = this.getServer().getGuild().channels.get(this.config.logChannelId);
-        if (channel instanceof TextChannel) {
+        if (channel instanceof TextChannel || channel instanceof NewsChannel) {
             channel.send(embed).catch();
         }
     }

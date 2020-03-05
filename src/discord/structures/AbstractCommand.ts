@@ -2,6 +2,7 @@ import { GuildMember, PermissionResolvable, Message } from "discord.js";
 import Server from "./Server";
 import PhoenixUser from "./PhoenixUser";
 import Constants from "../util/Constants";
+import { RolePermissions } from "../modules/PermissionsModule";
 
 export default abstract class AbstractCommand{
     public readonly name: string;
@@ -9,6 +10,7 @@ export default abstract class AbstractCommand{
     public readonly aliases: string[];
     public readonly permissionsNeed: PermissionResolvable[];
     public readonly botPermissionsNeed: PermissionResolvable[];
+    public readonly rolePermissionsNeed: RolePermissions[];
     public readonly onlyOwner: boolean;
     public readonly enabled: boolean;
 
@@ -18,6 +20,7 @@ export default abstract class AbstractCommand{
         this.aliases = props.aliases || [];
         this.permissionsNeed = props.permissionsNeed || [];
         this.botPermissionsNeed = props.botPermissionsNeed || [];
+        this.rolePermissionsNeed = props.rolePermissionsNeed || [];
         this.onlyOwner = props.onlyOwner || false;
         this.enabled = props.enabled || true;
     }
@@ -29,9 +32,22 @@ export default abstract class AbstractCommand{
             return true;
         return member.hasPermissions(this.permissionsNeed);
     }
-    public botHasPermissions(member: GuildMember): boolean{
-        return this.memberHasPermissions(member);
+
+    public botHasPermissions(bot: GuildMember): boolean{
+        return this.memberHasPermissions(bot);
     }
+
+    public memberHasRolePermissions(member: GuildMember, server: Server): boolean {
+        if (!this.rolePermissionsNeed)
+            return true;
+        
+        for (const rolePermission of this.rolePermissionsNeed) {
+            if (!server.getPermissionsModule().hasPermission(member.roles.array(), rolePermission))
+                return false;
+        }
+        return true;
+    }
+
     public enabledForMemberId(id: string): boolean{
         return this.enabled || (this.onlyOwner && Constants.OWNERS_LIST.includes(id));
     }
@@ -43,6 +59,7 @@ export interface ICommandProps{
     aliases?: string[];
     permissionsNeed?: PermissionResolvable[];
     botPermissionsNeed?: PermissionResolvable[];
+    rolePermissionsNeed?: RolePermissions[];
     onlyOwner?: boolean;
     enabled?: boolean;
 }
@@ -52,4 +69,5 @@ export interface ICommandParameters{
     args?: string[];
     server?: Server;
     phoenixUser?: PhoenixUser;
+    t: Function;
 }

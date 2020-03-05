@@ -10,6 +10,7 @@ import BanCommand from "../commands/moderator/Ban";
 import BotinfoCommand from "../commands/others/Botinfo";
 import AvatarCommand from "../commands/utils/Avatar";
 import EvalCommand from "../commands/owner/Eval";
+import WarnCommand from "../commands/moderator/Warn";
 
 export default class CommandManager extends AbstractManager {
     private commands = new Map();
@@ -25,6 +26,7 @@ export default class CommandManager extends AbstractManager {
         this.addCommand(new BotinfoCommand());
         this.addCommand(new AvatarCommand());
         this.addCommand(new EvalCommand());
+        this.addCommand(new WarnCommand());
     }
     public destroy() {
         this.commands.clear();
@@ -42,14 +44,26 @@ export default class CommandManager extends AbstractManager {
             return false;
 
         const args = message.content.slice(prefix.length).split(' ');
-        const command = args.shift();
+        const command = args.shift()?.toLowerCase();
         const cmd = this.commands.get(command) || this.commands.get(this.aliases.get(command));
         if (cmd instanceof AbstractCommand) {
-            //todo: implements cooldown
-            const callback = cmd.run({ message, server, phoenixUser, args });
-            if (callback instanceof Error)
-                console.error(callback) // todo send to user error message
-            //else = command executed?
+            //todo passar para embeds
+            if (!cmd.enabledForMemberId(message.member.id))
+                message.channel.send('this command is disabled')
+            else if (!cmd.memberHasPermissions(message.member))
+                message.channel.send('u no have permissions to do that');
+            else if (!cmd.memberHasRolePermissions(message.member, server))
+                message.channel.send('u not have permissions to do that');
+            else if (!cmd.botHasPermissions(message.guild.me))
+                message.channel.send('i dont have permission to do that');
+            else {
+                const t = phoenixUser.t;
+                //todo: implements cooldown
+                const callback = cmd.run({ message, server, phoenixUser, args, t });
+                if (callback instanceof Error)
+                    console.error(callback) // todo send to user error message
+                //else = command executed?
+            }
         }
         
         return true;
