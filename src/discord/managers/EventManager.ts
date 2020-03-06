@@ -52,9 +52,6 @@ export default class EventManager extends AbstractManager {
                 return;
             
             const server = Phoenix.getServerManager().getOrCreateServer(message.guild.id, message.guild);
-            if (server.getPermissionsModule().hasPermission(message.member.roles.array(), RolePermissions.bypassLogger))
-                return;
-                
             if (!server.getPermissionsModule().hasPermission(message.member.roles.array(), RolePermissions.bypassLogger))
                 server.getLoggerModule().onMessageDeleted(message);
         });
