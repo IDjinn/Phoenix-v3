@@ -25,10 +25,6 @@ export default class PhoenixUser{
         this.lang = userData.lang;
     }
 
-    public t(key: string, ...args: any): string {
-        return Phoenix.getTextManager().t(this.getLang(), key, args);
-    }
-
     public getLevel(): number{
         return this.level;
     }
@@ -45,8 +41,12 @@ export default class PhoenixUser{
         return this.xpMultiplier;
     }
 
-    public getLang():Language {
+    public getLang(): Language {
         return this.lang;
+    }
+
+    public t(key: string, ...args: any): string {
+        return Phoenix.getTextManager().t(Language.en_US, key, args);
     }
 
     public setXp(xp: number, updateDatabase?: boolean) {

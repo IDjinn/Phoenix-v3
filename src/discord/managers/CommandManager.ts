@@ -36,18 +36,19 @@ export default class CommandManager extends AbstractManager {
 
     public handledCommand(message: Message, server: Server, phoenixUser: PhoenixUser): boolean {
         let prefix = '';
-        for (const thisPrefix of [Phoenix.getConfig().defaultPrefix, server.prefix, `<@!${message.guild.me.id}> `]) {
-            if (message.content.startsWith(thisPrefix)) prefix = thisPrefix;
+        for (const thisPrefix of [server.prefix, Phoenix.getConfig().defaultPrefix, `<@!${message.guild.me.id}> `]) {
+            if (message.content.startsWith(thisPrefix)) {
+                prefix = thisPrefix;
+                break;
+            }
+            return false;
         }
 
-        if (prefix.length <= 0)
-            return false;
-
         const args = message.content.slice(prefix.length).split(' ');
-        const command = args.shift()?.toLowerCase();
+        const command = args.shift()!.toLowerCase();
         const cmd = this.commands.get(command) || this.commands.get(this.aliases.get(command));
         if (cmd instanceof AbstractCommand) {
-            //todo passar para embeds
+            //todo passar para embeds?
             if (!cmd.enabledForMemberId(message.member.id))
                 message.channel.send('this command is disabled')
             else if (!cmd.memberHasPermissions(message.member))
@@ -65,7 +66,7 @@ export default class CommandManager extends AbstractManager {
                 //else = command executed?
             }
         }
-        
+
         return true;
     }
 

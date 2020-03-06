@@ -6,7 +6,7 @@
     "dev": "tsc && yarn copy-website-files && node .",
     "web-dev": "yarn copy-website-files && node .",
     "build": "tsc && yarn copy-website-files",
-    "copy-website-files": "cpy ./src/website ./build --parents && cpy ./src/lang ./build --parents"
+    "copy-website-files": "cpy ./src/website ./build --parents && cpy ./src/website/lang ./build --parents && cpy ./src/discord/lang ./build --parents"
   },
   "license": "MIT",
   "dependencies": {
@@ -15,6 +15,7 @@
     "@types/express": "^4.17.2",
     "@types/i18n": "^0.8.6",
     "@types/mongoose": "^5.7.1",
+    "@types/string-format": "^2.0.0",
     "body-parser": "^1.19.0",
     "discord.js": "^11.5.1",
     "ejs": "^3.0.1",
@@ -23,6 +24,7 @@
     "i18n": "^0.8.5",
     "moment": "^2.24.0",
     "mongoose": "^5.9.1",
+    "string-format": "^2.0.0",
     "typescript": "^3.7.5"
   },
   "devDependencies": {

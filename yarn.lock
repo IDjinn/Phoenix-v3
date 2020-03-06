@@ -148,6 +148,11 @@
     "@types/express-serve-static-core" "*"
     "@types/mime" "*"
 
+"@types/string-format@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@types/string-format/-/string-format-2.0.0.tgz#c1588f507be7b8ef5eb5074a41e48e4538f3f6d5"
+  integrity sha512-mMwtmgN0ureESnJ3SuMM4W9lsi4CgOxs43YxNo14SDHgzJ+OPYO3yM7nOTJTh8x5YICseBdtrySUbvxnpb+NYQ==
+
 "@typescript-eslint/eslint-plugin@^2.21.0":
   version "2.21.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-2.21.0.tgz#a34de84a0791cae0357c4dda805c5b4e8203b6c6"
@@ -2564,6 +2569,11 @@ static-extend@^0.1.1:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.5.0.tgz#161c7dac177659fd9811f43771fa99381478628c"
   integrity sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=
+
+string-format@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/string-format/-/string-format-2.0.0.tgz#f2df2e7097440d3b65de31b6d40d54c96eaffb9b"
+  integrity sha512-bbEs3scLeYNXLecRRuk6uJxdXUSj6le/8rNPHChIJTn2V79aXVTR1EH2OH5zLKKoz0V02fOUKZZcw01pLUShZA==
 
 string-width@^2.1.0:
   version "2.1.1"
