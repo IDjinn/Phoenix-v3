@@ -23,7 +23,7 @@ export default class BanCommand extends AbstractCommand {
             member.ban(reason).catch(error => {
                 return message.reply(t('commands.kick.erros.discord-api-error', error.message));
             }).then(() => {
-                return message.reply(t('commands.kick.sucess'))
+                return message.reply(t('commands.kick.sucess', member.displayName))
             });
         }
         else {
