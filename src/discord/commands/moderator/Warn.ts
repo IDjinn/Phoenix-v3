@@ -22,7 +22,7 @@ export default class WarnCommand extends AbstractCommand {
             return message.reply(t('commands.warn.errors.member-not-found'))
         if (member.id === message.member.id)
             return message.reply(t('commands.warn.errors.cannot-warn-yourself'));
-        if (member.id === message.guild.me.id)
+        if (member.user.bot)
             return message.reply(t('commands.warn.errors.cannot-warn-bot'));
         if (server.getPermissionsModule().hasPermission(member.roles.array(), RolePermissions.bypassAutomod))
             return message.reply(t('commands.warn.errors.member-bypass-moderation'));
