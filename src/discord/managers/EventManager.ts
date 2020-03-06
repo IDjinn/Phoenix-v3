@@ -1,8 +1,6 @@
 import AbstractManager from "../structures/AbstractManager";
 import Phoenix from "../Phoenix";
 import { GuildChannel } from "discord.js";
-import Server from "../structures/Server";
-import PhoenixUser from "../structures/PhoenixUser";
 import { RolePermissions } from "../modules/PermissionsModule";
 import sleep from "../util/Sleep";
 
@@ -27,23 +25,19 @@ export default class EventManager extends AbstractManager {
             if (message.author.bot || ['dm', 'voice', 'category', 'group'].includes(message.channel.type) || message.type !== 'DEFAULT')
                 return;
                        
-            let user = Phoenix.getPhoenixUserManager().getOrCreateUser(message.author.id, message.author);
-            if (user instanceof PhoenixUser) {
-                let server = Phoenix.getServerManager().getOrCreateServer(message.guild.id, message.guild);
-                if (server instanceof Server) {
-                    if (server.getAutomodModule().messageFiltred(message, message.member.roles.array()))
-                        return;
+            const server = Phoenix.getServerManager().getOrCreateServer(message.guild.id, message.guild);
+            if (server.getAutomodModule().messageFiltred(message, message.member.roles.array()))
+                return;
                     
-                    Phoenix.getCommandManager().handledCommand(message, server, user);
-                    server.getLevelModule().giveMessageXp(message, user);
-                }
-            }
+            const user = Phoenix.getPhoenixUserManager().getOrCreateUser(message.author.id, message.author);
+            Phoenix.getCommandManager().handledCommand(message, server, user);
+            server.getLevelModule().giveMessageXp(message, user);
         });
         /* todo send a text file with messages deleted.
                 Phoenix.getClient().on('messageDeleteBulk', messages => {
                     messages = messages.filter(message => !message.author.bot && !['dm', 'voice', 'category', 'group'].includes(message.channel.type) && message.type === 'DEFAULT');
                     if (messages) {
-                        let server = Phoenix.getServerManager().getOrCreateServer(messages.first().guild.id);
+                        const server = Phoenix.getServerManager().getOrCreateServer(messages.first().guild.id);
                         if (server instanceof Server) {/*
                             if (server.getPermissionsModule().hasPermission(message.first().member.roles.array(), RolePermissions.bypassLogger))
                                 return;
@@ -57,14 +51,12 @@ export default class EventManager extends AbstractManager {
             if (message.author.bot || ['dm', 'voice', 'category', 'group'].includes(message.channel.type) || message.type !== 'DEFAULT')
                 return;
             
-            let server = Phoenix.getServerManager().getOrCreateServer(message.guild.id, message.guild);
-            if (server instanceof Server) {
-                if (server.getPermissionsModule().hasPermission(message.member.roles.array(), RolePermissions.bypassLogger))
-                    return;
+            const server = Phoenix.getServerManager().getOrCreateServer(message.guild.id, message.guild);
+            if (server.getPermissionsModule().hasPermission(message.member.roles.array(), RolePermissions.bypassLogger))
+                return;
                 
-                if (!server.getPermissionsModule().hasPermission(message.member.roles.array(), RolePermissions.bypassLogger))
-                    server.getLoggerModule().onMessageDeleted(message);
-            }
+            if (!server.getPermissionsModule().hasPermission(message.member.roles.array(), RolePermissions.bypassLogger))
+                server.getLoggerModule().onMessageDeleted(message);
         });
         
         Phoenix.getClient().on('messageUpdate', (oldMessage, newMessage) => {
@@ -72,54 +64,46 @@ export default class EventManager extends AbstractManager {
                 oldMessage.cleanContent == newMessage.cleanContent || newMessage.type !== 'DEFAULT')
                 return;
             
-            let user = Phoenix.getPhoenixUserManager().getOrCreateUser(newMessage.author.id, newMessage.author);
-            if (user instanceof PhoenixUser) {
-                let server = Phoenix.getServerManager().getOrCreateServer(newMessage.guild.id, newMessage.guild);
-                if (server instanceof Server) {
-                    if (server.getAutomodModule().messageFiltred(newMessage, newMessage.member.roles.array()))
-                        return;
+            const server = Phoenix.getServerManager().getOrCreateServer(newMessage.guild.id, newMessage.guild);
+            if (server.getAutomodModule().messageFiltred(newMessage, newMessage.member.roles.array()))
+                return;
                         
-                    if (!server.getPermissionsModule().hasPermission(newMessage.member.roles.array(), RolePermissions.bypassLogger))
-                        server.getLoggerModule().onMessageUpdated(oldMessage, newMessage);
+            if (!server.getPermissionsModule().hasPermission(newMessage.member.roles.array(), RolePermissions.bypassLogger))
+                server.getLoggerModule().onMessageUpdated(oldMessage, newMessage);
                     
-                    if (Phoenix.getCommandManager().handledCommand(newMessage, server, user))
-                        return;
-                }
-            }
+            const user = Phoenix.getPhoenixUserManager().getOrCreateUser(newMessage.author.id, newMessage.author);
+            if (Phoenix.getCommandManager().handledCommand(newMessage, server, user))
+                return;
         });
 
         Phoenix.getClient().on('guildMemberAdd', member => {
             if (member.user.bot)
                 return;
             
-            let server = Phoenix.getServerManager().getOrCreateServer(member.guild.id, member.guild);
-            if (server instanceof Server) {
-                server.getWelcomeModule().onMemberJoin(member);
-                server.getCounterModule().updateCounters();
-            }
+            const server = Phoenix.getServerManager().getOrCreateServer(member.guild.id, member.guild);
+            server.getWelcomeModule().onMemberJoin(member);
+            server.getCounterModule().updateCounters();
         });
 
         Phoenix.getClient().on('guildMemberRemove', member => {
             if (member.user.bot)
                 return;
             
-            let server = Phoenix.getServerManager().getOrCreateServer(member.guild.id, member.guild);
-            if (server instanceof Server) {
-                server.getWelcomeModule().onMemberLeave(member);
-                server.getCounterModule().updateCounters();
-            }
+            const server = Phoenix.getServerManager().getOrCreateServer(member.guild.id, member.guild);
+            server.getWelcomeModule().onMemberLeave(member);
+            server.getCounterModule().updateCounters();
         });
 
         Phoenix.getClient().on('channelCreate', channel => {
             if (channel instanceof GuildChannel) {
-                let server = Phoenix.getServerManager().getOrCreateServer(channel.guild.id, channel.guild);
+                const server = Phoenix.getServerManager().getOrCreateServer(channel.guild.id, channel.guild);
                 server.getLoggerModule().onChannelCreated(channel);
             }
         });
 
         Phoenix.getClient().on('channelDelete', channel => {
             if (channel instanceof GuildChannel) {
-                let server = Phoenix.getServerManager().getOrCreateServer(channel.guild.id, channel.guild);
+                const server = Phoenix.getServerManager().getOrCreateServer(channel.guild.id, channel.guild);
                 server.getLoggerModule().onChannelDeleted(channel);
             }
         });
@@ -138,7 +122,7 @@ export default class EventManager extends AbstractManager {
                     const after = _new.replace('true', 'Sim').replace('false', 'Não');
                     changes += type + ':\nBefore: ' + before + ' -  After: ' + after + '\n\n';
                 }
-                let server = Phoenix.getServerManager().getOrCreateServer(newChannel.guild.id, newChannel.guild);
+                const server = Phoenix.getServerManager().getOrCreateServer(newChannel.guild.id, newChannel.guild);
                 server.getLoggerModule().onChannelUpdate(log, changes, newChannel);
             }
         });
@@ -180,7 +164,7 @@ export default class EventManager extends AbstractManager {
                 after = after.replace('true', 'True').replace('false', 'False').replace('undefined', 'Undefined!');
                 changes += type + ':\nBefore: ' + before + ' -  After: ' + after + '\n\n';
             }
-            let server = Phoenix.getServerManager().getOrCreateServer(newGuild.id, newGuild);
+            const server = Phoenix.getServerManager().getOrCreateServer(newGuild.id, newGuild);
             server.getLoggerModule().onGuildUpdated(log, changes);
         });
 
