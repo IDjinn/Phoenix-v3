@@ -1,7 +1,7 @@
 import AbstractCommand, { ICommandParameters } from "../../structures/AbstractCommand";
 import { SimpleEmbed } from "../../util/EmbedFactory";
 
-export default class AvatarCommand extends AbstractCommand{
+export default class AvatarCommand extends AbstractCommand {
     constructor() {
         super({
             name: 'avatar',

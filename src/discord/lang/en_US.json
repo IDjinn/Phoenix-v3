@@ -24,7 +24,13 @@
             }
         }
     },
-    "commands": {
+    "command": {
+        "disabled": "This command is disabled, or only for creator use.",
+        "missing-permissions": "You do not have these permissions need to run this command: `{0}`.",
+        "missing-bot-permissions": "I do not have these permissions need to run this command: `{0}`.",
+        "missing-server-permissions": "You do not have these costum permissions to run this command: `{0}`.",
+        "error": "Error while running this command: {0}",
+        "commands":{
         "warn": {
             "name": "warn",
             "description": "Warn a member",
@@ -75,6 +81,7 @@
             "generic": {
                 "no-reason": "No reason provided."
             }
+        }
         }
     }
 }

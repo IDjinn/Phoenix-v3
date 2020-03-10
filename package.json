@@ -4,6 +4,7 @@
   "main": "build/Main.js",
   "scripts": {
     "dev": "tsc && yarn copy-website-files && node .",
+    "discord-dev": "tsc && node .",
     "web-dev": "yarn copy-website-files && node .",
     "build": "tsc && yarn copy-website-files",
     "copy-website-files": "cpy ./src/website ./build --parents && cpy ./src/website/lang ./build --parents && cpy ./src/discord/lang ./build --parents"

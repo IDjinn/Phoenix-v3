@@ -2,7 +2,7 @@ import AbstractCommand, { ICommandParameters } from "../../structures/AbstractCo
 import { RichEmbed } from "discord.js";
 import Constants from "../../util/Constants";
 
-export default class BotinfoCommand extends AbstractCommand{
+export default class BotinfoCommand extends AbstractCommand {
     constructor() {
         super({
             name: 'botinfo',

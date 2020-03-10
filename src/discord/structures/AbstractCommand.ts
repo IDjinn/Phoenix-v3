@@ -25,7 +25,7 @@ export default abstract class AbstractCommand{
         this.enabled = props.enabled || true;
     }
 
-    public abstract run(params: ICommandParameters): Promise<Message | Message[]> | boolean | Error | void;
+    public abstract run(params: ICommandParameters): Promise<Message | Message[]> | Promise<void>;
     
     public memberHasPermissions(member: GuildMember): boolean{
         if (this.permissionsNeed.length == 0)
@@ -67,7 +67,7 @@ export interface ICommandProps{
 export interface ICommandParameters{
     message: Message;
     args?: string[];
-    server?: Server;
-    phoenixUser?: PhoenixUser;
+    server: Server;
+    phoenixUser: PhoenixUser;
     t: Function;
 }
