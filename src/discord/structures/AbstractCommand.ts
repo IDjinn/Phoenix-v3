@@ -2,13 +2,15 @@ import { GuildMember, PermissionResolvable, Message } from "discord.js";
 import Server from "./Server";
 import PhoenixUser from "./PhoenixUser";
 import Constants from "../util/Constants";
+import PermissionsModule, { RolePermissions } from "../modules/PermissionsModule";
 
-export default abstract class AbstractCommand{
+export default abstract class AbstractCommand {
     public readonly name: string;
     public readonly description: string;
     public readonly aliases: string[];
     public readonly permissionsNeed: PermissionResolvable[];
     public readonly botPermissionsNeed: PermissionResolvable[];
+    public readonly rolePermissionsNeed: RolePermissions[];
     public readonly onlyOwner: boolean;
     public readonly enabled: boolean;
 
@@ -18,38 +20,54 @@ export default abstract class AbstractCommand{
         this.aliases = props.aliases || [];
         this.permissionsNeed = props.permissionsNeed || [];
         this.botPermissionsNeed = props.botPermissionsNeed || [];
+        this.rolePermissionsNeed = props.rolePermissionsNeed || [];
         this.onlyOwner = props.onlyOwner || false;
         this.enabled = props.enabled || true;
     }
 
-    public abstract run(params: ICommandParameters): Promise<Message | Message[]> | boolean | Error | void;
-    
-    public memberHasPermissions(member: GuildMember): boolean{
+    public abstract run(params: ICommandParameters): Promise<Message | Message[]> | Promise<void>;
+
+    public memberHasPermissions(member: GuildMember): boolean {
         if (this.permissionsNeed.length == 0)
             return true;
         return member.hasPermissions(this.permissionsNeed);
     }
-    public botHasPermissions(member: GuildMember): boolean{
-        return this.memberHasPermissions(member);
+
+    public botHasPermissions(bot: GuildMember): boolean {
+        return this.memberHasPermissions(bot);
     }
-    public enabledForMemberId(id: string): boolean{
+
+    public memberHasRolePermissions(member: GuildMember, server: Server): boolean {
+        if (!this.rolePermissionsNeed)
+            return true;
+
+        for (const rolePermission of this.rolePermissionsNeed) {
+            if (!PermissionsModule.hasPermission(member.roles.array(), server.getRoles(), rolePermission))
+                return false;
+        }
+        return true;
+    }
+
+    public enabledForMemberId(id: string): boolean {
         return this.enabled || (this.onlyOwner && Constants.OWNERS_LIST.includes(id));
     }
 }
 
-export interface ICommandProps{
+export interface ICommandProps {
     name: string;
     description: string;
     aliases?: string[];
     permissionsNeed?: PermissionResolvable[];
     botPermissionsNeed?: PermissionResolvable[];
+    rolePermissionsNeed?: RolePermissions[];
     onlyOwner?: boolean;
     enabled?: boolean;
 }
 
-export interface ICommandParameters{
+export interface ICommandParameters {
     message: Message;
     args?: string[];
-    server?: Server;
-    phoenixUser?: PhoenixUser;
+    server: Server;
+    phoenixUser: PhoenixUser;
+    t: Function;
 }

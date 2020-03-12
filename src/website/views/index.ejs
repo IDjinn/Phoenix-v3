@@ -1,14 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= t('html-lang') %>">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/public/css/index.css">
+    <title><%= t('default-page-title') %></title>
 </head>
 
 <body>
-    <p>Oi  </p>
+    <div id="app">
+        <ul id="nav-bar">
+            <li><a href="/invite"><%= t('nav-bar.buttons.invite') %></a></li>
+            <li><a href="/status"><%= t('nav-bar.buttons.status') %></a></li>
+            <li><a href="/premium"><%= t('nav-bar.buttons.premium') %></a></li>
+            <li><a href="/support"><%= t('nav-bar.buttons.support') %></a></li>
+            <li><a href="/commands"><%= t('nav-bar.buttons.commands') %></a></li>
+        </ul>
+        <main id="main">
+            <div id="introduction-texts">
+                <p id="short-description"><%= t('pages.index.short-description') %></p>
+                <button class="invite-button"><%= t('pages.index.panel-button') %> </button>
+                <button class="invite-button"><%= t('pages.index.invite-button') %> </button>
+            </div>
+            <br>
+            <p><%= t('pages.index.long-description') %> </p>
+    </div>
+    </div>
 </body>
 
 </html>

@@ -1,0 +1,21 @@
+{
+    "html-lang": "en",
+    "default-page-title": "Index",
+    "nav-bar": {
+        "buttons": {
+            "invite": "Invite",
+            "status": "Status",
+            "premium": "Premium",
+            "support": "Support",
+            "commands": "Commands"
+        }
+    },
+    "pages": {
+        "index": {
+            "logn-description": "AAAAAA",
+            "short-description": "algo aq",
+            "panel-button": "Manage",
+            "invite-button": "Add"
+        }
+    }
+}

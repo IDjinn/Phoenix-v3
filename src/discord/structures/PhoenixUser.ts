@@ -1,5 +1,7 @@
 import { User } from "discord.js";
 import PhoenixUserSchema, { IPhoenixUser } from "../schemas/PhoenixUserSchema";
+import { Language } from "../managers/TextController";
+import Phoenix from "../Phoenix";
 
 export default class PhoenixUser{
     private id: string;
@@ -10,6 +12,7 @@ export default class PhoenixUser{
     private coins: number;
     private rep: number;
     private bio: string;
+    private lang: Language;
     constructor(user: User, userData: IPhoenixUser) {
         this.user = user;
         this.id = this.user.id;
@@ -19,6 +22,7 @@ export default class PhoenixUser{
         this.level = userData.level;
         this.xp = userData.xp;
         this.xpMultiplier = userData.xpMultiplier;
+        this.lang = userData.lang;
     }
 
     public getLevel(): number{
@@ -35,6 +39,14 @@ export default class PhoenixUser{
 
     public getXpMultiplier(): number{
         return this.xpMultiplier;
+    }
+
+    public getLang(): Language {
+        return this.lang;
+    }
+
+    public t(key: string, ...args: any): string {
+        return Phoenix.getTextController().t(Language.en_US, key, args);
     }
 
     public setXp(xp: number, updateDatabase?: boolean) {

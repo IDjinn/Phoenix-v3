@@ -1,19 +1,21 @@
-import {Schema, model} from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { ILogger } from '../modules/LoggerModule';
 import { IAutomod } from '../modules/AutomodModule';
 import { IRole } from '../modules/PermissionsModule';
 import { ICounter } from '../modules/CounterModule';
 import { ILevelModule } from '../modules/LevelModule';
 import { IWelcome } from '../modules/WelcomeModule';
+import { Language } from '../managers/TextController';
 
 const ServerSchema = new Schema({
-    id: {
-        type: String,
-        required: true
-    },
+    _id: String,
     prefix: {
         type: String,
         default: '>'
+    },
+    language: {
+        type: Number,
+        default: 0
     },
     level: {
         enabled: {
@@ -233,7 +235,7 @@ const ServerSchema = new Schema({
         dupChars: {
             enabled: {
                 type: Boolean,
-                default: true
+                default: false
             },
             percent: {
                 type: Number,
@@ -243,7 +245,7 @@ const ServerSchema = new Schema({
         capsLock: {
             enabled: {
                 type: Boolean,
-                default: true
+                default: false
             },
             percent: {
                 type: Number,
@@ -253,7 +255,7 @@ const ServerSchema = new Schema({
         massMention: {
             enabled: {
                 type: Boolean,
-                default: true
+                default: false
             },
             count: {
                 type: Number,
@@ -271,6 +273,10 @@ const ServerSchema = new Schema({
         whitelist: {
             type: Array,
             default: []
+        },
+        enabled: {
+            type: Boolean,
+            default: false
         }
     },
     logger: {
@@ -319,14 +325,16 @@ const ServerSchema = new Schema({
             default: false
         },
     }
-}, { timestamps: true });
+}, { timestamps: true, _id: false });
 
 
 export default model('Servers', ServerSchema);
 
-export interface IServer{
-    id: string;
-    prefix: string,
+export interface IServer {
+    _id: string;
+    prefix: string;
+    language: Language;
+    muteRole: string;
     punishment: {
         enabled: boolean
         channel: string
@@ -347,7 +355,7 @@ export interface IServer{
     counter: ICounter,
     roles: IRole[],
     welcome: IWelcome,
-    invites:{
+    invites: {
         enabled: boolean
         channel: string
         embed: JSON,
@@ -359,10 +367,6 @@ export interface IServer{
             valor: number
         }
     },
-    automod: IAutomod,
-    logger: ILogger,
-    createdAt: Date,
-    updatedAt: Date,
-    '__v': number,
-    '_id': string
+    automod: IAutomod;
+    logger: ILogger;
 }

@@ -4,7 +4,7 @@ export default class Constants {
     public static WHITE_PHOENIX = '#f2f2f2';
     public static DUPLICATED_CHARS_REGEX = /(.)\1{2,}/gi;
     public static CAPS_LOCK_REGEX = /([A-Z])\1{2,}/gi;
-    public static DISCORD_INVITES_REGEX = /^((?:https?:)?\/\/)?((?:www|m)\.)? ((?:discord\.gg|discordapp\.com))/gi;
+    public static DISCORD_INVITES_REGEX = /discord(?:app\.com\/invite|\.gg(?:\/invite)?)\/([\w-]{2,255})/gi;
     public static LINKS_REGEX = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
     public static VERSION = '0.0.1 - ALPHA'
 }

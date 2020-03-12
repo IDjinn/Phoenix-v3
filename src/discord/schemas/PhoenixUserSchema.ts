@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import { Language } from '../managers/TextController';
 
 const PhoenixUserSchema = new Schema({
     id: { type: String, required: true },
@@ -7,7 +8,8 @@ const PhoenixUserSchema = new Schema({
     xpMultiplier: { type: Number, default: 0 },
     coins: { type: Number, default: 0 },
     rep: { type: Number, default: 0 },
-    bio: { type: String, default: '' }
+    bio: { type: String, default: '' },
+    lang: { type: Number, default: 0 }
 }, { timestamps: true });
 
 export default model('Users', PhoenixUserSchema);
@@ -20,4 +22,5 @@ export interface IPhoenixUser{
     rep: number;
     bio: string;
     xpMultiplier: number;
+    lang: Language;
 }

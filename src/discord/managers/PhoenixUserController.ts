@@ -1,14 +1,10 @@
-import AbstractManager from "../structures/AbstractManager";
 import { Collection, User } from "discord.js";
 import PhoenixUser from "../structures/PhoenixUser";
 import PhoenixUserSchema from "../schemas/PhoenixUserSchema";
 import Phoenix from "../Phoenix";
 
-export default class PhoenixUserManager extends AbstractManager {
+export default class PhoenixUserController {
     private users: Collection<string, PhoenixUser> = new Collection();
-    constructor() {
-        super('PhoenixUser');
-    }
 
     public init(): void {
         PhoenixUserSchema.find({}).then((users: any[]) => {

@@ -32,7 +32,7 @@ export default class EvalCommand extends AbstractCommand {
         try {
             if (!args)
                 return message.channel.send(SimpleEmbed('Você precisa colocar algum código para ser executado!'));
-            
+
             const evaled = inspect(eval(args.join(' ')))
             return message.reply(EmbedWithTitle('Sucesso', `Entrada \`\`\`${message.content}\`\`\`\n\nSaída:\`\`\`${cleanEvaledCode(evaled)}\`\`\``));
         } catch (err) {

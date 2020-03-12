@@ -1,29 +1,12 @@
-import AbstractModule from "../structures/AbstractModule";
-import { Collection, Role } from "discord.js";
-import Server from "../structures/Server";
+import { Role } from "discord.js";
+import { isArray } from "util";
 
-export default class PermissionsModule extends AbstractModule {
-    public readonly config: IRole[];
-    private roles: Collection<string, IRole> = new Collection();
-    constructor(data: IRole[], server: Server) {
-        super('Permissions', server);
-        this.config = data;
-    }
-
-    public init(): void {
-        for (let role of this.config || []) {
-            this.roles.set(role.id, role);
-        }
-    }
-
-    public destroy(): void {
-        this.roles.clear();
-    }
-
-    public hasPermission(roles: Role[], permission: RolePermissions): boolean {
-        for (let role of roles || []) {
-            if (this.roles.has(role.id)) {
-                if ((this.roles.get(role.id) as IRole).permissions.indexOf(permission) > -1)
+export default class PermissionsModule {
+    public static hasPermission(roles: Role[], iRoles: IRole[] | undefined, permission: RolePermissions): boolean {
+        if (isArray(iRoles)) {
+            for (const role of roles) {
+                const iRole = iRoles.find(r => r.id === role.id);
+                if (iRole && iRole.permissions.indexOf(permission) >= 0)
                     return true;
             }
         }
