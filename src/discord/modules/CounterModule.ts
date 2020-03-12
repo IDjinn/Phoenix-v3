@@ -1,35 +1,24 @@
-import AbstractModule from "../structures/AbstractModule";
 import Server from "../structures/Server";
+import { Guild } from "discord.js";
 
-export default class CounterModule extends AbstractModule {
-    public config: ICounter;
-    constructor(data: ICounter, server: Server) {
-        super('Counter', server);
-        this.config = data;
-    }
-    
-    public init(): void {
-        this.updateCounters();
-    }
-
-    public destroy(): void {
-        
+export default class CounterModule {
+    public static updateCounters(server: Server) {
+        if (server.getCounter().users.enabled)
+            this.updateChannelName(server.getCounter().users.channel, server.getCounter().users.name.replace(/{users}/gi, server.getGuild().memberCount.toString()), server.getGuild());
+        if (server.getCounter().bots.enabled)
+            this.updateChannelName(server.getCounter().bots.channel, server.getCounter().bots.name.replace(/{bots}/gi, server.getGuild().members.filter(member => member.user.bot).size.toString()), server.getGuild());
+        if (server.getCounter().channels.enabled)
+            this.updateChannelName(server.getCounter().channels.channel, server.getCounter().channels.name.replace(/{channels}/gi, server.getGuild().channels.size.toString()), server.getGuild());
     }
 
-    public updateCounters() {
-        this.updateChannelName(this.config.users.channel, this.config.users.name.replace(/{users}/gi, this.getServer().getGuild().memberCount.toString()))
-        this.updateChannelName(this.config.bots.channel, this.config.bots.name.replace(/{bots}/gi, this.getServer().getGuild().members.filter(member => member.user.bot).size.toString()))
-        this.updateChannelName(this.config.channels.channel, this.config.channels.name.replace(/{channels}/gi, this.getServer().getGuild().channels.size.toString()))
-    }
-
-    private updateChannelName(id: string, name: string) {
-        let channel = this.getServer().getGuild().channels.get(id);
+    private static updateChannelName(id: string, name: string, guild: Guild) {
+        let channel = guild.channels.get(id);
         if (channel && channel.name !== name)
             channel.setName(name).catch();
     }
 }
 
-export interface ICounter{
+export interface ICounter {
     users: {
         enabled: boolean
         channel: string

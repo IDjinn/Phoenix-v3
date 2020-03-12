@@ -1,48 +1,33 @@
-import AbstractModule from "../structures/AbstractModule";
 import Server from "../structures/Server";
-import { GuildMember, TextChannel, Collection } from "discord.js";
+import { GuildMember, TextChannel } from "discord.js";
 import { EmbedWithTitle } from "../util/EmbedFactory";
 
-export default class WelcomeModule extends AbstractModule{
-    public config: IWelcome;
-    private doorLog = new Collection<string, string>(); //todo make anti raid with this
-    constructor(data: IWelcome, server: Server) {
-        super('Welcome', server);
-        this.config = data;
-    }
-    public init(): void {
-        
-    }
-    public destroy(): void {
-        this.doorLog.clear();
-    }
-
-    public onMemberJoin(member: GuildMember) {
-        if (this.config.join.enabled) {
-            let channel = member.guild.channels.get(this.config.join.channel);
+export default class WelcomeModule {
+    //private doorLog = new Collection<string, string>(); //todo make anti raid with this
+    public static onMemberJoin(server: Server, member: GuildMember) {
+        if (server.getWelcome().join.enabled) {
+            let channel = member.guild.channels.get(server.getWelcome().join.channel);
             if (channel instanceof TextChannel) {
-                if (this.config.join.embed)
-                    channel.send(this.config.join.embed).catch();
+                if (server.getWelcome().join.embed)
+                    channel.send(server.getWelcome().join.embed).catch();
                 else
                     channel.send(EmbedWithTitle('User Joined', `The user ${member.toString()} joined in the ${member.guild.name} server.`)).catch();
             }
-            if (this.config.autorole.enabled)
-                member.addRoles(this.config.autorole.roles).catch();
+            if (server.getWelcome().autorole.enabled)
+                member.addRoles(server.getWelcome().autorole.roles).catch();
         }
-        this.doorLog.set(Date.now().toString(), member.id);
     }
 
-    public onMemberLeave(member: GuildMember) {
-        if (this.config.leave.enabled) {
-            let channel = member.guild.channels.get(this.config.leave.channel);
+    public static onMemberLeave(server: Server, member: GuildMember) {
+        if (server.getWelcome().leave.enabled) {
+            let channel = member.guild.channels.get(server.getWelcome().leave.channel);
             if (channel instanceof TextChannel) {
-                if (this.config.leave.embed)
-                    channel.send(this.config.leave.embed).catch();
+                if (server.getWelcome().leave.embed)
+                    channel.send(server.getWelcome().leave.embed).catch();
                 else
                     channel.send(EmbedWithTitle('User Leave', `The user ${member.toString()} leaved in the ${member.guild.name} server.`)).catch();
             }
         }
-        this.doorLog.set(Date.now().toString(), member.id);
     }
 }
 

@@ -1,75 +1,60 @@
-import AbstractModule from "../structures/AbstractModule";
 import Server from "../structures/Server";
 import { Message, TextChannel, RichEmbed, GuildChannel, Role, NewsChannel } from "discord.js";
 import { EmbedWithTitle } from "../util/EmbedFactory";
 
-export default class LoggerModule extends AbstractModule {
-    public readonly config: ILogger;
-    constructor(data: ILogger, server: Server) {
-        super('LoggerModule', server);
-        this.config = data;
-    }
-
-    public init() {
-        
-    }
-
-    public destroy() {
-        
-    }
-
-    private sendEmbed(embed: RichEmbed) {
-        let channel = this.getServer().getGuild().channels.get(this.config.logChannelId);
+export default class LoggerModule {
+    private static sendEmbed(server: Server, embed: RichEmbed) {
+        let channel = server.getGuild().channels.get(server.getLogger().logChannelId);
         if (channel instanceof TextChannel || channel instanceof NewsChannel) {
             channel.send(embed).catch();
         }
     }
 
-    public onMessageUpdated(oldMessage: Message, newMessage: Message) {
-        if (this.config.messageUpdatedEnabled) {
-            this.sendEmbed(EmbedWithTitle('Message Updated', `Old content: \`\`\`${oldMessage.cleanContent}\`\`\`\n\nNew Content: \`\`\`${newMessage.cleanContent}\`\`\``));
+    public static onMessageUpdated(server: Server, oldMessage: Message, newMessage: Message) {
+        if (server.getLogger().messageUpdatedEnabled) {
+            this.sendEmbed(server, EmbedWithTitle('Message Updated', `Old content: \`\`\`${oldMessage.cleanContent}\`\`\`\n\nNew Content: \`\`\`${newMessage.cleanContent}\`\`\``));
         }
     }
 
-    public onMessageDeleted(message: Message) {
-        if (this.config.messageDeletedEnabled) {
-            this.sendEmbed(EmbedWithTitle('Message Deleted', `Content: \`\`\`${message.cleanContent}\`\`\``));
+    public static onMessageDeleted(server: Server, message: Message) {
+        if (server.getLogger().messageDeletedEnabled) {
+            this.sendEmbed(server, EmbedWithTitle('Message Deleted', `Content: \`\`\`${message.cleanContent}\`\`\``));
         }
     }
 
-    public onChannelCreated(channel: GuildChannel) {
-        if (this.config.channelCreatedEnabled) {
-            this.sendEmbed(EmbedWithTitle('Channel Created', `Channel name: \`${channel.name}\`\nChannel Id: \`${channel.id}\`\nChannel mention: ${channel.toString()}`));
+    public static onChannelCreated(server: Server, channel: GuildChannel) {
+        if (server.getLogger().channelCreatedEnabled) {
+            this.sendEmbed(server, EmbedWithTitle('Channel Created', `Channel name: \`${channel.name}\`\nChannel Id: \`${channel.id}\`\nChannel mention: ${channel.toString()}`));
         }
     }
 
-    public onChannelDeleted(channel: GuildChannel) {
-        if (this.config.channelDeletedEnabled) {
-            this.sendEmbed(EmbedWithTitle('Channel Deleted', `Channel name: \`${channel.name}\`\nChannel Id: \`${channel.id}\``));
+    public static onChannelDeleted(server: Server, channel: GuildChannel) {
+        if (server.getLogger().channelDeletedEnabled) {
+            this.sendEmbed(server, EmbedWithTitle('Channel Deleted', `Channel name: \`${channel.name}\`\nChannel Id: \`${channel.id}\``));
         }
     }
 
-    public onRoleCreated(role: Role) {
-        if (this.config.roleCreatedEnabled) {
-            this.sendEmbed(EmbedWithTitle('Role Created', `Role name: \`${role.name}\`\nRole Id: \`${role.id}\`\nRole mention: ${role.toString()}`))
+    public static onRoleCreated(server: Server, role: Role) {
+        if (server.getLogger().roleCreatedEnabled) {
+            this.sendEmbed(server, EmbedWithTitle('Role Created', `Role name: \`${role.name}\`\nRole Id: \`${role.id}\`\nRole mention: ${role.toString()}`))
         }
     }
 
-    public onRoleDeleted(role: Role) {
-        if (this.config.roleDeletedEnabled) {
-            this.sendEmbed(EmbedWithTitle('Role Deleted', `Role name: \`${role.name}\`\nRole Id: \`${role.id}\``))
+    public static onRoleDeleted(server: Server, role: Role) {
+        if (server.getLogger().roleDeletedEnabled) {
+            this.sendEmbed(server, EmbedWithTitle('Role Deleted', `Role name: \`${role.name}\`\nRole Id: \`${role.id}\``))
         }
     }
 
-    public onGuildUpdated(log: any, changed: string) {
-        if (this.config.guildUpdatedEnabled) {
-            this.sendEmbed(EmbedWithTitle('Guild Config Updated',`Updated by: ${log.executor.username}\nUpdates: \`${changed.trim()}\`\nTag: ${log.executor.username + "#" + log.executor.discriminator}\nMention: <@${log.executor.id}>`))
+    public static onGuildUpdated(server: Server, log: any, changed: string) {
+        if (server.getLogger().guildUpdatedEnabled) {
+            this.sendEmbed(server, EmbedWithTitle('Guild Config Updated', `Updated by: ${log.executor.username}\nUpdates: \`${changed.trim()}\`\nTag: ${log.executor.username + "#" + log.executor.discriminator}\nMention: <@${log.executor.id}>`))
         }
     }
 
-    public onChannelUpdate(log: any, changed: string, channel: GuildChannel) {
-        if (this.config.channelUpdatedEnabled) {
-            this.sendEmbed(EmbedWithTitle('Channel Updated', `Name: ${channel.name}\nUpdated by: <@${log.executor.id}>\nMention: <#${channel.id}>\n\nUpdates: \`${changed.trim()}\``))
+    public static onChannelUpdate(server: Server, log: any, changed: string, channel: GuildChannel) {
+        if (server.getLogger().channelUpdatedEnabled) {
+            this.sendEmbed(server, EmbedWithTitle('Channel Updated', `Name: ${channel.name}\nUpdated by: <@${log.executor.id}>\nMention: <#${channel.id}>\n\nUpdates: \`${changed.trim()}\``))
         }
     }
 }

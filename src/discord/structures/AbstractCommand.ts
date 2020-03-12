@@ -2,9 +2,9 @@ import { GuildMember, PermissionResolvable, Message } from "discord.js";
 import Server from "./Server";
 import PhoenixUser from "./PhoenixUser";
 import Constants from "../util/Constants";
-import { RolePermissions } from "../modules/PermissionsModule";
+import PermissionsModule, { RolePermissions } from "../modules/PermissionsModule";
 
-export default abstract class AbstractCommand{
+export default abstract class AbstractCommand {
     public readonly name: string;
     public readonly description: string;
     public readonly aliases: string[];
@@ -26,34 +26,34 @@ export default abstract class AbstractCommand{
     }
 
     public abstract run(params: ICommandParameters): Promise<Message | Message[]> | Promise<void>;
-    
-    public memberHasPermissions(member: GuildMember): boolean{
+
+    public memberHasPermissions(member: GuildMember): boolean {
         if (this.permissionsNeed.length == 0)
             return true;
         return member.hasPermissions(this.permissionsNeed);
     }
 
-    public botHasPermissions(bot: GuildMember): boolean{
+    public botHasPermissions(bot: GuildMember): boolean {
         return this.memberHasPermissions(bot);
     }
 
     public memberHasRolePermissions(member: GuildMember, server: Server): boolean {
         if (!this.rolePermissionsNeed)
             return true;
-        
+
         for (const rolePermission of this.rolePermissionsNeed) {
-            if (!server.getPermissionsModule().hasPermission(member.roles.array(), rolePermission))
+            if (!PermissionsModule.hasPermission(member.roles.array(), server.getRoles(), rolePermission))
                 return false;
         }
         return true;
     }
 
-    public enabledForMemberId(id: string): boolean{
+    public enabledForMemberId(id: string): boolean {
         return this.enabled || (this.onlyOwner && Constants.OWNERS_LIST.includes(id));
     }
 }
 
-export interface ICommandProps{
+export interface ICommandProps {
     name: string;
     description: string;
     aliases?: string[];
@@ -64,7 +64,7 @@ export interface ICommandProps{
     enabled?: boolean;
 }
 
-export interface ICommandParameters{
+export interface ICommandParameters {
     message: Message;
     args?: string[];
     server: Server;

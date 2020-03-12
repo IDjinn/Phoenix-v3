@@ -1,4 +1,3 @@
-import AbstractManager from "../structures/AbstractManager";
 import AbstractCommand from "../structures/AbstractCommand";
 import PingCommand from "../commands/others/Ping";
 import { Message } from "discord.js";
@@ -13,13 +12,10 @@ import EvalCommand from "../commands/owner/Eval";
 import WarnCommand from "../commands/moderator/Warn";
 import CommandsCommand from "../commands/utils/Commands";
 
-export default class CommandManager extends AbstractManager {
+export default class CommandController {
     private commands = new Map();
     private aliases = new Map();
     //private cooldown = new Map();
-    constructor() {
-        super('CommandManager');
-    }
     public init() {
         this.addCommand(new PingCommand());
         this.addCommand(new KickCommand());
@@ -43,8 +39,10 @@ export default class CommandManager extends AbstractManager {
                 prefix = thisPrefix;
                 break;
             }
-            return false;
         }
+
+        if (!prefix)
+            return false;
 
         const args = message.content.slice(prefix.length).split(' ');
         const command = args.shift()!.toLowerCase();
@@ -53,18 +51,18 @@ export default class CommandManager extends AbstractManager {
             const t = phoenixUser.t;
             //todo make it embeds and implements cooldown
             if (!cmd.enabledForMemberId(message.member.id))
-                message.channel.send(t('command.disabled')).catch();
+                message.channel.send(t('command-error.disabled')).catch();
             else if (!cmd.memberHasPermissions(message.member))
-                message.channel.send(t('command.missing-permissions')).catch();
+                message.channel.send(t('command-error.missing-permissions')).catch();
             else if (!cmd.memberHasRolePermissions(message.member, server))
-                message.channel.send(t('command.missing-server-permissions')).catch();
+                message.channel.send(t('command-error.missing-server-permissions')).catch();
             else if (!cmd.botHasPermissions(message.guild.me))
-                message.channel.send(t('command.missing-bot-permissions')).catch();
+                message.channel.send(t('command-error.missing-bot-permissions')).catch();
             else {
                 try {
                     cmd.run({ message, args, server, phoenixUser, t });
                 } catch (error) {
-                    message.reply(t('command.error', error));
+                    message.reply(t('command-error.runtime-error', error));
                 }
             }
         }

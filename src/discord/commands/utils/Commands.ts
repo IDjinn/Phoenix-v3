@@ -11,6 +11,6 @@ export default class CommandsCommand extends AbstractCommand {
     }
 
     public run({ message }: ICommandParameters) {
-        return message.reply(Phoenix.getCommandManager().getCommands().keys.toString());
+        return message.reply(Phoenix.getCommandController().getCommands().keys.toString());
     }
 }

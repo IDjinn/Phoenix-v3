@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { Language } from '../managers/TextManager';
+import { Language } from '../managers/TextController';
 
 const PhoenixUserSchema = new Schema({
     id: { type: String, required: true },

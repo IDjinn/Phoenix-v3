@@ -1,70 +1,54 @@
-import AbstractModule from "../structures/AbstractModule";
 import Server from "../structures/Server";
-import { Message } from "discord.js";
+import { Message, TextChannel, NewsChannel } from "discord.js";
 import PhoenixUser from "../structures/PhoenixUser";
 import Constants from "../util/Constants";
-import { Collection } from "discord.js";
-import { RolePermissions } from "./PermissionsModule";
+import PermissionsModule, { RolePermissions } from "./PermissionsModule";
+import { SimpleEmbed } from "../util/EmbedFactory";
 
-export default class LevelModule extends AbstractModule{
-    public config: ILevelModule;
-    private levels: Collection<number, ILevel> = new Collection();
-    constructor(data: ILevelModule, server: Server) {
-        super('Level', server);
-        this.config = data;
-    }
-    public init(): void {
-        for (let i in this.config.levels || []) {
-            this.levels.set(this.config.levels[i].level, this.config.levels[i]);
-        }
-    }
-    public destroy(): void {
-
-    }
-    
-    public giveMessageXp(message: Message, user: PhoenixUser) {
-        if (!this.config.enabled || message.cleanContent.length <= 5 || !user ||
-            !this.getServer().getPermissionsModule().hasPermission(
-                message.member.roles.array(), RolePermissions.canWonXp))
-            return;
-        
-        if (!this.config.whitelist.includes(message.channel.id))
+export default class LevelModule {
+    public static giveMessageXp(server: Server, message: Message, user: PhoenixUser) {
+        if (!server.getLevel().enabled || !user || message.cleanContent.length <= 5)
             return;
 
-        if (this.config.blacklist.includes(message.channel.id) &&
-            !this.getServer().getPermissionsModule().hasPermission(message.member.roles.array(),
-                RolePermissions.bypassXpChannels))
+        if (!PermissionsModule.hasPermission(message.member.roles.array(), server.getRoles(), RolePermissions.canWonXp))
             return;
-        
-        let currentILevel = this.levels.get(user.getLevel());
+
+        if (!server.getLevel().whitelist.includes(message.channel.id))
+            return;
+
+        if (server.getLevel().blacklist.includes(message.channel.id) &&
+            !PermissionsModule.hasPermission(message.member.roles.array(), server.getRoles(), RolePermissions.bypassXpChannels))
+            return;
+
+        let currentILevel = server.getLevel().levels.find(x => x.level === user.getLevel());
         //server multiplier === donator server, more xp per message? todo this. (max xp p/ message ~ 15?)
         const winXp = Math.floor(Math.random() * 3 + 1) * user.getXpMultiplier() *
-            (currentILevel ? currentILevel.xpMultiplier * this.config.serverXpMultiplier : this.config.serverXpMultiplier);
+            (currentILevel ? currentILevel.xpMultiplier * server.getLevel().serverXpMultiplier : server.getLevel().serverXpMultiplier);
         user.setXp(user.getXp() + winXp);
         if (user.getXp() > Constants.getXpFromLevel(user.getLevel() + 1)) {
-            //todo user level up
             user.setLevel(user.getLevel() + 1);
-            let newILevel = this.levels.get(user.getLevel());
+            const newILevel = server.getLevel().levels.find(x => x.level === user.getLevel());
             if (newILevel) {
                 message.member.addRoles(newILevel.giveRoles).catch();
                 message.member.removeRoles(newILevel.takeRoles).catch();
             }
-            message.channel.send(`you've level up ` + user.getLevel());
+            const channel = message.guild.channels.get(server.getLevel().channel);
+            if (channel instanceof TextChannel || channel instanceof NewsChannel)
+                channel.send(SimpleEmbed(server.t('level-up-message', message.member, user.getLevel())));
         }
     }
 }
 
-export interface ILevelModule{
+export interface ILevelModule {
     enabled: boolean;
     serverXpMultiplier: number;
     channel: string;
     whitelist: string[];
     blacklist: string[];
     levels: ILevel[];
-    embed: JSON;
 }
 
-export interface ILevel{
+export interface ILevel {
     level: number;
     giveRoles: string[];
     takeRoles: string[];

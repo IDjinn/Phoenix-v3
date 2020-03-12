@@ -1,5 +1,6 @@
 import AbstractCommand, { ICommandParameters } from "../../structures/AbstractCommand";
-import { RolePermissions } from "../../modules/PermissionsModule";
+import PermissionsModule, { RolePermissions } from "../../modules/PermissionsModule";
+import AutomodModule from "../../modules/AutomodModule";
 
 export default class WarnCommand extends AbstractCommand {
     constructor() {
@@ -21,11 +22,11 @@ export default class WarnCommand extends AbstractCommand {
             return message.reply(t('commands.warn.errors.cannot-warn-yourself'));
         else if (member.user.bot)
             return message.reply(t('commands.warn.errors.cannot-warn-bot'));
-        else if (server.getPermissionsModule().hasPermission(member.roles.array(), RolePermissions.bypassAutomod))
+        else if (PermissionsModule.hasPermission(member.roles.array(), server.getRoles(), RolePermissions.bypassAutomod))
             return message.reply(t('commands.warn.errors.member-bypass-moderation'));
         else {
             const reason = args.slice(1).join(' ') || t('commands.warn.generic.no-reason')
-            server.getAutomodModule().warn(member, message.member, reason);
+            AutomodModule.warn(server, member, message.member, reason);
             return message.reply(t('commands.warn.sucess'));
         }
     }

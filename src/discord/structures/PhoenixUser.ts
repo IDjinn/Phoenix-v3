@@ -1,6 +1,6 @@
 import { User } from "discord.js";
 import PhoenixUserSchema, { IPhoenixUser } from "../schemas/PhoenixUserSchema";
-import { Language } from "../managers/TextManager";
+import { Language } from "../managers/TextController";
 import Phoenix from "../Phoenix";
 
 export default class PhoenixUser{
@@ -46,7 +46,7 @@ export default class PhoenixUser{
     }
 
     public t(key: string, ...args: any): string {
-        return Phoenix.getTextManager().t(Language.en_US, key, args);
+        return Phoenix.getTextController().t(Language.en_US, key, args);
     }
 
     public setXp(xp: number, updateDatabase?: boolean) {

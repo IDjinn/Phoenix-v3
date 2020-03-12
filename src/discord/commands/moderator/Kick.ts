@@ -10,7 +10,7 @@ export default class KickCommand extends AbstractCommand {
             aliases: ['expulsar', 'kickar', 'chutar']
         });
     }
-    public run({ message, args, t }: ICommandParameters) {
+    public async run({ message, args, t }: ICommandParameters) {
         if (!args || args.length === 0)
             return message.reply(t('commands.kick.errors.no-member'));
 

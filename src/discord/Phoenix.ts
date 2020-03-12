@@ -1,19 +1,20 @@
 import IConfig from '../../IConfig';
 import { Client } from 'discord.js';
-import CommandManager from './managers/CommandManager';
-import EventManager from './managers/EventManager';
-import ServerManager from './managers/ServerManager';
-import PhoenixUserManager from './managers/PhoenixUserManager';
-import TextManager from './managers/TextManager';
+import CommandController from './managers/CommandController';
+import EventController from './managers/EventController';
+import ServerController from './managers/ServerController';
+import PhoenixUserController from './managers/PhoenixUserController';
+import TextController from './managers/TextController';
 import { connect as mongooseConnect, disconnect as mongooseDisconnect } from 'mongoose';
+import sleep from './util/Sleep';
 
 export default class Phoenix {
     private static configuration: IConfig = require('../../../config.json') as IConfig;
-    private static commandManager = new CommandManager();
-    private static eventManager = new EventManager();
-    private static serverManager = new ServerManager();
-    private static phoenixUserManager = new PhoenixUserManager();
-    private static textManager = new TextManager();
+    private static commandController = new CommandController();
+    private static eventController = new EventController();
+    private static serverController = new ServerController();
+    private static phoenixUserController = new PhoenixUserController();
+    private static textController = new TextController();
     public static INVITE: string;
     private static client: Client = new Client({
         disableEveryone: true,
@@ -33,52 +34,51 @@ export default class Phoenix {
         messageSweepInterval: 480
     });
 
-    public async init() {
+    public init() {
         const { link, user, password } = Phoenix.getConfig().database;
-        try {
-            await mongooseConnect(link.replace('%user%', user).replace('%password%', password), { useNewUrlParser: true, useUnifiedTopology: true });
-            console.log('Database ready');
-            Phoenix.getServerManager().init();
-            Phoenix.getPhoenixUserManager().init();
-            Phoenix.getEventManager().init();
-            Phoenix.getCommandManager().init();
-            await Phoenix.getClient().login(Phoenix.getConfig().token).then(() => console.log('Logged on discord!')).catch(console.error);
-        }
-        catch (error) {
-            console.error(`Mongoose doesn't connected, Phoenix is shuttedown. Error: ${error}`);
-        }
+        mongooseConnect(link.replace('%user%', user).replace('%password%', password), { useNewUrlParser: true, useUnifiedTopology: true }).then(async () => console.log('Database ready')).catch(console.error);
+        Phoenix.getClient().login(Phoenix.getConfig().token).then(() => console.log('Logged on discord!')).catch(console.error);
+        Phoenix.getCommandController().init();
+        Phoenix.getClient().on('ready', async () => {
+            await sleep(1_000);
+            Phoenix.getServerController().init();
+            Phoenix.getPhoenixUserController().init();
+            await sleep(1_000);
+            Phoenix.getEventController().init();
+            console.log('ready');
+        });
     }
-    
+
     public static destroy() {
-        Phoenix.getServerManager().destroy();
-        Phoenix.getPhoenixUserManager().destroy();
-        Phoenix.getEventManager().destroy();
-        Phoenix.getCommandManager().destroy();
+        Phoenix.getServerController().destroy();
+        Phoenix.getPhoenixUserController().destroy();
+        Phoenix.getEventController().destroy();
+        Phoenix.getCommandController().destroy();
         mongooseDisconnect();
     }
 
     public static getClient() {
         return this.client;
     }
-  
-    public static getEventManager() {
-        return this.eventManager;
-    }
-  
-    public static getCommandManager() {
-        return this.commandManager;
-    }
-  
-    public static getServerManager() {
-        return this.serverManager;
+
+    public static getEventController() {
+        return this.eventController;
     }
 
-    public static getPhoenixUserManager() {
-        return this.phoenixUserManager;
+    public static getCommandController() {
+        return this.commandController;
     }
 
-    public static getTextManager(){
-        return this.textManager;
+    public static getServerController() {
+        return this.serverController;
+    }
+
+    public static getPhoenixUserController() {
+        return this.phoenixUserController;
+    }
+
+    public static getTextController() {
+        return this.textController;
     }
 
     public static getConfig() {

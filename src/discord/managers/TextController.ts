@@ -1,14 +1,10 @@
-import AbstractManager from "../structures/AbstractManager";
 import { Collection } from "discord.js";
 import { readdirSync } from 'fs';
 import { join as pathJoin } from 'path';
 import format from 'string-format';
 
-export default class TextManager extends AbstractManager {
+export default class TextController {
     private texts = new Collection<Language, any>();
-    constructor() {
-        super('Text');
-    }
 
     public init() {
         const languagesPath = pathJoin(__dirname, '../lang');

@@ -1,85 +1,68 @@
-import LoggerModule from "../modules/LoggerModule";
+import { ILogger } from "../modules/LoggerModule";
 import { IServer } from "../schemas/ServerSchema";
-import PermissionsModule from "../modules/PermissionsModule";
-import AutomodModule from "../modules/AutomodModule";
+import { IRole } from "../modules/PermissionsModule";
+import { IAutomod } from "../modules/AutomodModule";
 import { Guild } from "discord.js";
-import LevelModule from "../modules/LevelModule";
-import CounterModule from "../modules/CounterModule";
-import WelcomeModule from "../modules/WelcomeModule";
-import { Language } from "../managers/TextManager";
+import { ILevelModule } from "../modules/LevelModule";
+import { ICounter } from "../modules/CounterModule";
+import { IWelcome } from "../modules/WelcomeModule";
+import { Language } from "../managers/TextController";
 import Phoenix from "../Phoenix";
 
 export default class Server {
-    private data: IServer;
-    private guild: Guild;
     public readonly id: string;
+    private readonly guild: Guild;
+    public readonly data: IServer;
     public readonly prefix: string;
+    public muteRole: string;
     public readonly lang: Language;
-    private loggerModule: LoggerModule;
-    private permissionsModule: PermissionsModule;
-    private automodModule: AutomodModule;
-    private levelModule: LevelModule;
-    private counterModule: CounterModule;
-    private welcomeModule: WelcomeModule;
+    private logger: ILogger;
+    private roles: IRole[];
+    private automod: IAutomod;
+    private level: ILevelModule;
+    private counter: ICounter;
+    private welcome: IWelcome;
     constructor(guild: Guild, data: IServer) {
         this.data = data;
         this.guild = guild;
-        this.id = this.data.id;
+        this.id = this.data._id;
         this.prefix = this.data.prefix;
+        this.muteRole = this.data.muteRole;
         this.lang = this.data.language;
-        this.loggerModule = new LoggerModule(this.data.logger, this);
-        this.permissionsModule = new PermissionsModule(this.data.roles, this);
-        this.automodModule = new AutomodModule(this.data.automod, this);
-        this.counterModule = new CounterModule(this.data.counter, this);
-        this.levelModule = new LevelModule(this.data.level, this);
-        this.welcomeModule = new WelcomeModule(this.data.welcome, this);
-        this.init();
-    }
-
-    public init() {
-        this.loggerModule.init();
-        this.permissionsModule.init();
-        this.automodModule.init();
-        this.counterModule.init();
-        this.levelModule.init();
-        this.welcomeModule.init();
-    }
-
-    public destroy() {
-        this.loggerModule.destroy();
-        this.permissionsModule.destroy();
-        this.automodModule.destroy();
-        this.counterModule.destroy();
-        this.levelModule.destroy();
-        this.welcomeModule.destroy();
+        this.logger = this.data.logger || {};
+        this.roles = this.data.roles || {};
+        this.automod = this.data.automod || {};
+        this.counter = this.data.counter || {};
+        this.level = this.data.level || {};
+        this.welcome = this.data.welcome || {};
     }
 
     public t(key: string, ...args: any): string {
-        return Phoenix.getTextManager().t(this.lang, key, args);
+        return Phoenix.getTextController().t(this.lang, key, args);
     }
 
-    public getLoggerModule(): LoggerModule {
-        return this.loggerModule;
+    public getLogger(): ILogger {
+        return this.logger;
     }
 
-    public getPermissionsModule(): PermissionsModule {
-        return this.permissionsModule;
+    public getRoles(): IRole[] {
+        return this.roles;
     }
 
-    public getAutomodModule(): AutomodModule {
-        return this.automodModule;
+    public getAutomod(): IAutomod {
+        return this.automod;
     }
 
-    public getLevelModule(): LevelModule {
-        return this.levelModule;
+    public getLevel(): ILevelModule {
+        return this.level;
     }
 
-    public getCounterModule(): CounterModule {
-        return this.counterModule;
+    public getCounter(): ICounter {
+        return this.counter;
     }
 
-    public getWelcomeModule(): WelcomeModule {
-        return this.welcomeModule;
+    public getWelcome(): IWelcome {
+        return this.welcome;
     }
 
     public getGuild(): Guild {

@@ -10,7 +10,7 @@ export default class BanCommand extends AbstractCommand {
             aliases: ['Banir']
         });
     }
-    public run({ message, args, t }: ICommandParameters) {
+    public async run({ message, args, t }: ICommandParameters) {
         if (!args)
             return message.reply(t('commands.kick.errors.no-member'));
 
