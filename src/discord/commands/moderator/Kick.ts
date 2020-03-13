@@ -11,10 +11,13 @@ export default class KickCommand extends AbstractCommand {
         });
     }
     public async run({ message, args, t }: ICommandParameters) {
-        if (!args || args.length === 0)
+        if (!message.guild)
+            throw `message.guild === null`;
+
+        if (!args)
             return message.reply(t('commands.kick.errors.no-member'));
 
-        const member = message.mentions.members.first() || message.guild.members.get(args[0]);
+        const member = message.mentions.members ? message.mentions.members.first() : null || message.guild.members.cache.get(args[0]);
         if (!member)
             return message.reply(t('commands.kick.errors.member-not-found'));
 

@@ -8,6 +8,6 @@ export default class PingCommand extends AbstractCommand {
         });
     }
     public async run({ message }: ICommandParameters) {
-        return message.channel.send(message.client.ping.toFixed(0) + 'ms.');
+        return message.channel.send(message.client.ws.ping.toFixed(0) + 'ms.');
     }
 }

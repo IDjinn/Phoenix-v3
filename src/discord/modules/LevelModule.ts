@@ -7,17 +7,17 @@ import { SimpleEmbed } from "../util/EmbedFactory";
 
 export default class LevelModule {
     public static giveMessageXp(server: Server, message: Message, user: PhoenixUser) {
-        if (!server.getLevel().enabled || !user || message.cleanContent.length <= 5)
+        if (!server.getLevel().enabled || !user || !message.member || !message.guild || message.cleanContent.length <= 5)
             return;
 
-        if (!PermissionsModule.hasPermission(message.member.roles.array(), server.getRoles(), RolePermissions.canWonXp))
+        if (!PermissionsModule.hasPermission(message.member.roles.cache.array(), server.getRoles(), RolePermissions.canWonXp))
             return;
 
         if (!server.getLevel().whitelist.includes(message.channel.id))
             return;
 
         if (server.getLevel().blacklist.includes(message.channel.id) &&
-            !PermissionsModule.hasPermission(message.member.roles.array(), server.getRoles(), RolePermissions.bypassXpChannels))
+            !PermissionsModule.hasPermission(message.member.roles.cache.array(), server.getRoles(), RolePermissions.bypassXpChannels))
             return;
 
         let currentILevel = server.getLevel().levels.find(x => x.level === user.getLevel());
@@ -29,10 +29,10 @@ export default class LevelModule {
             user.setLevel(user.getLevel() + 1);
             const newILevel = server.getLevel().levels.find(x => x.level === user.getLevel());
             if (newILevel) {
-                message.member.addRoles(newILevel.giveRoles).catch();
-                message.member.removeRoles(newILevel.takeRoles).catch();
+                message.member.roles.add(newILevel.giveRoles).catch();
+                message.member.roles.add(newILevel.takeRoles).catch();
             }
-            const channel = message.guild.channels.get(server.getLevel().channel);
+            const channel = message.guild.channels.cache.get(server.getLevel().channel);
             if (channel instanceof TextChannel || channel instanceof NewsChannel)
                 channel.send(SimpleEmbed(server.t('level-up-message', message.member, user.getLevel())));
         }

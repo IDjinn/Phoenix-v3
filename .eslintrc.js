@@ -18,7 +18,7 @@ module.exports = {
     "plugins": [
         "@typescript-eslint"
     ],
-    "ignorePatterns": ["node_modules/", "build/"],
+    "ignorePatterns": ["node_modules/", "build/", ".theia/"],
     "rules": {
     }
 };

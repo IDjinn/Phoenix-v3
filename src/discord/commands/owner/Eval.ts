@@ -15,7 +15,7 @@ const replaceAll = (str: string, find: string, replace: string) => {
 
 const cleanEvaledCode = (text: string) => {
     text = text.toString().replace(/`/g, '`' + String.fromCharCode(8203)).replace(/@/g, '@' + String.fromCharCode(8203)).replace(/\n/g, '\n' + String.fromCharCode(8203));
-    return replaceAll(text, Phoenix.getClient().token, '•••••••••');
+    return replaceAll(text, `${Phoenix.getClient().token}`, '~•TOKEN•~');
 }
 
 export default class EvalCommand extends AbstractCommand {

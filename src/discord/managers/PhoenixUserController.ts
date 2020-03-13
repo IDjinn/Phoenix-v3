@@ -22,7 +22,7 @@ export default class PhoenixUserController {
 
     public createUser(userData: any) {
         return new Promise((resolve, reject) => {
-            let user = Phoenix.getClient().users.get(userData.id);
+            let user = Phoenix.getClient().users.cache.get(userData.id);
             if (user instanceof User) {
                 resolve(this.users.set(user.id, new PhoenixUser(user, userData)));
             }

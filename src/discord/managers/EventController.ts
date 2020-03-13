@@ -1,5 +1,5 @@
 import Phoenix from "../Phoenix";
-import { GuildChannel } from "discord.js";
+import { GuildChannel, Message, GuildMember } from "discord.js";
 import PermissionsModule, { RolePermissions } from "../modules/PermissionsModule";
 import AutomodModule from "../modules/AutomodModule";
 import LevelModule from "../modules/LevelModule";
@@ -13,12 +13,15 @@ export default class EventController {
 
         Phoenix.getClient().on('guildDelete', guild => Phoenix.getServerController().deleteServer(guild.id));
 
-        Phoenix.getClient().on('message', async message => {
-            if (message.author.bot || ['dm', 'voice', 'category', 'group'].includes(message.channel.type) || message.type !== 'DEFAULT')
+        Phoenix.getClient().on('message', (message: Message) => {
+            if (message.author.bot || ['dm', 'voice', 'category', 'group'].includes(message.channel.type))
+                return;
+
+            if (!message.guild || !message.member || message.type !== 'DEFAULT')
                 return;
 
             const server = Phoenix.getServerController().getOrCreateServer(message.guild.id, message.guild);
-            if (AutomodModule.messageFiltred(message, server, message.member.roles.array()))
+            if (AutomodModule.messageFiltred(message, server, message.member.roles.cache.array()))
                 return;
 
             const user = Phoenix.getPhoenixUserController().getOrCreateUser(message.author.id, message.author);
@@ -39,25 +42,27 @@ export default class EventController {
                     }
                 });*/
 
-        Phoenix.getClient().on('messageDelete', message => {
-            if (message.author.bot || ['dm', 'voice', 'category', 'group'].includes(message.channel.type) || message.type !== 'DEFAULT')
+        Phoenix.getClient().on('messageDelete', (message: Message) => {
+            if (message.author.bot || ['dm', 'voice', 'category', 'group'].includes(message.channel.type) || !message.guild ||
+                !message.member || message.type !== 'DEFAULT')
                 return;
 
             const server = Phoenix.getServerController().getOrCreateServer(message.guild.id, message.guild);
-            if (!PermissionsModule.hasPermission(message.member.roles.array(), server.getRoles(), RolePermissions.bypassLogger))
+            if (!PermissionsModule.hasPermission(message.member.roles.cache.array(), server.getRoles(), RolePermissions.bypassLogger))
                 LoggerModule.onMessageDeleted(server, message);
         });
 
-        Phoenix.getClient().on('messageUpdate', (oldMessage, newMessage) => {
+        Phoenix.getClient().on('messageUpdate', (oldMessage: Message, newMessage: Message) => {
             if (newMessage.author.bot || ['dm', 'voice', 'category', 'group'].includes(newMessage.channel.type) ||
-                oldMessage.cleanContent == newMessage.cleanContent || newMessage.type !== 'DEFAULT')
+                oldMessage.cleanContent == newMessage.cleanContent || newMessage.type !== 'DEFAULT' || !newMessage.guild ||
+                !newMessage.member)
                 return;
 
             const server = Phoenix.getServerController().getOrCreateServer(newMessage.guild.id, newMessage.guild);
-            if (AutomodModule.messageFiltred(newMessage, server, newMessage.member.roles.array()))
+            if (AutomodModule.messageFiltred(newMessage, server, newMessage.member.roles.cache.array()))
                 return;
 
-            if (!PermissionsModule.hasPermission(newMessage.member.roles.array(), server.getRoles(), RolePermissions.bypassLogger))
+            if (!PermissionsModule.hasPermission(newMessage.member.roles.cache.array(), server.getRoles(), RolePermissions.bypassLogger))
                 LoggerModule.onMessageUpdated(server, oldMessage, newMessage);
 
             const user = Phoenix.getPhoenixUserController().getOrCreateUser(newMessage.author.id, newMessage.author);
@@ -65,7 +70,7 @@ export default class EventController {
                 return;
         });
 
-        Phoenix.getClient().on('guildMemberAdd', member => {
+        Phoenix.getClient().on('guildMemberAdd', (member: GuildMember) => {
             if (member.user.bot)
                 return;
 
@@ -74,7 +79,7 @@ export default class EventController {
             CounterModule.updateCounters(server);
         });
 
-        Phoenix.getClient().on('guildMemberRemove', member => {
+        Phoenix.getClient().on('guildMemberRemove', (member: GuildMember) => {
             if (member.user.bot)
                 return;
 
@@ -102,14 +107,16 @@ export default class EventController {
                 let changes = '';
                 const auditLogs = await newChannel.guild.fetchAuditLogs({ type: 'CHANNEL_UPDATE', limit: 1 });
                 const log = auditLogs.entries.first();
-                for (const change of log.changes) {
-                    const { key: _key, old: _old, new: _new } = change;
-                    const type = _key.replace('name', 'Nome').replace('position', 'Posição')
-                        .replace('topic', 'Tópico').replace('nsfw', 'NSFW?').replace('rate_limit_per_user', 'SlowMode')
-                        .replace('bitrate', 'BitRate').replace('userLimit', 'Limite de Usuários');
-                    const before = _old.replace('true', 'Sim').replace('false', 'Não').replace('undefined', 'Não Definido!');
-                    const after = _new.replace('true', 'Sim').replace('false', 'Não');
-                    changes += type + ':\nBefore: ' + before + ' -  After: ' + after + '\n\n';
+                if (log && log.changes) {
+                    for (const change of log.changes) {
+                        const { key: _key, old: _old, new: _new } = change;
+                        const type = _key.replace('name', 'Nome').replace('position', 'Posição')
+                            .replace('topic', 'Tópico').replace('nsfw', 'NSFW?').replace('rate_limit_per_user', 'SlowMode')
+                            .replace('bitrate', 'BitRate').replace('userLimit', 'Limite de Usuários');
+                        const before = _old.replace('true', 'Sim').replace('false', 'Não').replace('undefined', 'Não Definido!');
+                        const after = _new.replace('true', 'Sim').replace('false', 'Não');
+                        changes += type + ':\nBefore: ' + before + ' -  After: ' + after + '\n\n';
+                    }
                 }
                 const server = Phoenix.getServerController().getOrCreateServer(newChannel.guild.id, newChannel.guild);
                 LoggerModule.onChannelUpdate(server, log, changes, newChannel);
@@ -120,38 +127,40 @@ export default class EventController {
             let changes = '';
             const auditLogs = await newGuild.fetchAuditLogs({ type: 'GUILD_UPDATE', limit: 1 });
             const log = auditLogs.entries.first();
-            for (const change of log.changes) {
-                const { key: _key, old: _old, new: _new } = change;
-                let before = '' + _old;
-                let after = '' + _new;
-                switch (_key) {
-                    case 'default_message_notifications': {
-                        after = after.replace('0', 'All Messages').replace('1', 'Only @mentions');
-                        before = before.replace('0', 'All Messages').replace('1', 'Only @mentions');
-                        break;
-                    };
-                    case 'afk_timeout': {
-                        after = parseInt(after) / 60 + ' minute(s)';
-                        before = parseInt(before) / 60 + ' minute(s)';
-                        break;
-                    };
-                    case 'system_channel_id':
-                    case 'afk_channel_id': {
-                        let afterChannel = newGuild.channels.get(after);
-                        let beforeChannel = newGuild.channels.get(before);
-                        if (after && afterChannel) after = afterChannel.name;
-                        if (before && beforeChannel) before = beforeChannel.name;
-                        break;
-                    };
-                }
+            if (log && log.changes) {
+                for (const change of log.changes) {
+                    const { key: _key, old: _old, new: _new } = change;
+                    let before = '' + _old;
+                    let after = '' + _new;
+                    switch (_key) {
+                        case 'default_message_notifications': {
+                            after = after.replace('0', 'All Messages').replace('1', 'Only @mentions');
+                            before = before.replace('0', 'All Messages').replace('1', 'Only @mentions');
+                            break;
+                        };
+                        case 'afk_timeout': {
+                            after = parseInt(after) / 60 + ' minute(s)';
+                            before = parseInt(before) / 60 + ' minute(s)';
+                            break;
+                        };
+                        case 'system_channel_id':
+                        case 'afk_channel_id': {
+                            let afterChannel = newGuild.channels.cache.get(after);
+                            let beforeChannel = newGuild.channels.cache.get(before);
+                            if (after && afterChannel) after = afterChannel.name;
+                            if (before && beforeChannel) before = beforeChannel.name;
+                            break;
+                        };
+                    }
 
-                const type = _key.replace('name', 'Name').replace('region', 'Region')
-                    .replace('verification_level', 'Protection Level').replace('explicit_content_filter', 'NSWF Filter?').replace('afk_channel_id', 'AFK Channel')
-                    .replace('system_channel_id', 'Welcome Channel').replace('afk_timeout', 'AFK Time').replace('widget_enabled', 'Widget Enabled?')
-                    .replace('icon_hash', 'Icon Id').replace('owner', 'Owner').replace('default_message_notifications', 'Notification Default Settings');
-                before = before.replace('true', 'True').replace('false', 'False').replace('undefined', 'Undefined!');
-                after = after.replace('true', 'True').replace('false', 'False').replace('undefined', 'Undefined!');
-                changes += type + ':\nBefore: ' + before + ' -  After: ' + after + '\n\n';
+                    const type = _key.replace('name', 'Name').replace('region', 'Region')
+                        .replace('verification_level', 'Protection Level').replace('explicit_content_filter', 'NSWF Filter?').replace('afk_channel_id', 'AFK Channel')
+                        .replace('system_channel_id', 'Welcome Channel').replace('afk_timeout', 'AFK Time').replace('widget_enabled', 'Widget Enabled?')
+                        .replace('icon_hash', 'Icon Id').replace('owner', 'Owner').replace('default_message_notifications', 'Notification Default Settings');
+                    before = before.replace('true', 'True').replace('false', 'False').replace('undefined', 'Undefined!');
+                    after = after.replace('true', 'True').replace('false', 'False').replace('undefined', 'Undefined!');
+                    changes += type + ':\nBefore: ' + before + ' -  After: ' + after + '\n\n';
+                }
             }
             const server = Phoenix.getServerController().getOrCreateServer(newGuild.id, newGuild);
             LoggerModule.onGuildUpdated(server, log, changes);

@@ -17,7 +17,7 @@ export default class Phoenix {
     private static textController = new TextController();
     public static INVITE: string;
     private static client: Client = new Client({
-        disableEveryone: true,
+        disableMentions: 'everyone',/*
         disabledEvents: [
             "GUILD_SYNC",
             "CHANNEL_PINS_UPDATE",
@@ -29,7 +29,7 @@ export default class Phoenix {
             "VOICE_SERVER_UPDATE",
             "TYPING_START",
             "PRESENCE_UPDATE"
-        ],
+        ],*/
         messageCacheLifetime: 120,
         messageSweepInterval: 480
     });
