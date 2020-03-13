@@ -39,6 +39,7 @@ export default class Phoenix {
         mongooseConnect(link.replace('%user%', user).replace('%password%', password), { useNewUrlParser: true, useUnifiedTopology: true }).then(async () => console.log('Database ready')).catch(console.error);
         Phoenix.getClient().login(Phoenix.getConfig().token).then(() => console.log('Logged on discord!')).catch(console.error);
         Phoenix.getCommandController().init();
+        Phoenix.getTextController().init();
         Phoenix.getClient().on('ready', async () => {
             await sleep(1_000);
             Phoenix.getServerController().init();
