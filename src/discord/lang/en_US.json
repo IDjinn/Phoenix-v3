@@ -1,4 +1,9 @@
 {
+    "languages": [{
+        "code": "en_US",
+        "name": "english",
+        "aliases": ["en"]
+    }],
     "level-up-message": "Congratulations, {0}! You are now at level {1}.",
     "automod": {
         "invites": {
@@ -83,6 +88,17 @@
             "generic": {
                 "no-reason": "No reason provided."
             }
+        },
+        "language":{
+            "name": "language",
+            "description": "Changes bot language for you.",
+            "aliases": [],
+            "usage": "{0}language <language>",
+            "errors": {
+                "no-lang": "You need put the new language.",
+                "invalid-lang": "It isn't a valid language."
+            },
+            "sucess": "You successfully changed bot language with you to `{0}`."
         }
     }
 }

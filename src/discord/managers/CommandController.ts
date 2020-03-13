@@ -11,6 +11,7 @@ import AvatarCommand from "../commands/utils/Avatar";
 import EvalCommand from "../commands/owner/Eval";
 import WarnCommand from "../commands/moderator/Warn";
 import CommandsCommand from "../commands/utils/Commands";
+import LanguageCommand from "../commands/utils/Language";
 
 export default class CommandController {
     private commands = new Map();
@@ -25,6 +26,7 @@ export default class CommandController {
         this.addCommand(new EvalCommand());
         this.addCommand(new WarnCommand());
         this.addCommand(new CommandsCommand());
+        this.addCommand(new LanguageCommand());
     }
     public destroy() {
         this.commands.clear();
@@ -51,21 +53,20 @@ export default class CommandController {
         const command = args.shift()!.toLowerCase();
         const cmd = this.commands.get(command) || this.commands.get(this.aliases.get(command));
         if (cmd instanceof AbstractCommand) {
-            const t = phoenixUser.t;
             //todo make it embeds and implements cooldown
             if (!cmd.enabledForMemberId(message.member.id))
-                message.channel.send(t('command-error.disabled')).catch();
+                message.channel.send(phoenixUser.t('command-error.disabled')).catch();
             else if (!cmd.memberHasPermissions(message.member))
-                message.channel.send(t('command-error.missing-permissions')).catch();
+                message.channel.send(phoenixUser.t('command-error.missing-permissions')).catch();
             else if (!cmd.memberHasRolePermissions(message.member, server))
-                message.channel.send(t('command-error.missing-server-permissions')).catch();
+                message.channel.send(phoenixUser.t('command-error.missing-server-permissions')).catch();
             else if (!cmd.botHasPermissions(message.guild.me))
-                message.channel.send(t('command-error.missing-bot-permissions')).catch();
+                message.channel.send(phoenixUser.t('command-error.missing-bot-permissions')).catch();
             else {
                 try {
-                    cmd.run({ message, args, server, phoenixUser, t });
+                    cmd.run({ message, args, server, phoenixUser });
                 } catch (error) {
-                    message.reply(t('command-error.runtime-error', error));
+                    message.reply(phoenixUser.t('command-error.runtime-error', error));
                 }
             }
         }

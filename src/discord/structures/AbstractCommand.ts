@@ -69,5 +69,4 @@ export interface ICommandParameters {
     args: string[];
     server: Server;
     phoenixUser: PhoenixUser;
-    t: Function;
 }
