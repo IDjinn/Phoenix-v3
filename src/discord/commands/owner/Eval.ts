@@ -30,7 +30,7 @@ export default class EvalCommand extends AbstractCommand {
 
     public async run({ message, args }: ICommandParameters) {
         try {
-            if (!args)
+            if (args.length === 0)
                 return message.channel.send(SimpleEmbed('Você precisa colocar algum código para ser executado!'));
 
             const evaled = inspect(eval(args.join(' ')))

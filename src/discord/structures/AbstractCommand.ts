@@ -66,7 +66,7 @@ export interface ICommandProps {
 
 export interface ICommandParameters {
     message: Message;
-    args?: string[];
+    args: string[];
     server: Server;
     phoenixUser: PhoenixUser;
     t: Function;

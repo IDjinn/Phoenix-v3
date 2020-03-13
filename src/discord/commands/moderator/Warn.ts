@@ -15,7 +15,7 @@ export default class WarnCommand extends AbstractCommand {
         if (!message.guild || !message.member)
             throw `message.guild === null`;
 
-        if (!args)
+        if (args.length === 0)
             return message.reply(t('commands.warn.errors.no-member'));
 
         const member = message.mentions.members ? message.mentions.members.first() : null || message.guild.members.cache.get(args[0]);

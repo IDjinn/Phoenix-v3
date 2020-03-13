@@ -14,7 +14,7 @@ export default class BanCommand extends AbstractCommand {
         if (!message.guild)
             return Promise.reject(`message.guild === null`);
 
-        if (!args)
+        if (args.length === 0)
             return message.reply(t('commands.kick.errors.no-member'));
 
         const member = message.mentions.members ? message.mentions.members.first() : null || message.guild.members.cache.get(args[0]);
