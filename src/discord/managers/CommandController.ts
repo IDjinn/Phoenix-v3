@@ -33,6 +33,9 @@ export default class CommandController {
     }
 
     public handledCommand(message: Message, server: Server, phoenixUser: PhoenixUser): boolean {
+        if (!message.guild || !message.guild.me || !message.member || !server || !phoenixUser)
+            return false;
+
         let prefix = '';
         for (const thisPrefix of [server.prefix, Phoenix.getConfig().defaultPrefix, `<@!${message.guild.me.id}> `]) {
             if (message.content.startsWith(thisPrefix)) {

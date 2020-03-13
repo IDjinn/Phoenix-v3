@@ -1,10 +1,10 @@
 import Server from "../structures/Server";
-import { Message, TextChannel, RichEmbed, GuildChannel, Role, NewsChannel } from "discord.js";
+import { Message, TextChannel, GuildChannel, Role, NewsChannel, MessageEmbed } from "discord.js";
 import { EmbedWithTitle } from "../util/EmbedFactory";
 
 export default class LoggerModule {
-    private static sendEmbed(server: Server, embed: RichEmbed) {
-        let channel = server.getGuild().channels.get(server.getLogger().logChannelId);
+    private static sendEmbed(server: Server, embed: MessageEmbed) {
+        let channel = server.getGuild().channels.cache.get(server.getLogger().logChannelId);
         if (channel instanceof TextChannel || channel instanceof NewsChannel) {
             channel.send(embed).catch();
         }

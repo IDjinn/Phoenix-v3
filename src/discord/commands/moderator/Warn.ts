@@ -12,17 +12,20 @@ export default class WarnCommand extends AbstractCommand {
     }
 
     public run({ message, args, server, t }: ICommandParameters) {
+        if (!message.guild || !message.member)
+            throw `message.guild === null`;
+
         if (!args)
             return message.reply(t('commands.warn.errors.no-member'));
 
-        const member = message.mentions.members.first() || message.guild.members.get(args[0]);
+        const member = message.mentions.members ? message.mentions.members.first() : null || message.guild.members.cache.get(args[0]);
         if (!member)
             return message.reply(t('commands.warn.errors.member-not-found'))
         else if (member.id === message.member.id)
             return message.reply(t('commands.warn.errors.cannot-warn-yourself'));
         else if (member.user.bot)
             return message.reply(t('commands.warn.errors.cannot-warn-bot'));
-        else if (PermissionsModule.hasPermission(member.roles.array(), server.getRoles(), RolePermissions.bypassAutomod))
+        else if (PermissionsModule.hasPermission(member.roles.cache.array(), server.getRoles(), RolePermissions.bypassAutomod))
             return message.reply(t('commands.warn.errors.member-bypass-moderation'));
         else {
             const reason = args.slice(1).join(' ') || t('commands.warn.generic.no-reason')

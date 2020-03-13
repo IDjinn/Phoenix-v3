@@ -11,7 +11,7 @@ export default class ServerController {
         ServerSchema.find({}).then((servers: any[]) => {
             if (servers) {
                 //todo: recode this?
-                Promise.all(servers.map(serverData => this.createServer(serverData, Phoenix.getClient().guilds.get(serverData._id)))).catch(console.error);
+                Promise.all(servers.map(serverData => this.createServer(serverData, Phoenix.getClient().guilds.cache.get(serverData._id)))).catch(console.error);
             }
         }).catch(console.error);
     }

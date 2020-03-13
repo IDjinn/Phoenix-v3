@@ -12,7 +12,8 @@ export default class AutomodModule {
             return false;
 
         if (PermissionsModule.hasPermission(roles, server.getRoles(), RolePermissions.bypassAutomod)
-            || server.getAutomod().whitelist.includes(message.channel.id)) return false;
+            || server.getAutomod().whitelist.includes(message.channel.id))
+            return false;
 
         if (server.getAutomod().invites.enabled && AutomodModule.hasInvites(message, server, roles))
             return true;
@@ -29,6 +30,9 @@ export default class AutomodModule {
     }
 
     public static hasInvites(message: Message, server: Server, roles: Role[]): boolean {
+        if (!message.member || !message.guild || !message.guild.me)
+            return false;
+
         if (!message.content.match(Constants.DISCORD_INVITES_REGEX))
             return false;
 
@@ -40,11 +44,14 @@ export default class AutomodModule {
             return false;
 
         message.delete().catch();
-        this.warn(server, message.member, message.guild.me, 'Posted a invite');
+        this.warn(server, message.member, message.guild.me, server.t('automod.invites.warn-reason'));
         return true;
     }
 
     public static hasLinks(message: Message, server: Server, roles: Role[]): boolean {
+        if (!message.member || !message.guild || !message.guild.me)
+            return false;
+
         if (!message.content.match(Constants.LINKS_REGEX))
             return false;
 
@@ -56,11 +63,14 @@ export default class AutomodModule {
             return false;
 
         message.delete().catch();
-        this.warn(server, message.member, message.guild.me, 'Posted a link');
+        this.warn(server, message.member, message.guild.me, server.t('automod.links.warn-reason'));
         return true;
     }
 
     public static hasDupChars(message: Message, server: Server, roles: Role[]): boolean {
+        if (!message.member || !message.guild || !message.guild.me)
+            return false;
+            
         if (PermissionsModule.hasPermission(roles, server.getRoles(), RolePermissions.ignoreDupChars))
             return false;
 
@@ -73,7 +83,7 @@ export default class AutomodModule {
             }
             if ((oldMessageLength - newMessage.length) / 100 > server.getAutomod().dupChars.percent) {
                 message.delete().catch();
-                this.warn(server, message.member, message.guild.me, `Dup chars (${(oldMessageLength - newMessage.length) / 100}%)`);
+                this.warn(server, message.member, message.guild.me, server.t('automod.dupChars.warn-reason', (oldMessageLength - newMessage.length) / 100));
                 return true;
             }
         }
@@ -81,6 +91,9 @@ export default class AutomodModule {
     }
 
     public static hasCapsLock(message: Message, server: Server, roles: Role[]): boolean {
+        if (!message.member || !message.guild || !message.guild.me)
+            return false;
+            
         if (PermissionsModule.hasPermission(roles, server.getRoles(), RolePermissions.ignoreCapsLock))
             return false;
 
@@ -93,7 +106,7 @@ export default class AutomodModule {
             }
             if ((oldMessageLength - newMessage.length) / 100 > server.getAutomod().capsLock.percent) {
                 message.delete().catch();
-                this.warn(server, message.member, message.guild.me, `Caps Lock (${(oldMessageLength - newMessage.length) / 100}%)`);
+                this.warn(server, message.member, message.guild.me, server.t('automod.capsLock.warn-reason', (oldMessageLength - newMessage.length) / 100));
                 return true;
             }
         }
@@ -101,6 +114,9 @@ export default class AutomodModule {
     }
 
     public static hasMassMention(message: Message, server: Server, memberRoles: Role[]): boolean {
+        if (!message.member || !message.guild || !message.guild.me)
+            return false;
+            
         if (PermissionsModule.hasPermission(memberRoles, server.getRoles(), RolePermissions.ignoreCapsLock))
             return false;
 
@@ -108,21 +124,21 @@ export default class AutomodModule {
         const totalMentions = channels.size + users.size + (everyone ? 1 : 0) + roles.size;
         if (totalMentions > server.getAutomod().massMention.count) {
             message.delete().catch();
-            this.warn(server, message.member, message.guild.me, `Mass Mentions (${totalMentions})`);
+            this.warn(server, message.member, message.guild.me, server.t('automod.massMentions.warn-reason', totalMentions));
             return true;
         }
         return false;
     }
 
     public static punishment(server: Server, member: GuildMember, punisher: GuildMember, reason: string, iAutomodAction: IAutomodAction): any {
-        const channel = member.guild.channels.get(server.getAutomod().warnsChannel);
+        const channel = member.guild.channels.cache.get(server.getAutomod().warnsChannel);
         //const user = Phoenix.getPhoenixUserController().getOrCreateUser(member.id, member.user);
         if ((channel instanceof TextChannel || channel instanceof NewsChannel) && server) {
             if (iAutomodAction) {
                 switch (iAutomodAction.action) {
                     case 'BAN': {
                         if (member.bannable) {
-                            return member.ban(reason).catch((error: DiscordAPIError) => {
+                            return member.ban({reason}).catch((error: DiscordAPIError) => {
                                 channel.send(EmbedWithTitle(server.t('automod:warns.embed-title-error', reason), server.t('automod:warns.erros.discord-api-error', error.message, punisher.toString(), punisher.user.username, punisher.user.discriminator))).catch();
                             });
                         }
@@ -151,14 +167,14 @@ export default class AutomodModule {
                                 reason: reason,
                                 rolesToGive: member.roles.map(x => x.id)
                             });*/
-                            member.removeRoles(member.roles).catch();
-                            const role = member.guild.roles.get(server.muteRole);
+                            member.roles.remove(member.roles.cache).catch();
+                            const role = member.guild.roles.cache.get(server.muteRole);
                             if (role)
-                                return member.addRole(role).catch();
+                                return member.roles.add(role).catch();
 
-                            return member.guild.createRole({ name: 'Muted', permissions: [] }).then(role => {
-                                member.addRole(role).catch();
-                                member.guild.channels.map(async channel => await channel.overwritePermissions(role, { SEND_MESSAGES: false }).catch());
+                            return member.guild.roles.create({data:{ name: 'Muted', permissions: [] }, reason: 'Phoenix Mute Role'}).then(role => {
+                                member.roles.add(role).catch();
+                                member.guild.channels.cache.map(async channel => await channel.updateOverwrite(role, { SEND_MESSAGES: false }).catch());
                                 server.muteRole = role.id;
                                 ServerSchema.findOneAndUpdate({ id: server.id }, { muteRole: role.id });
                             }).catch();

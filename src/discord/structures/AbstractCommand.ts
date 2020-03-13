@@ -30,7 +30,7 @@ export default abstract class AbstractCommand {
     public memberHasPermissions(member: GuildMember): boolean {
         if (this.permissionsNeed.length == 0)
             return true;
-        return member.hasPermissions(this.permissionsNeed);
+        return member.hasPermission(this.permissionsNeed);
     }
 
     public botHasPermissions(bot: GuildMember): boolean {
@@ -42,7 +42,7 @@ export default abstract class AbstractCommand {
             return true;
 
         for (const rolePermission of this.rolePermissionsNeed) {
-            if (!PermissionsModule.hasPermission(member.roles.array(), server.getRoles(), rolePermission))
+            if (!PermissionsModule.hasPermission(member.roles.cache.array(), server.getRoles(), rolePermission))
                 return false;
         }
         return true;
