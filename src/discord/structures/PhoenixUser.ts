@@ -3,7 +3,7 @@ import PhoenixUserSchema, { IPhoenixUser } from "../schemas/PhoenixUserSchema";
 import { Language } from "../managers/TextController";
 import Phoenix from "../Phoenix";
 
-export default class PhoenixUser{
+export default class PhoenixUser {
     private id: string;
     private user: User;
     private level: number;
@@ -25,19 +25,19 @@ export default class PhoenixUser{
         this.lang = userData.lang;
     }
 
-    public getLevel(): number{
+    public getLevel(): number {
         return this.level;
     }
 
-    public getXp(): number{
+    public getXp(): number {
         return this.xp;
     }
 
-    public getUser(): User{
+    public getUser(): User {
         return this.user;
     }
 
-    public getXpMultiplier(): number{
+    public getXpMultiplier(): number {
         return this.xpMultiplier;
     }
 
@@ -46,7 +46,13 @@ export default class PhoenixUser{
     }
 
     public t(key: string, ...args: any): string {
-        return Phoenix.getTextController().t(Language.en_US, key, args);
+        return Phoenix.getTextController().t(this.getLang(), key, args);
+    }
+
+    public setLang(lang: Language, updateDatabase?: boolean) {
+        this.lang = lang;
+        if (updateDatabase)
+            PhoenixUserSchema.findOneAndUpdate({ id: this.id }, { lang: this.lang });
     }
 
     public setXp(xp: number, updateDatabase?: boolean) {
