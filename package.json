@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "main": "build/Main.js",
   "scripts": {
-    "dev": "tsc && yarn copy-website-files && node .",
-    "discord-dev": "tsc && cpy ./src/discord/lang ./build --parents && node .",
-    "web-dev": "yarn copy-website-files && node .",
-    "build": "tsc && yarn copy-website-files",
-    "copy-website-files": "cpy ./src/website ./build --parents && cpy ./src/website/lang ./build --parents && cpy ./src/discord/lang ./build --parents"
+    "dev": "tsc && yarn copy-website-files && yarn copy-discord-languages && yarn copy-website-languages && node .",
+    "discord-dev": "tsc && copy-discord-languages && node .",
+    "web-dev": "yarn copy-website-files && yarn copy-website-languages && node .",
+    "copy-discord-languages": "cpy ./src/discord/lang ./build --parents",
+    "copy-website-languages": "cpy ./src/website/lang ./build --parents",
+    "copy-website-files": "cpy ./src/website ./build --parents",
+    "build": "tsc && yarn copy-website-files && yarn copy-discord-languages && yarn copy-website-languages"
   },
   "license": "MIT",
   "dependencies": {
