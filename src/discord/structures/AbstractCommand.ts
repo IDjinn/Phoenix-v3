@@ -25,7 +25,7 @@ export default abstract class AbstractCommand {
         this.enabled = props.enabled || true;
     }
 
-    public abstract run(params: ICommandParameters): Promise<Message | Message[]> | Promise<void>;
+    public abstract run(params: ICommandParameters): Promise<Message | Message[]> | Promise<void | any>;
 
     public memberHasPermissions(member: GuildMember): boolean {
         if (this.permissionsNeed.length == 0)
