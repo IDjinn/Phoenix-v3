@@ -20,7 +20,7 @@ export default class LevelModule {
             !PermissionsModule.hasPermission(message.member.roles.cache.array(), server.getRoles(), RolePermissions.bypassXpChannels))
             return;
 
-        let currentILevel = server.getLevel().levels.find(x => x.level === user.getLevel());
+        const currentILevel = server.getLevel().levels.find(x => x.level === user.getLevel());
         //server multiplier === donator server, more xp per message? todo this. (max xp p/ message ~ 15?)
         const winXp = Math.floor(Math.random() * 3 + 1) * user.getXpMultiplier() *
             (currentILevel ? currentILevel.xpMultiplier * server.getLevel().serverXpMultiplier : server.getLevel().serverXpMultiplier);
@@ -30,7 +30,7 @@ export default class LevelModule {
             const newILevel = server.getLevel().levels.find(x => x.level === user.getLevel());
             if (newILevel) {
                 message.member.roles.add(newILevel.giveRoles).catch();
-                message.member.roles.add(newILevel.takeRoles).catch();
+                message.member.roles.remove(newILevel.takeRoles).catch();
             }
             const channel = message.guild.channels.cache.get(server.getLevel().channel);
             if (channel instanceof TextChannel || channel instanceof NewsChannel)
