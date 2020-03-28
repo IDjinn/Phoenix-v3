@@ -7,6 +7,7 @@ import PermissionsModule, { RolePermissions } from "../modules/PermissionsModule
 export default abstract class AbstractCommand {
     public readonly name: string;
     public readonly description: string;
+    public readonly category: string;
     public readonly aliases: string[];
     public readonly permissionsNeed: PermissionResolvable[];
     public readonly botPermissionsNeed: PermissionResolvable[];
@@ -17,6 +18,7 @@ export default abstract class AbstractCommand {
     constructor(props: ICommandProps) {
         this.name = props.name;
         this.description = props.description;
+        this.category = props.category;
         this.aliases = props.aliases || [];
         this.permissionsNeed = props.permissionsNeed || [];
         this.botPermissionsNeed = props.botPermissionsNeed || [];
@@ -56,6 +58,7 @@ export default abstract class AbstractCommand {
 export interface ICommandProps {
     name: string;
     description: string;
+    category: string;
     aliases?: string[];
     permissionsNeed?: PermissionResolvable[];
     botPermissionsNeed?: PermissionResolvable[];

@@ -44,7 +44,8 @@ export default class EvalCommand extends AbstractCommand {
             name: 'eval',
             description: 'beep boop',
             onlyOwner: true,
-            enabled: false
+            enabled: false,
+            category: 'owner'
         });
     }
 

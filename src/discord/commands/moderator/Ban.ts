@@ -5,8 +5,9 @@ export default class BanCommand extends AbstractCommand {
         super({
             name: 'ban',
             description: 'Ban a member.',
+            category: 'moderator',
             permissionsNeed: ['BAN_MEMBERS'],
-            botPermissionsNeed: ['BAN_MEMBERS'],
+            botPermissionsNeed: ['BAN_MEMBERS']
         });
     }
     public async run({ message, args, phoenixUser }: ICommandParameters) {

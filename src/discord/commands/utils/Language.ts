@@ -6,7 +6,8 @@ export default class LanguageCommand extends AbstractCommand {
     constructor() {
         super({
             name: 'language',
-            description: 'Changes bot language for you.'
+            description: 'Changes bot language for you.',
+            category: 'utils'
         })
     }
 

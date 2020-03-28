@@ -4,7 +4,8 @@ export default class PingCommand extends AbstractCommand {
     constructor() {
         super({
             name: 'ping',
-            description: 'Show the bot latency.'
+            description: 'Show the bot latency.',
+            category: 'others'
         });
     }
     public async run({ message }: ICommandParameters) {
