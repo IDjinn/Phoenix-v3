@@ -55,7 +55,7 @@ export default class EvalCommand extends AbstractCommand {
                 return message.channel.send(SimpleEmbed('Você precisa colocar algum código para ser executado!'));
             
             const code = args.join(' ');
-            const evaled = cleanEvaledCode(inspect(eval(phoenixEval + '\n' + code)));
+            const evaled = cleanEvaledCode(inspect(eval(`(async () => {${phoenixEval}\n${code}})()`)));
             message.reply(EmbedWithTitle('Sucesso', `Entrada \`\`\`js\n${message.cleanContent}\`\`\`\n\nSaída:\`\`\`js\n${evaled.length > 1900 ? evaled.slice(0, 1900) : evaled}\`\`\``));
             for (let i = 1900; i < evaled.length; i += 1900) {
                 await sleep(200);
