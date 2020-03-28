@@ -5,6 +5,8 @@ import Constants from "../util/Constants";
 import { EmbedWithTitle } from "../util/EmbedFactory";
 import ServerSchema from "../schemas/ServerSchema";
 import Server from "../structures/Server";
+import PhoenixUser from "../structures/PhoenixUser";
+import Phoenix from "../Phoenix";
 
 export default class AutomodModule {
     public static messageFiltred(message: Message, server: Server, roles: Role[]): boolean {
@@ -132,8 +134,9 @@ export default class AutomodModule {
 
     public static punishment(server: Server, member: GuildMember, punisher: GuildMember, reason: string, iAutomodAction: IAutomodAction): any {
         const channel = member.guild.channels.cache.get(server.getAutomod().warnsChannel);
-        //const user = Phoenix.getPhoenixUserController().getOrCreateUser(member.id, member.user);
-        if ((channel instanceof TextChannel || channel instanceof NewsChannel) && server) {
+        const user = Phoenix.getPhoenixUserController().getOrCreateUser(member.user.id, member.user);
+;        //const user = Phoenix.getPhoenixUserController().getOrCreateUser(member.id, member.user);
+        if ((channel instanceof TextChannel || channel instanceof NewsChannel) && server && user) {
             if (iAutomodAction) {
                 switch (iAutomodAction.action) {
                     case 'BAN': {
@@ -156,31 +159,9 @@ export default class AutomodModule {
                             return channel.send(EmbedWithTitle(server.t('automod:warns.embed-title-alert'), server.t('automod:warns.erros.missing-permissions', member.toString(), member.user.username, member.user.discriminator, member.id, reason, punisher.toString(), punisher.user.username, punisher.user.discriminator, punisher.id))).catch();
                         }
                     }
-                    case 'MUTE': {
-                        if (member.manageable) {
-                            /* const timestamp = `${Date.now() + 5 * 60_000}`; //todo: server mute queue
-                            server.mutes.set(timestamp, { 
-                                user: user,
-                                member: member,
-                                expiresAt: timestamp,
-                                punisher: punisher.id,
-                                reason: reason,
-                                rolesToGive: member.roles.map(x => x.id)
-                            });*/
-                            member.roles.remove(member.roles.cache).catch();
-                            const role = member.guild.roles.cache.get(server.muteRole);
-                            if (role)
-                                return member.roles.add(role).catch();
-
-                            return member.guild.roles.create({data:{ name: 'Muted', permissions: [] }, reason: 'Phoenix Mute Role'}).then(role => {
-                                member.roles.add(role).catch();
-                                member.guild.channels.cache.map(async channel => await channel.updateOverwrite(role, { SEND_MESSAGES: false }).catch());
-                                server.muteRole = role.id;
-                                ServerSchema.findOneAndUpdate({ id: server.id }, { muteRole: role.id });
-                            }).catch();
-                        }
+                    case 'MUTE': 
+                        this.mute(member, punisher, user, server, reason);
                         break;
-                    }
                     default:
                         //todo: Não deveria estar aqui? WARN já foi dado...
                         break;
@@ -202,6 +183,31 @@ export default class AutomodModule {
                 this.punishment(server, member, punisher, reason, action);
             });
         }
+    }
+
+    public static mute(member: GuildMember, punisher: GuildMember, user: PhoenixUser, server: Server, reason: string) {
+        console.log(server.muteRole);
+        console.log(server.mutes);
+        if (!server.mutes.get(member.id)) return console.log(server.mutes.get(member.id));
+        server.mutes.set(member.id, {
+            user: user,
+            member: member,
+            expiresAt: `${Date.now()}`,
+            punisher: punisher.id,
+            reason: reason,
+            rolesToGive: member.roles.cache.map(x => x.id)
+        });
+        member.roles.remove(member.roles.cache).catch();
+        const role = member.guild.roles.cache.get(server.muteRole);
+        if (role) // Check if role exists, to not create it.
+            return member.roles.add(role).catch();
+
+        return member.guild.roles.create({ data: { name: 'Muted', permissions: [] }, reason: 'Phoenix Mute Role' }).then(role => {
+            member.roles.add(role).catch();
+            member.guild.channels.cache.map(async channel => await channel.updateOverwrite(role, { SEND_MESSAGES: false }).catch());
+            server.muteRole = role.id;
+            ServerSchema.findOneAndUpdate({ id: server.id }, { muteRole: role.id });
+        }).catch();
     }
 }
 
