@@ -1,4 +1,9 @@
+body {
+  background-color: #23272A;
+}
+
 ul#nav-bar {
+    background-color: #2C2F33;
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -16,6 +21,10 @@ ul#nav-bar li a{
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
+}
+
+ul#nav-bar li a#right{
+  float: right;
 }
 
 main#main div#introduction-texts {

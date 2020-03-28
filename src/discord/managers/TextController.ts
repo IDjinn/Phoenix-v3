@@ -10,7 +10,7 @@ export default class TextController {
         const languagesPath = pathJoin(__dirname, '../lang');
         for (const file of readdirSync(languagesPath)) {
             const language = require(`${languagesPath}/${file}`);
-            this.texts.set(this.parseLanguage(file.replace('.json', '')), language);
+            this.texts.set(this.parseLanguage(file.replace('.json', ''), Language.en_US), language);
         }
     }
 
@@ -27,12 +27,12 @@ export default class TextController {
         return format(value, args);
     }
 
-    public parseLanguage(str: string) {
+    public parseLanguage(str: string, defaultValue = -1) {
         switch (str.toLowerCase()) {
-            default:
             case 'en_us':
                 return Language.en_US;
         }
+        return defaultValue;
     }
 }
 

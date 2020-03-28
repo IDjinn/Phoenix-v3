@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/public/css/guilds.css">
+    <title>Guilds</title>
+</head>
+
+<body>
+    <p>seus servidores</p>
+    <div id="guilds">
+        <% if(guilds)  for(const guild of guilds) { %>
+        <div id="guild">
+            <% if(guild.icon) { %>
+                <img src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>.jpg?size=64">
+            <% } else { %>
+                <img src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>.jpg?size=64">
+            <% } %>
+            <p><%= guild.name %></p>
+            <a href="dashboard/<%= guild.id %>/index">Manage</a>
+        </div>
+        <% } %>
+    </div>
+</body>
+
+</html>

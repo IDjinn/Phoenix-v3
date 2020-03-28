@@ -5,7 +5,8 @@ export default class AvatarCommand extends AbstractCommand {
     constructor() {
         super({
             name: 'avatar',
-            description: 'Show the user avatar.'
+            description: 'Show the user avatar.',
+            category: 'utils'
         });
     }
 
@@ -20,7 +21,7 @@ export default class AvatarCommand extends AbstractCommand {
             throw 'message.member.user === null';
 
         let member = message.mentions.members ? message.mentions.members.first() : null;
-        if (!member && args) member = message.guild.members.cache.get(args[0]);
+        if (!member && args.length > 0) member = message.guild.members.cache.get(args[0]);
         if (!member) member = message.member;
         return message.reply(SimpleEmbed(`${member.displayName}'s Avatar`).setImage(member.user.displayAvatarURL())).catch();
     }

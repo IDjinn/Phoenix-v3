@@ -7,6 +7,7 @@ import PermissionsModule, { RolePermissions } from "../modules/PermissionsModule
 export default abstract class AbstractCommand {
     public readonly name: string;
     public readonly description: string;
+    public readonly category: string;
     public readonly aliases: string[];
     public readonly permissionsNeed: PermissionResolvable[];
     public readonly botPermissionsNeed: PermissionResolvable[];
@@ -17,6 +18,7 @@ export default abstract class AbstractCommand {
     constructor(props: ICommandProps) {
         this.name = props.name;
         this.description = props.description;
+        this.category = props.category;
         this.aliases = props.aliases || [];
         this.permissionsNeed = props.permissionsNeed || [];
         this.botPermissionsNeed = props.botPermissionsNeed || [];
@@ -25,7 +27,7 @@ export default abstract class AbstractCommand {
         this.enabled = props.enabled || true;
     }
 
-    public abstract run(params: ICommandParameters): Promise<Message | Message[]> | Promise<void>;
+    public abstract run(params: ICommandParameters): Promise<Message | Message[]> | Promise<void | any>;
 
     public memberHasPermissions(member: GuildMember): boolean {
         if (this.permissionsNeed.length == 0)
@@ -56,6 +58,7 @@ export default abstract class AbstractCommand {
 export interface ICommandProps {
     name: string;
     description: string;
+    category: string;
     aliases?: string[];
     permissionsNeed?: PermissionResolvable[];
     botPermissionsNeed?: PermissionResolvable[];
@@ -66,8 +69,7 @@ export interface ICommandProps {
 
 export interface ICommandParameters {
     message: Message;
-    args?: string[];
+    args: string[];
     server: Server;
     phoenixUser: PhoenixUser;
-    t: Function;
 }

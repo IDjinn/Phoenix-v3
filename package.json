@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "main": "build/Main.js",
   "scripts": {
-    "dev": "tsc && yarn copy-website-files && node .",
-    "discord-dev": "tsc && node .",
-    "web-dev": "yarn copy-website-files && node .",
-    "build": "tsc && yarn copy-website-files",
-    "copy-website-files": "cpy ./src/website ./build --parents && cpy ./src/website/lang ./build --parents && cpy ./src/discord/lang ./build --parents"
+    "dev": "tsc && yarn copy-website-files && yarn copy-discord-languages && yarn copy-website-languages && node .",
+    "discord-dev": "tsc && yarn copy-discord-languages && node .",
+    "web-dev": "yarn copy-website-files && yarn copy-website-languages && node build/src/website/website.js",
+    "copy-discord-languages": "cpy ./src/discord/lang ./build --parents",
+    "copy-website-languages": "cpy ./src/website/lang ./build --parents",
+    "copy-website-files": "cpy ./src/website ./build --parents",
+    "build": "tsc && yarn copy-website-files && yarn copy-discord-languages && yarn copy-website-languages"
   },
   "license": "MIT",
   "dependencies": {
@@ -22,9 +24,12 @@
     "ejs": "^3.0.1",
     "eslint": "5.16.0",
     "express": "^4.17.1",
+    "form-data": "^3.0.0",
     "i18n": "^0.8.5",
+    "md5": "^2.2.1",
     "moment": "^2.24.0",
     "mongoose": "^5.9.1",
+    "node-fetch": "^2.6.0",
     "string-format": "^2.0.0",
     "typescript": "^3.7.5"
   },
