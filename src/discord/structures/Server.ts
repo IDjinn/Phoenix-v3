@@ -2,7 +2,7 @@ import { ILogger } from "../modules/LoggerModule";
 import { IServer } from "../schemas/ServerSchema";
 import { IRole } from "../modules/PermissionsModule";
 import { IAutomod } from "../modules/AutomodModule";
-import { Guild } from "discord.js";
+import { Guild, Collection } from "discord.js";
 import { ILevelModule } from "../modules/LevelModule";
 import { ICounter } from "../modules/CounterModule";
 import { IWelcome } from "../modules/WelcomeModule";
@@ -22,6 +22,7 @@ export default class Server {
     private level: ILevelModule;
     private counter: ICounter;
     private welcome: IWelcome;
+    public mutes = new Collection();
     constructor(guild: Guild, data: IServer) {
         this.data = data;
         this.guild = guild;

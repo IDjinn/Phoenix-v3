@@ -1,8 +1,15 @@
 {
     "token": "",
+    "defaultPrefix": ">",
+    "logLevel": 7,
     "database": {
         "link": "",
-        "user": "",
-        "password": ""
+        "user": "admin",
+        "password": "admin"
+    },
+    "website":{
+        "enabled": false,
+        "port":3000,
+        "discord-callback": ""
     }
 }
