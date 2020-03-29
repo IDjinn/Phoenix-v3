@@ -114,6 +114,16 @@
                 "give": "give",
                 "take": "take"
             }
+        },
+        "iam":{
+            "name": "iam",
+            "description": "Show how much percent you're anything.",
+            "aliases": [],
+            "usage": "{0}iam <anything>",
+            "errors": {
+                "are-you-what": "You need put arguments what you're."
+            },
+            "sucess": "You're {0}% {1}."
         }
     }
 }
