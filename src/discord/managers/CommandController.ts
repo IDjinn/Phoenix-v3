@@ -13,6 +13,7 @@ import WarnCommand from "../commands/moderator/Warn";
 import CommandsCommand from "../commands/utils/Commands";
 import LanguageCommand from "../commands/utils/Language";
 import MuteCommand from "../commands/moderator/Mute";
+import MassRoleCommand from "../commands/administrator/MassRole";
 
 export default class CommandController {
     private commands = new Collection<string, AbstractCommand>();
@@ -29,6 +30,7 @@ export default class CommandController {
         this.addCommand(new CommandsCommand());
         this.addCommand(new LanguageCommand());
         this.addCommand(new MuteCommand());
+        this.addCommand(new MassRoleCommand());
     }
     public destroy() {
         this.commands.clear();

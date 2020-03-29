@@ -46,7 +46,7 @@ export default class PhoenixUser {
     }
 
     public t(key: string, ...args: any): string {
-        return Phoenix.getTextController().t(this.getLang(), key, args);
+        return Phoenix.getTextController().t(this.getLang(), key, ...args);
     }
 
     public setLang(lang: Language, updateDatabase?: boolean) {

@@ -1,6 +1,4 @@
 import AbstractCommand, { ICommandParameters } from "../../structures/AbstractCommand";
-import Phoenix from "../../Phoenix";
-import { Collection } from "discord.js";
 
 export default class CommandsCommand extends AbstractCommand {
     constructor() {
@@ -12,13 +10,14 @@ export default class CommandsCommand extends AbstractCommand {
         });
     }
 
-    public run({ message }: ICommandParameters) {
+    public run({ message }: ICommandParameters) {/*
         let commandList = new Map<string, AbstractCommand[]>();
         new Collection(Phoenix.getCommandController().getCommands().arr)
         for (const command of Phoenix.getCommandController().getCommands().values()) {
             if (command instanceof AbstractCommand)
                 commandList.set(command.category, push(command);
         }
-        return message.reply(commandList);
+        return message.reply(commandList);*/
+        return Promise.resolve(message.content);
     }
 }

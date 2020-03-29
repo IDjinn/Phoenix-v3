@@ -99,6 +99,21 @@
                 "invalid-lang": "It isn't a valid language."
             },
             "sucess": "You successfully changed bot language with you to `{0}`."
+        },
+        "massRole":{
+            "name": "massrole",
+            "description": "Give/Take one role to all members.",
+            "aliases": [],
+            "usage": "{0}massrole <role> [give/take]",
+            "errors": {
+                "no-role": "You need mention the role or use it Id.",
+                "invalid-role": "It's a invalid role."
+            },
+            "sucess": "You successfully {0} role to `{1}` members.",
+            "operations":{
+                "give": "give",
+                "take": "take"
+            }
         }
     }
 }

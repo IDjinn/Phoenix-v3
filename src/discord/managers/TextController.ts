@@ -18,13 +18,13 @@ export default class TextController {
         this.texts.clear();
     }
 
-    public t(lang: Language, key: string, ...args: any[]): string {
+    public t(lang: Language, key: string, ...args: any): string {
         const keys = key.split('.');
         let value = this.texts.get(lang) || this.texts.get(Language.en_US);
         for (const subKey of keys) {
             value = value[subKey];
         }
-        return format(value, args);
+        return format(value, ...args);
     }
 
     public parseLanguage(str: string, defaultValue = -1) {

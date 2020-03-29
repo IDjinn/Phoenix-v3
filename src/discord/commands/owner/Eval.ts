@@ -4,23 +4,44 @@ import Phoenix from "../../Phoenix";
 import { inspect } from 'util';
 import sleep from "../../util/Sleep";
 const phoenixEval = `
+//Modules
 var AutomodModule = require('../../modules/AutomodModule').default;
 var CounterModule = require('../../modules/CounterModule').default;
 var LevelModule = require('../../modules/LevelModule').default;
 var LoggerModule = require('../../modules/LoggerModule').default;
 var PermissionsModule = require('../../modules/PermissionsModule').default;
 var WelcomeModule = require('../../modules/WelcomeModule').default;
+
+//Phoenix
 var Phoenix = require('../../Phoenix').default;
+
+//Schemas
 var PhoenixUserSchema = require('../../schemas/PhoenixUserSchema').default;
 var ServerSchema = require('../../schemas/ServerSchema').default;
 var WarnSchema = require('../../schemas/WarnSchema').default;
+
+//Structures
 var AbstractCommand = require('../../structures/AbstractCommand').default;
 var PhoenixUser = require('../../structures/PhoenixUser').default;
 var Server = require('../../structures/Server').default;
+
+//Util
 var EmbedFactory = require('../../util/EmbedFactory').default;
 var Permissions = require('../../util/Permissions').default;
 var sleep = require('../../util/Sleep').default;
-var Constants = require('../../util/Constants').default;`;
+var Constants = require('../../util/Constants').default;
+
+//Commands
+var AvatarCommand = require('../utils/Avatar').default;
+var CommandsCommand = require('../utils/Commands').default;
+var LanguageCommand = require('../utils/Language').default;
+var BotinfoCommand = require('../others/Botinfo').default;
+var PingCommand = require('../others/Ping').default;
+var WarnCommand = require('../moderator/Warn').default;
+var MuteCommand = require('../moderator/Mute').default;
+var KickCommand = require('../moderator/Kick').default;
+var BanCommand = require('../moderator/Ban').default;
+`;
 
 
 const replaceAll = (str: string, find: string, replace: string) => {
