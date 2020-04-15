@@ -49,22 +49,19 @@ export default class PhoenixUser {
         return Phoenix.getTextController().t(this.getLang(), key, ...args);
     }
 
-    public setLang(lang: Language, updateDatabase?: boolean) {
+    public setLang(lang: Language) {
         this.lang = lang;
-        if (updateDatabase)
-            PhoenixUserSchema.findOneAndUpdate({ id: this.id }, { lang: this.lang });
+        PhoenixUserSchema.findOneAndUpdate({ id: this.id }, { lang: this.lang });
     }
 
-    public setXp(xp: number, updateDatabase?: boolean) {
+    public setXp(xp: number) {
         this.xp = xp;
-        if (updateDatabase)
-            PhoenixUserSchema.findOneAndUpdate({ id: this.id }, { xp: this.getXp() }).catch();
+        PhoenixUserSchema.findOneAndUpdate({ id: this.id }, { xp: this.getXp() }).catch();
     }
 
-    public setLevel(level: number, updateDatabase?: boolean) {
+    public setLevel(level: number) {
         this.level = level;
-        if (updateDatabase)
-            PhoenixUserSchema.findOneAndUpdate({ id: this.id }, { level: this.getLevel() }).catch();
+        PhoenixUserSchema.findOneAndUpdate({ id: this.id }, { level: this.getLevel() }).catch();
     }
 
     public save() {
