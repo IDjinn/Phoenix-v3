@@ -4,7 +4,6 @@ export default class MassRoleCommand extends AbstractCommand {
     constructor() {
         super({
             name: 'massrole',
-            description: 'Give one role to all members.',
             category: 'administrator',
             botPermissionsNeed: ['MANAGE_ROLES'],
             permissionsNeed: ['MANAGE_ROLES']

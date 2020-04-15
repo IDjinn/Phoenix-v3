@@ -6,7 +6,6 @@ export default class BotinfoCommand extends AbstractCommand {
     constructor() {
         super({
             name: 'botinfo',
-            description: 'Show a short description about bot info.',
             category: 'others'
         });
     }

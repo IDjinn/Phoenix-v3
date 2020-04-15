@@ -4,7 +4,6 @@ export default class BanCommand extends AbstractCommand {
     constructor() {
         super({
             name: 'ban',
-            description: 'Ban a member.',
             category: 'moderator',
             permissionsNeed: ['BAN_MEMBERS'],
             botPermissionsNeed: ['BAN_MEMBERS']

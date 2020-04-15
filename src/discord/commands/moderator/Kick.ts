@@ -4,11 +4,9 @@ export default class KickCommand extends AbstractCommand {
     constructor() {
         super({
             name: 'kick',
-            description: 'Kick an guild member.',
             category: 'moderator',
             permissionsNeed: ['KICK_MEMBERS'],
             botPermissionsNeed: ['KICK_MEMBERS'],
-            aliases: ['expulsar', 'kickar', 'chutar']
         });
     }
     public async run({ message, args, phoenixUser }: ICommandParameters) {

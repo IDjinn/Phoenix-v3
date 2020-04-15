@@ -1,14 +1,14 @@
 import AbstractCommand, { ICommandParameters } from "../../structures/AbstractCommand";
+import Phoenix from "../../Phoenix";
 
 export default class PingCommand extends AbstractCommand {
     constructor() {
         super({
             name: 'ping',
-            description: 'Show the bot latency.',
-            category: 'others'
+            category: 'others',
         });
     }
-    public async run({ message }: ICommandParameters) {
-        return message.channel.send(message.client.ws.ping.toFixed(0) + 'ms.');
+    public async run({ message, phoenixUser }: ICommandParameters) {
+        return message.channel.send(phoenixUser.t('commands.ping.sucess', Phoenix.getClient().ws.ping.toFixed(0)));
     }
 }

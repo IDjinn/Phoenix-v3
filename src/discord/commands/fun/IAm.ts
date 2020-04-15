@@ -5,7 +5,6 @@ export default class IAmCommand extends AbstractCommand{
     constructor() {
         super({
             name: 'iam',
-            description: 'I am `??`% anything.',
             category: 'fun'
         });
     }

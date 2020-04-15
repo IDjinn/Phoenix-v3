@@ -6,7 +6,7 @@ export default class MuteCommand extends AbstractCommand{
         super({
             name: 'mute',
             category: 'moderator',
-            description: 'Mute a user'
+            enabled: false
         });
     }
     public run({ message, server, phoenixUser, args }: ICommandParameters) {

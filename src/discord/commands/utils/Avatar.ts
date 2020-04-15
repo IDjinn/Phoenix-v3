@@ -5,8 +5,8 @@ export default class AvatarCommand extends AbstractCommand {
     constructor() {
         super({
             name: 'avatar',
-            description: 'Show the user avatar.',
-            category: 'utils'
+            category: 'utils',
+            botPermissionsNeed: ['EMBED_LINKS']
         });
     }
 

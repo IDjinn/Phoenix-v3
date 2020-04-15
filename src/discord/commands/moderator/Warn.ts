@@ -6,7 +6,6 @@ export default class WarnCommand extends AbstractCommand {
     constructor() {
         super({
             name: 'warn',
-            description: 'Warn a member',
             category: 'moderator',
             rolePermissionsNeed: [RolePermissions.canWarn]
         });
