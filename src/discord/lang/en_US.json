@@ -3,8 +3,12 @@
         "code": "en_US",
         "name": "english",
         "aliases": ["en"]
+    },{
+        "code": "pt_BR",
+        "name": "Português Brasileiro",
+        "aliases": ["pt", "br"]
     }],
-    "level-up-message": "Congratulations, {0}! You are now at level {1}.",
+    "level-up-message": "Congratulations, {0!invites}! You are now at level {1}.",
     "automod": {
         "invites": {
             "warn-reason": "Posted a invite."
@@ -25,17 +29,18 @@
             "embed-title-error": "Automod {0} Error",
             "embed-title-alert": "Automod Alert",
             "errors": {
-                "discord-api-error": "This action ins't completed why `{0}`\nReason: `{4}`\nPunisher: {5} (`${6}#${7}` ID: `${8}`)",
-                "missing-permissions": "I can't kick the member {0} ({1}#{2} ID: {3})\nReason: `{4}`\nPunisher: {5} (`${6}#${7}` ID: `${8}`)`"
+                "discord-api-error": "This action ins't completed why `{0}`\nReason: `{4!invites}`\nPunisher: {5!invites} (`${6!invites}#${7}` ID: `${8}`)",
+                "missing-permissions": "I can't manage the member {0!invites} ({1!invites}#{2} ID: {3})\nReason: `{4!invites}`\nPunisher: {5!invites} (`${6!invites}#${7}` ID: `${8}`)`"
             }
         }
     },
     "command-error": {
+        "my-mention": "Hello there, my name is Phoenix and my prefix in this server is `{0}`.",
         "disabled": "This command is disabled, or only for creator use.",
         "missing-permissions": "You do not have these permissions need to run this command: `{0}`.",
         "missing-bot-permissions": "I do not have these permissions need to run this command: `{0}`.",
         "missing-server-permissions": "You do not have these costum permissions to run this command: `{0}`.",
-        "runtime-error": "Error while running this command: {0}"
+        "runtime-error": "Error while running this command: `{0!invites}`"
     },
     "commands": {
         "warn": {
@@ -52,7 +57,7 @@
                     "member-bypass-moderation": "This member have a permission bypass moderation."
                 }
             },
-            "sucess": "You successfully warned the member {0} with reason {1}.",
+            "sucess": "You successfully warned the member {0!invites} with reason `{1!invites}`.",
             "generic": {
                 "no-reason": "No reason provided."
             }
@@ -65,7 +70,7 @@
             "errors": {
                 "no-member": "You need mention the member or put him Id.",
                 "member-not-found": "The member isn't found.",
-                "discord-api-error": "Error while kicking this member: `{0}`.",
+                "discord-api-error": "Error while kicking this member: `{0!invites}`.",
                 "cant-kickable": "I can't kick this member."
             },
             "sucess": "You successfully kicked `{0}`.",
@@ -81,10 +86,10 @@
             "errors": {
                 "no-member": "You need mention the member or put him Id.",
                 "member-not-found": "The member isn't found.",
-                "discord-api-error": "Error while kicking this member: `{0}`.",
+                "discord-api-error": "Error while kicking this member: `{0!invites}`.",
                 "cant-kickable": "I can't ban this member."
             },
-            "sucess": "You successfully banned `{0}`.",
+            "sucess": "You successfully banned `{0!invites}`.",
             "generic": {
                 "no-reason": "No reason provided."
             }
@@ -123,7 +128,38 @@
             "errors": {
                 "are-you-what": "You need put arguments what you're."
             },
-            "sucess": "You're {0}% {1}."
+            "sucess": "You're {0}% {1!invites}."
+        },
+        "clear":{
+            "name": "clear",
+            "description": "Clear `x` messages in the current channel.",
+            "aliases": [],
+            "usage": "{0}clear <amount>",
+            "errors": {
+                "no-amount": "You need put the amount of messages to clear.",
+                "invalid-amount": "{0} ins't a valid amount.",
+                "invalid-range": "The amount must be in 1-100 messages."
+            },
+            "sucess": "Successfully {0} messages was clear."
+        },
+        "ping":{
+            "name": "ping",
+            "description": "Pong!",
+            "aliases": [],
+            "usage": "{0}ping",
+            "sucess": "Pong! {0}ms."
+        },
+        "botinfo":{
+            "name": "botinfo",
+            "description": "Show a short description of the bot.",
+            "aliases": [],
+            "usage": "{0}botinfo"
+        },
+        "commands":{
+            "name": "commands",
+            "description": "Show a list with all commands.",
+            "aliases": [],
+            "usage": "{0}commands"
         }
     }
 }

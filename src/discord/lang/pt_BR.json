@@ -1,0 +1,153 @@
+{
+    "languages": [{
+        "code": "en_US",
+        "name": "english",
+        "aliases": ["en"]
+    },{
+        "code": "pt_BR",
+        "name": "Português Brasileiro",
+        "aliases": ["pt", "br"]
+    }],
+    "level-up-message": "Parabéns, {0!invites}! Você agora está no nível {1}.",
+    "automod": {
+        "invites": {
+            "warn-reason": "Enviou um convite."
+        },
+        "links": {
+            "warn-reason": "Enviou um link."
+        },
+        "dupChars": {
+            "warn-reason": "Spam de letras repetidas."
+        },
+        "capsLock": {
+            "warn-reason": "Spam caps lock."
+        },
+        "massMentions": {
+            "warn-reason": "Spam mass mentions."
+        },
+        "warns": {
+            "embed-title-error": "Automod {0} Erro",
+            "embed-title-alert": "Automod Alerta",
+            "errors": {
+                "discord-api-error": "Essa ação não foi completada porque `{0}`\nMotivo: `{4!invites}`\nQuem Puniu: {5!invites} (`${6!invites}#${7}` ID: `${8}`)",
+                "missing-permissions": "Eu não tenho permissão para gerenciar o membro {0!invites} ({1!invites}#{2} ID: {3})\nMotivo: `{4!invites}`\nQuem Puniu: {5!invites} (`${6!invites}#${7}` ID: `${8}`)`"
+            }
+        }
+    },
+    "command-error": {
+        "my-mention": "Olá, sou o Phoenix e nesse servidor meu prefixo é `{0}`.",
+        "disabled": "Esse comando está desativado ou para uso apenas do criador.",
+        "missing-permissions": "Você não tem as seguintes permissões para executar esse comando: `{0}`.",
+        "missing-bot-permissions": "Eu não tenho as seguintes permissões para executar esse comando: `{0}`.",
+        "missing-server-permissions": "Você não tem as seguintes permições customizadas para executar esse comando: `{0}`.",
+        "runtime-error": "Erro enquanto executava esse comando: {0!invites}"
+    },
+    "commands": {
+        "warn": {
+            "name": "alertar",
+            "description": "Manda um alerta para um membro.",
+            "aliases": ["alerta"],
+            "usage": "{0}alertar @membro",
+            "errors": {
+                "warn": {
+                    "no-member": "Você precisa mencionar o membro ou colocar o Id dele.",
+                    "member-not-found": "Esse membro não foi encontrado.",
+                    "cannot-warn-yourself": "Você não pode se alertar.",
+                    "cannot-warn-bot": "Você não pode alertar um bot.",
+                    "member-bypass-moderation": "Esse membro tem permissão de ignorar ações de moderação."
+                }
+            },
+            "sucess": "Você alertou com sucesso o membro {0!invites} pelo motivo: `{1!invites}`.",
+            "generic": {
+                "no-reason": "Motivo não expecificado."
+            }
+        },
+        "kick": {
+            "name": "expulsar",
+            "description": "Expulsa um membro do servidor.",
+            "aliases": [],
+            "usage": "{0}expulsar @membro",
+            "errors": {
+                "no-member": "Você precisa mencionar o membro ou colocar o Id dele.",
+                "member-not-found": "Esse membro não foi encontrado.",
+                "discord-api-error": "Erro enquanto expulsava o membro: `{0!invites}`.",
+                "cant-kickable": "Eu não posso expulsar esse membro."
+            },
+            "sucess": "Você expulsou com sucesso o membro {0!invites} pelo motivo: `{1!invites}`.",
+            "generic": {
+                "no-reason": "Motivo não expecificado."
+            }
+        },
+        "ban": {
+            "name": "banir",
+            "description": "Bane um membro do servidor.",
+            "aliases": [],
+            "usage": "{0}banir @membro",
+            "errors": {
+                "no-member": "Você precisa mencionar o membro ou colocar o Id dele.",
+                "member-not-found": "Esse membro não foi encontrado.",
+                "discord-api-error": "Erro enquanto bania o membro: `{0!invites}`.",
+                "cant-kickable": "Eu não posso banir esse membro."
+            },
+            "sucess": "Você baniu com sucesso o membro {0!invites} pelo motivo: `{1!invites}`.",
+            "generic": {
+                "no-reason": "Motivo não expecificado."
+            }
+        },
+        "language":{
+            "name": "linguagem",
+            "description": "Muda a linguagem do bot para você.",
+            "aliases": [],
+            "usage": "{0}linguagem <linguagem>",
+            "errors": {
+                "no-lang": "Você precisa colocar a nova linguagem.",
+                "invalid-lang": "Isso não é uma linguagem válida."
+            },
+            "sucess": "Você mudou com sucesso a linguagem para `{0}`."
+        },
+        "massRole":{
+            "name": "massRole",
+            "description": "Dê/Tire um cargo de todos os membros.",
+            "aliases": [],
+            "usage": "{0}massrole <@cargo> [dar/tirar]",
+            "errors": {
+                "no-role": "Você precisa mencionar o cargo ou o Id dele.",
+                "invalid-role": "Isso não é um cargo válido."
+            },
+            "sucess": "Você {0} com sucesso o cargo para `{1}` membros.",
+            "operations":{
+                "dar": "give",
+                "tirar": "take"
+            }
+        },
+        "iam":{
+            "name": "eusou",
+            "description": "Mostra quantos porcento você é algo.",
+            "aliases": [],
+            "usage": "{0}eusou <algo>",
+            "errors": {
+                "are-you-what": "Você precisa colocar argumentos do que você é."
+            },
+            "sucess": "Você é {0}% {1!invites}."
+        },
+        "clear":{
+            "name": "limpar",
+            "description": "Limpa `x` mensagens no canal atual.",
+            "aliases": [],
+            "usage": "{0}limpar <quantidade>",
+            "errors": {
+                "no-amount": "Você precisa colocar a quantidade de mensagens que deseja limpar.",
+                "invalid-amount": "{0} não é uma quantidade válida.",
+                "invalid-range": "A quantidade deve estar entre 1-100 mensagens."
+            },
+            "sucess": "Foram limpas {0} mensagens do canal com sucesso."
+        },
+        "ping":{
+            "name": "ping",
+            "description": "Pong!",
+            "aliases": [],
+            "usage": "{0}ping",
+            "sucess": "Pong! {0}ms."
+        }
+    }
+}
