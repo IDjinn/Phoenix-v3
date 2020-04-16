@@ -132,9 +132,9 @@ export default class AutomodModule {
         return false;
     }
 
-    public static punishment(server: Server, member: GuildMember, punisher: GuildMember, reason: string, iAutomodAction: IAutomodAction): any {
+    public static async punishment(server: Server, member: GuildMember, punisher: GuildMember, reason: string, iAutomodAction: IAutomodAction) {
         const channel = member.guild.channels.cache.get(server.getAutomod().warnsChannel);
-        const user = Phoenix.getPhoenixUserController().getOrCreateUser(member.user.id, member.user);
+        const user = await Phoenix.getPhoenixUserController().getOrCreateUser(member.user.id, member.user);
 ;        //const user = Phoenix.getPhoenixUserController().getOrCreateUser(member.id, member.user);
         if ((channel instanceof TextChannel || channel instanceof NewsChannel) && server && user) {
             if (iAutomodAction) {
@@ -186,9 +186,7 @@ export default class AutomodModule {
     }
 
     public static mute(member: GuildMember, punisher: GuildMember, user: PhoenixUser, server: Server, reason: string) {
-        console.log(server.muteRole);
-        console.log(server.mutes);
-        if (!server.mutes.get(member.id)) return console.log(server.mutes.get(member.id));
+        //todo: if (!server.mutes.get(member.id)) return console.log(server.mutes.get(member.id));
         server.mutes.set(member.id, {
             user: user,
             member: member,

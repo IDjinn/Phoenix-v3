@@ -8,6 +8,7 @@ import { ICounter } from "../modules/CounterModule";
 import { IWelcome } from "../modules/WelcomeModule";
 import { Language } from "../managers/TextController";
 import Phoenix from "../Phoenix";
+import { ICommands } from "../managers/CommandController";
 
 export default class Server {
     public readonly id: string;
@@ -22,6 +23,7 @@ export default class Server {
     private level: ILevelModule;
     private counter: ICounter;
     private welcome: IWelcome;
+    public readonly commands: ICommands;
     public mutes = new Collection();
     constructor(guild: Guild, data: IServer) {
         this.data = data;
@@ -29,6 +31,7 @@ export default class Server {
         this.id = this.data._id;
         this.prefix = this.data.prefix;
         this.muteRole = this.data.muteRole;
+        this.commands = this.data.commands;
         this.lang = this.data.language;
         this.logger = this.data.logger || {};
         this.roles = this.data.roles || {};

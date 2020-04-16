@@ -2,6 +2,7 @@ import { Collection, User } from "discord.js";
 import PhoenixUser from "../structures/PhoenixUser";
 import PhoenixUserSchema from "../schemas/PhoenixUserSchema";
 import Phoenix from "../Phoenix";
+import logger from "../util/logger/Logger";
 
 export default class PhoenixUserController {
     private users: Collection<string, PhoenixUser> = new Collection();
@@ -9,7 +10,7 @@ export default class PhoenixUserController {
     public init(): void {
         PhoenixUserSchema.find({}).then((users: any[]) => {
             if (users) {
-                Promise.all(users.map(userData => this.createUser(userData))).catch(console.error);
+                Promise.all(users.map(userData => this.createUser(userData))).catch(logger.error);
             }
         });
     }
@@ -20,28 +21,33 @@ export default class PhoenixUserController {
             user.save();
     }
 
-    public createUser(userData: any) {
-        return new Promise((resolve, reject) => {
+    public createUser(userData: any) :PhoenixUser {
+        if (userData && userData.id) {
             const user = Phoenix.getClient().users.cache.get(userData.id);
             if (user instanceof User) {
                 const phoenixUser = new PhoenixUser(user, userData);
                 this.users.set(user.id, phoenixUser);
-                resolve();
+                return phoenixUser;
             }
-            reject(`User from userData '${userData._id}' === null`);
-        });
+            PhoenixUserSchema.deleteMany({ id: userData.id })//If isn't found, delete from database.
+        }
+        throw new Error(userData);
     }
 
     public getUser(id: string): PhoenixUser | undefined {
         return this.users.get(id);
     }
-
-    public getOrCreateUser(id: string, user: User): PhoenixUser {
+    
+    public async getOrCreateUser(id: string, user: User): Promise<PhoenixUser> {
         let phoenixUser = this.getUser(id);
         if (phoenixUser)
             return phoenixUser;
         
-        let userData = new PhoenixUserSchema({ id: id }).save() as any;
+        const dbUserData = await PhoenixUserSchema.findOne({ id: id });
+        if (dbUserData)
+            return this.createUser(dbUserData);
+        
+        let userData = await new PhoenixUserSchema({ id: id }).save() as any;
         this.users.set(id, new PhoenixUser(user, userData));
         return this.getUser(id) as PhoenixUser;
     }

@@ -1,6 +1,6 @@
 import AbstractCommand from "../structures/AbstractCommand";
 import PingCommand from "../commands/others/Ping";
-import { Message, Collection } from "discord.js";
+import { Message, Collection, TextChannel } from "discord.js";
 import Phoenix from "../Phoenix";
 import Server from "../structures/Server";
 import PhoenixUser from "../structures/PhoenixUser";
@@ -15,11 +15,17 @@ import LanguageCommand from "../commands/utils/Language";
 import MuteCommand from "../commands/moderator/Mute";
 import MassRoleCommand from "../commands/administrator/MassRole";
 import IAmCommand from "../commands/fun/IAm";
+import ClearCommand from "../commands/moderator/Clear";
+//import PermissionsModule, { RolePermissions } from "../modules/PermissionsModule";
+import ReloadCommand from "../commands/owner/Reload";
+import logger from "../util/logger/Logger";
+import AsyncLock from 'async-lock';
 
 export default class CommandController {
     private commands = new Collection<string, AbstractCommand>();
     private aliases = new Collection<string, string>();
-    //private cooldown = new Map();
+    //private cooldown =new Collection<string, number>();
+    private lock = new AsyncLock();
     public init() {
         this.addCommand(new PingCommand());
         this.addCommand(new KickCommand());
@@ -33,11 +39,12 @@ export default class CommandController {
         this.addCommand(new MuteCommand());
         this.addCommand(new MassRoleCommand());
         this.addCommand(new IAmCommand());
+        this.addCommand(new ClearCommand());
+        this.addCommand(new ReloadCommand());
     }
     public destroy() {
         this.commands.clear();
         this.aliases.clear();
-        //this.cooldown.clear(); 
     }
 
     public handledCommand(message: Message, server: Server, phoenixUser: PhoenixUser): boolean {
@@ -46,6 +53,9 @@ export default class CommandController {
         
         if (message.content.startsWith('> ')) //Ignore quotes
             return false;
+        
+        if (!message.guild.me.permissionsIn(message.channel).has('SEND_MESSAGES'))
+            return false; // If i cannot have permissions to sent message, i do not process commands
 
         let usingPrefix = '';
         for (const thisPrefix of [server.prefix, Phoenix.getConfig().defaultPrefix, `<@!${message.guild.me.id}> `]) {
@@ -57,40 +67,61 @@ export default class CommandController {
 
         if (!usingPrefix)
             return false;
+        /*
+        if (server.commands.enabled) { //todo: remake this logic
+            if ((server.commands.blacklist.includes(message.channel.id) && !PermissionsModule.hasPermission(message.member.roles.cache.array(), server.getRoles(),
+                RolePermissions.bypassChannelCommand)) || (!server.commands.whitelist.includes(message.channel.id)) && server.commands.whitelist.length > 0) {
+                return false;
+            }
+        }*/
 
         const args = message.content.slice(usingPrefix.length).split(' ');
-        if (!args || !args[0])
-            return false;
-        
         const command = args.shift()!.toLowerCase();
         const cmd = this.commands.get(command) || this.commands.get(this.aliases.get(command) + '');
-        if (cmd instanceof AbstractCommand) {
-            //todo make it embeds and implements cooldown
+        if (cmd instanceof AbstractCommand) {/*
+            const cooldown = this.cooldown.get(message.author.id);
+            const cooldownTime = cooldown ? (cooldown - Date.now()) : 0;
+            if (cooldownTime > 0)
+                message.reply('You are in cooldown, need await ' + cooldownTime + 'ms');
+            //todo implements cooldown*/
             if (!cmd.enabledForMemberId(message.member.id))
                 message.channel.send(phoenixUser.t('command-error.disabled')).catch();
-            else if (!cmd.memberHasPermissions(message.member))
+            else if (!cmd.memberHasPermissions(message.channel as TextChannel, message.member))
                 message.channel.send(phoenixUser.t('command-error.missing-permissions')).catch();
             else if (!cmd.memberHasRolePermissions(message.member, server))
                 message.channel.send(phoenixUser.t('command-error.missing-server-permissions')).catch();
-            else if (!cmd.botHasPermissions(message.guild.me))
+            else if (!cmd.botHasPermissions(message.channel as TextChannel))
                 message.channel.send(phoenixUser.t('command-error.missing-bot-permissions')).catch();
+            else if (this.lock.isBusy(message.author.id)) //User already executing one command.
+                return false;
             else {
                 try {
-                    cmd.run({ message, args, server, phoenixUser });
+                    if (cmd.subCommands.length > 0) {
+                        const subCommandsMethods = cmd.subCommands.filter(command => command.methodName === args[0] || (command.methodAliases ? command.methodAliases.includes(args[0]) : false));
+                        if (subCommandsMethods.length > 0) {
+                            this.lock.acquire(message.author.id, cmd[subCommandsMethods[0].methodName]({ message, args: args.slice(1), server, phoenixUser }));
+                            return true;
+                        }
+                    }
+                    this.lock.acquire(message.author.id, async () => cmd.run({ message, args, server, phoenixUser }));
+                    //this.cooldown.set(message.author.id, Date.now() + 3_500);
+                    return true;
                 } catch (error) {
                     message.reply(phoenixUser.t('command-error.runtime-error', error)).catch();
+                    logger.error('Command runtime error', error);
                 }
             }
         }
-
         return true;
     }
 
     public addCommand(command: AbstractCommand) {
-        this.commands.set(command.name, command);
-        if (command.aliases.length > 0) {
-            command.aliases.forEach(aliase => {
-                this.aliases.set(aliase, command.name);
+        this.commands.set(command.name.toLowerCase(), command);
+        const aliases = Phoenix.getTextController().allT(`commands.${command.name}.name`);
+        if (aliases.length > 0) {
+            aliases.forEach(aliase => {
+                if (aliase !== command.name)
+                    this.aliases.set(aliase.toLowerCase(), command.name.toLowerCase());
             });
         }
     }
@@ -99,11 +130,17 @@ export default class CommandController {
         return this.commands.delete(command.name);
     }
 
-    public getCommands(): Map<string, AbstractCommand> {
+    public getCommands(): Collection<string, AbstractCommand> {
         return this.commands;
     }
 
-    public getAliases(): Map<any, any> {
+    public getAliases(): Collection<string, string> {
         return this.aliases;
     }
+}
+
+export interface ICommands{
+    enabled: boolean;
+    whitelist: string[];
+    blacklist: string[];
 }

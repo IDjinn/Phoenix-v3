@@ -14,8 +14,8 @@ export default class CounterModule {
     }
 
     private static updateChannelName(id: string, name: string, guild: Guild) {
-        let channel = guild.channels.cache.get(id);
-        if (channel && channel.name !== name)
+        const channel = guild.channels.cache.get(id);
+        if (channel && channel.manageable && channel.name !== name)
             channel.setName(name).catch();
     }
 }

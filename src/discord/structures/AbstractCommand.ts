@@ -1,14 +1,17 @@
-import { GuildMember, PermissionResolvable, Message } from "discord.js";
+import { GuildMember, PermissionResolvable, Message, GuildChannel } from "discord.js";
 import Server from "./Server";
 import PhoenixUser from "./PhoenixUser";
 import Constants from "../util/Constants";
 import PermissionsModule, { RolePermissions } from "../modules/PermissionsModule";
 
 export default abstract class AbstractCommand {
+    [x: string]: any;
     public readonly name: string;
     public readonly description: string;
     public readonly category: string;
     public readonly aliases: string[];
+    public readonly cooldown: number;
+    public readonly subCommands: ISubcommand[];
     public readonly permissionsNeed: PermissionResolvable[];
     public readonly botPermissionsNeed: PermissionResolvable[];
     public readonly rolePermissionsNeed: RolePermissions[];
@@ -17,9 +20,11 @@ export default abstract class AbstractCommand {
 
     constructor(props: ICommandProps) {
         this.name = props.name;
-        this.description = props.description;
         this.category = props.category;
-        this.aliases = props.aliases || [];
+        this.description = `commands.${this.name}.description`;
+        this.aliases = [];
+        this.cooldown = props.cooldown || 4_000;
+        this.subCommands = props.subCommands || [];
         this.permissionsNeed = props.permissionsNeed || [];
         this.botPermissionsNeed = props.botPermissionsNeed || [];
         this.rolePermissionsNeed = props.rolePermissionsNeed || [];
@@ -27,16 +32,20 @@ export default abstract class AbstractCommand {
         this.enabled = props.enabled || true;
     }
 
-    public abstract run(params: ICommandParameters): Promise<Message | Message[]> | Promise<void | any>;
+    public abstract run(params: ICommandParameters): Promise<Message | Message[]> | Promise<void | any> | void;
 
-    public memberHasPermissions(member: GuildMember): boolean {
+    public memberHasPermissions(channel: GuildChannel, member: GuildMember): boolean {
         if (this.permissionsNeed.length == 0)
             return true;
-        return member.hasPermission(this.permissionsNeed);
+        
+        return member.permissionsIn(channel.id).has(this.permissionsNeed);
     }
 
-    public botHasPermissions(bot: GuildMember): boolean {
-        return this.memberHasPermissions(bot);
+    public botHasPermissions(channel: GuildChannel): boolean {
+        if (!channel.guild || !channel.guild.me)
+            return false;
+        
+        return this.memberHasPermissions(channel, channel.guild.me);
     }
 
     public memberHasRolePermissions(member: GuildMember, server: Server): boolean {
@@ -51,15 +60,15 @@ export default abstract class AbstractCommand {
     }
 
     public enabledForMemberId(id: string): boolean {
-        return this.enabled || (this.onlyOwner && Constants.OWNERS_LIST.includes(id));
+        return this.onlyOwner ? Constants.OWNERS_LIST.includes(id) : this.enabled;
     }
 }
 
 export interface ICommandProps {
     name: string;
-    description: string;
     category: string;
-    aliases?: string[];
+    cooldown?: number;
+    subCommands?: ISubcommand[];
     permissionsNeed?: PermissionResolvable[];
     botPermissionsNeed?: PermissionResolvable[];
     rolePermissionsNeed?: RolePermissions[];
@@ -72,4 +81,9 @@ export interface ICommandParameters {
     args: string[];
     server: Server;
     phoenixUser: PhoenixUser;
+}
+
+export interface ISubcommand{
+    methodName: string;
+    methodAliases?: string[];
 }
