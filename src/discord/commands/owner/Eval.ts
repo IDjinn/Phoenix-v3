@@ -63,7 +63,6 @@ export default class EvalCommand extends AbstractCommand {
     constructor() {
         super({
             name: 'eval',
-            description: 'beep boop',
             onlyOwner: true,
             enabled: false,
             category: 'owner'
@@ -79,13 +78,13 @@ export default class EvalCommand extends AbstractCommand {
             const evaled = cleanEvaledCode(inspect(eval(`(async () => {${phoenixEval}\n${code}})()`)));
             message.reply(EmbedWithTitle('Sucesso', `Entrada \`\`\`js\n${message.cleanContent}\`\`\`\n\nSaída:\`\`\`js\n${evaled.length > 1900 ? evaled.slice(0, 1900) : evaled}\`\`\``));
             for (let i = 1900; i < evaled.length; i += 1900) {
-                await sleep(200);
+                sleep(200);
                 message.channel.send(SimpleEmbed(`\`\`\`js\n${evaled.slice(i, i + 1900)}\`\`\``));
             }
         } catch (error) {
             message.reply(EmbedWithTitle('Sucesso', `Entrada \`\`\`js\n${message.cleanContent}\`\`\`\n\nSaída:\`\`\`js\n${error.length > 1900 ? error.slice(0, 1900) : error}\`\`\``));
             for (let i = 1900; i < error.length; i += 1900) {
-                await sleep(200);
+                sleep(200);
                 message.channel.send(SimpleEmbed(`\`\`\`js\n${error.slice(i, i + 1900)}\`\`\``));
             }
         }
