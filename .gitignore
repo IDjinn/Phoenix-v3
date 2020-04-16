@@ -4,3 +4,4 @@ build/*
 yarn-error.log
 .theia/*
 /yarn.lock
+logs/*

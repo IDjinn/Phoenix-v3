@@ -1,7 +1,7 @@
 export default interface IConfig{
     token: string;
     defaultPrefix: string;
-    logLevel: number;
+    logLevel: string;
     database: {
         link: string
         user: string;

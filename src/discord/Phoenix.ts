@@ -7,6 +7,7 @@ import PhoenixUserController from './managers/PhoenixUserController';
 import TextController from './managers/TextController';
 import { connect as mongooseConnect, disconnect as mongooseDisconnect } from 'mongoose';
 import sleep from './util/Sleep';
+import logger from './util/logger/Logger';
 
 export default class Phoenix {
     private static configuration: IConfig = require('../../../config.json') as IConfig;
@@ -35,18 +36,36 @@ export default class Phoenix {
     });
 
     public init() {
+        let timer = Date.now();
         const { link, user, password } = Phoenix.getConfig().database;
-        mongooseConnect(link.replace('%user%', user).replace('%password%', password), { useNewUrlParser: true, useUnifiedTopology: true }).then(async () => console.log('Database ready')).catch(console.error);
-        Phoenix.getClient().login(Phoenix.getConfig().token).then(() => console.log('Logged on discord!')).catch(console.error);
-        Phoenix.getCommandController().init();
+        mongooseConnect(link.replace('%user%', user).replace('%password%', password), { useNewUrlParser: true, useUnifiedTopology: true }).then(() => logger.info('Database Ready')).catch(logger.error);
+        Phoenix.getClient().login(Phoenix.getConfig().token).then(() => logger.info('Logged on discord')).catch(logger.error);
         Phoenix.getTextController().init();
-        Phoenix.getClient().on('ready', async () => {
-            await sleep(1_000);
+        logger.debug(`Text controller ready at ${Date.now() - timer}ms.`);
+        timer = Date.now();
+        Phoenix.getCommandController().init();
+        logger.debug(`Command controller ready at ${Date.now() - timer}ms.`);
+        Phoenix.getClient().on('ready', () => {
+            sleep(1_000);
+            timer = Date.now();
             Phoenix.getServerController().init();
+            logger.debug(`Server controller ready at ${Date.now() - timer}ms.`);
+            timer = Date.now();
             Phoenix.getPhoenixUserController().init();
-            await sleep(1_000);
+            logger.debug(`PhoenixUser controller ready at ${Date.now() - timer}ms.`);
+            sleep(1_000);
+            timer = Date.now();
             Phoenix.getEventController().init();
-            console.log('ready');
+            logger.debug(`Event controller ready at ${Date.now() - timer}ms.`);
+            /*
+            for (const server of Phoenix.getServerController().getServers().values()) {
+                CounterModule.updateCounters(server);
+            }*/
+            if (Phoenix.getConfig().website.enabled) {
+                logger.debug('Loading website');
+                require('../website/website');
+            }
+            logger.info('Ready');
         });
     }
 
