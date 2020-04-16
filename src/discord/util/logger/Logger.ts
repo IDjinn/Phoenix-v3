@@ -1,27 +1,16 @@
-import Phoenix from "../../Phoenix";
+import winston from 'winston';
 import moment from 'moment';
+import { join as pathJoin } from 'path';
+const config = require('../../../../../config.json'); //Need it, because it was called after initializated
+const logger = winston.createLogger({
+    level: config.logLevel,
+    transports: [
+        new winston.transports.Console(),
+        new winston.transports.File({ filename: pathJoin(__dirname, '../../../../logs') + '/errors.log', level: 'error' }),
+        new winston.transports.File({ filename: pathJoin(__dirname, '../../../../logs') + '/debug.log', level: 'debug' }),
+        new winston.transports.File({ filename: pathJoin(__dirname, '../../../../logs') + '/phoenix.log', level: 'info' }),
+    ],
+    format: winston.format.printf(log => `[${moment().format(`h:mm:ss${config.logLevel === 'debug' ? ':SSS' : ''}`)}] [${log.level.toUpperCase()}] - ${log.message}`),
+});
 
-export default class Logger {
-    private className: string;
-    constructor(className: string){
-        this.className = className;
-    }
-    public debug(message: string, _args?: string[]) {
-        if (Phoenix.getConfig().logLevel < LogLevel.DEBUG)
-            return;
-        
-        this.print(message, LogLevel.DEBUG)
-    }
-
-    public print(str: string, logLevel: LogLevel) {
-        console.log(`[${moment().format('h:mm:ss:SSS')}] [${this.className}] [${LogLevel[logLevel]}] ${str}`);
-    }
-}
-
-export enum LogLevel{
-    INFO,
-    WARN,
-    ERROR,
-    CRITICAL,
-    DEBUG
-}
+export default logger;

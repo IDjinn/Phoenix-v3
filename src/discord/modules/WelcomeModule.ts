@@ -9,7 +9,7 @@ export default class WelcomeModule {
             let channel = member.guild.channels.cache.get(server.getWelcome().join.channel);
             if (channel instanceof TextChannel) {
                 if (server.getWelcome().join.embed)
-                    channel.send(server.getWelcome().join.embed).catch();
+                    channel.send(JSON.parse(server.getWelcome().join.embed.replace(/{member}/gi, member.toString()).replace(/{guild}/gi, member.guild.name))).catch();
                 else
                     channel.send(EmbedWithTitle('User Joined', `The user ${member.toString()} joined in the ${member.guild.name} server.`)).catch();
             }
@@ -23,7 +23,7 @@ export default class WelcomeModule {
             let channel = member.guild.channels.cache.get(server.getWelcome().leave.channel);
             if (channel instanceof TextChannel) {
                 if (server.getWelcome().leave.embed)
-                    channel.send(server.getWelcome().leave.embed).catch();
+                channel.send(JSON.parse(server.getWelcome().leave.embed.replace(/{user}/gi, member.user.username).replace(/{guild}/gi, member.guild.name))).catch();
                 else
                     channel.send(EmbedWithTitle('User Leave', `The user ${member.toString()} leaved in the ${member.guild.name} server.`)).catch();
             }
@@ -33,17 +33,17 @@ export default class WelcomeModule {
 
 export interface IWelcome {
     join: {
-        enabled: boolean
-        channel: string
-        embed: JSON
+        enabled: boolean;
+        channel: string;
+        embed: string;
     },
     leave: {
-        enabled: boolean
-        channel: string
-        embed: JSON
+        enabled: boolean;
+        channel: string;
+        embed: string;
     },
     autorole: {
-        enabled: boolean
-        roles: string[]
+        enabled: boolean;
+        roles: string[];
     },
 }

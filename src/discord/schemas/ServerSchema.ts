@@ -140,7 +140,7 @@ const ServerSchema = new Schema({
                 default: ''
             },
             embed: {
-                type: JSON,
+                type: String,
                 default: ''
             }
         },
@@ -154,7 +154,7 @@ const ServerSchema = new Schema({
                 default: ''
             },
             embed: {
-                type: JSON,
+                type: String,
                 default: ''
             }
         },

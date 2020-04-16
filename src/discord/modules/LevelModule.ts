@@ -20,10 +20,8 @@ export default class LevelModule {
             !PermissionsModule.hasPermission(message.member.roles.cache.array(), server.getRoles(), RolePermissions.bypassXpChannels))
             return;
 
-        const currentILevel = server.getLevel().levels.find(x => x.level === user.getLevel());
-        //server multiplier === donator server, more xp per message? todo this. (max xp p/ message ~ 15?)
-        const winXp = Math.floor(Math.random() * 3 + 1) * user.getXpMultiplier() *
-            (currentILevel ? currentILevel.xpMultiplier * server.getLevel().serverXpMultiplier : server.getLevel().serverXpMultiplier);
+        //const currentILevel = server.getLevel().levels.find(x => x.level === user.getLevel());
+        const winXp = Math.floor(Math.random() * 3 + 1);
         user.setXp(user.getXp() + winXp);
         if (user.getXp() > Constants.getXpFromLevel(user.getLevel() + 1)) {
             user.setLevel(user.getLevel() + 1);

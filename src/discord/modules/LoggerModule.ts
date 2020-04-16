@@ -46,6 +46,12 @@ export default class LoggerModule {
         }
     }
 
+    public static onRoleUpdated(server: Server, log: any, changed: string, role: Role) {
+        if (server.getLogger().roleUpdatedEnabled) {
+            this.sendEmbed(server, EmbedWithTitle('Channel Updated', `Name: ${role.name}\nUpdated by: <@${log.executor.id}>\nMention: <@&${role.id}>\n\nUpdates: \`${changed.trim()}\``))
+        }
+    }
+
     public static onGuildUpdated(server: Server, log: any, changed: string) {
         if (server.getLogger().guildUpdatedEnabled) {
             this.sendEmbed(server, EmbedWithTitle('Guild Config Updated', `Updated by: ${log.executor.username}\nUpdates: \`${changed.trim()}\`\nTag: ${log.executor.username + "#" + log.executor.discriminator}\nMention: <@${log.executor.id}>`))
