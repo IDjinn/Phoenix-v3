@@ -235,6 +235,6 @@ export default class EventController {
     }
 
     public destroy() {
-
+        Phoenix.getClient().removeAllListeners();
     }
 }
