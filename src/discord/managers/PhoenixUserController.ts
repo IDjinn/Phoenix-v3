@@ -16,9 +16,7 @@ export default class PhoenixUserController {
     }
 
     public destroy(): void {
-        let user;
-        while (user = this.users.values().next().value as PhoenixUser)
-            user.save();
+        //não precisa disso
     }
 
     public createUser(userData: any) :PhoenixUser {
