@@ -76,6 +76,9 @@ export default class CommandController {
         }*/
 
         const args = message.content.slice(usingPrefix.length).split(' ');
+        if (args.length === 0)
+            return false;
+        
         const command = args.shift()!.toLowerCase();
         const cmd = this.commands.get(command) || this.commands.get(this.aliases.get(command) + '');
         if (cmd instanceof AbstractCommand) {/*
@@ -96,10 +99,11 @@ export default class CommandController {
                 return false;
             else {
                 try {
-                    if (cmd.subCommands.length > 0) {
-                        const subCommandsMethods = cmd.subCommands.filter(command => command.methodName === args[0] || (command.methodAliases ? command.methodAliases.includes(args[0]) : false));
-                        if (subCommandsMethods.length > 0) {
-                            this.lock.acquire(message.author.id, cmd[subCommandsMethods[0].methodName]({ message, args: args.slice(1), server, phoenixUser }));
+                    if (cmd.subCommands.length > 0 && args.length > 0) {
+                        const subCommand = args[0].toLowerCase();
+                        const subCommandsMethods = cmd.subCommands.filter(command => command.methodName.toLowerCase() === subCommand || (command.methodAliases ? command.methodAliases.includes(subCommand) : false));
+                        if (subCommandsMethods.length > 0 && typeof cmd[subCommandsMethods[0].methodName] === 'function') {
+                            this.lock.acquire(message.author.id, async () => cmd[subCommandsMethods[0].methodName]({ message, args: args.slice(1), server, phoenixUser }));
                             return true;
                         }
                     }
