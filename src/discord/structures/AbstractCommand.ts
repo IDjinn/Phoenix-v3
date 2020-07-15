@@ -3,6 +3,7 @@ import Server from "./Server";
 import PhoenixUser from "./PhoenixUser";
 import Constants from "../util/Constants";
 import PermissionsModule, { RolePermissions } from "../modules/PermissionsModule";
+import CommandContext from "./CommandContext";
 
 export default abstract class AbstractCommand {
     [x: string]: any;
@@ -11,11 +12,13 @@ export default abstract class AbstractCommand {
     public readonly category: string;
     public readonly aliases: string[];
     public readonly cooldown: number;
+    public readonly cooldownType: CooldownType;
     public readonly subCommands: ISubcommand[];
     public readonly permissionsNeed: PermissionResolvable[];
     public readonly botPermissionsNeed: PermissionResolvable[];
     public readonly rolePermissionsNeed: RolePermissions[];
     public readonly onlyOwner: boolean;
+    public readonly dmEnabled: boolean;
     public readonly enabled: boolean;
 
     constructor(props: ICommandProps) {
@@ -23,12 +26,14 @@ export default abstract class AbstractCommand {
         this.category = props.category;
         this.description = `commands.${this.name}.description`;
         this.aliases = [];
-        this.cooldown = props.cooldown || 4_000;
+        this.cooldown = props.cooldown || 3_500;
+        this.cooldownType = props.cooldownType || CooldownType.AUTHOR;
         this.subCommands = props.subCommands || [];
         this.permissionsNeed = props.permissionsNeed || [];
         this.botPermissionsNeed = props.botPermissionsNeed || [];
         this.rolePermissionsNeed = props.rolePermissionsNeed || [];
         this.onlyOwner = props.onlyOwner || false;
+        this.dmEnabled = props.dmEnabled || false;
         this.enabled = props.enabled || true;
     }
 
@@ -59,7 +64,7 @@ export default abstract class AbstractCommand {
         return true;
     }
 
-    public enabledForMemberId(id: string): boolean {
+    public enabledForContext(id: string): boolean {
         return this.onlyOwner ? Constants.OWNERS_LIST.includes(id) : this.enabled;
     }
 }
@@ -68,11 +73,13 @@ export interface ICommandProps {
     name: string;
     category: string;
     cooldown?: number;
+    cooldownType?: CooldownType;
     subCommands?: ISubcommand[];
     permissionsNeed?: PermissionResolvable[];
     botPermissionsNeed?: PermissionResolvable[];
     rolePermissionsNeed?: RolePermissions[];
     onlyOwner?: boolean;
+    dmEnabled?: boolean;
     enabled?: boolean;
 }
 
@@ -81,9 +88,17 @@ export interface ICommandParameters {
     args: string[];
     server: Server;
     phoenixUser: PhoenixUser;
+    ctx: CommandContext;
 }
 
 export interface ISubcommand{
     methodName: string;
     methodAliases?: string[];
+}
+
+export enum CooldownType {
+    AUTHOR,
+    CHANNEL,
+    GUILD,
+    CLIENT
 }

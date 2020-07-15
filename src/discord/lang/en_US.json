@@ -36,11 +36,22 @@
     },
     "command-error": {
         "my-mention": "Hello there, my name is Phoenix and my prefix in this server is `{0}`.",
+        "await-cooldown": "Hey, calm down! You need await the end of your `{0}` cooldown to can execute other command again.",
         "disabled": "This command is disabled, or only for creator use.",
         "missing-permissions": "You do not have these permissions need to run this command: `{0}`.",
         "missing-bot-permissions": "I do not have these permissions need to run this command: `{0}`.",
         "missing-server-permissions": "You do not have these costum permissions to run this command: `{0}`.",
-        "runtime-error": "Error while running this command: `{0!invites}`"
+        "runtime-error": "Error while running this command: {0!invites}",
+        "missing-member-argument": "You need mention a member to execute this command.",
+        "missing-user-argument": "You need mention a user to execute this command.",
+        "missing-channel-argument": "You need mention a channel to execute this command.",
+        "missing-role-argument": "You need mention a role to execute this command.",
+        "missing-emoji-argument": "You need mention a emoji to execute this command.",
+        "member-not-found": "I don't know any member called as `{0!invites}`!",
+        "user-not-found": "I don't know any user called as `{0!invites}`!",
+        "channel-not-found": "I don't know any channel called as `{0!invites}`!",
+        "role-not-found": "I don't know any role called as `{0!invites}`!",
+        "emoji-not-found": "I don't know any emoji called as `{0!invites}`!"
     },
     "commands": {
         "warn": {
@@ -160,6 +171,12 @@
             "description": "Show a list with all commands.",
             "aliases": [],
             "usage": "{0}commands"
+        },
+        "reload":{
+            "name": "reload",
+            "description": "Beep Boop.",
+            "aliases": [],
+            "usage": "{0}reload [target]"
         }
     }
 }

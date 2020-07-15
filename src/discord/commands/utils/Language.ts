@@ -1,5 +1,5 @@
 import AbstractCommand, { ICommandParameters } from "../../structures/AbstractCommand";
-import { Language } from "../../managers/TextController";
+import { Language } from "../../controllers/TextController";
 import Phoenix from "../../Phoenix";
 
 export default class LanguageCommand extends AbstractCommand {

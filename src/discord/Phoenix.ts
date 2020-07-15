@@ -1,10 +1,10 @@
 import IConfig from '../../IConfig';
 import { Client } from 'discord.js';
-import CommandController from './managers/CommandController';
-import EventController from './managers/EventController';
-import ServerController from './managers/ServerController';
-import PhoenixUserController from './managers/PhoenixUserController';
-import TextController from './managers/TextController';
+import CommandController from './controllers/CommandController';
+import EventController from './controllers/EventController';
+import ServerController from './controllers/ServerController';
+import PhoenixUserController from './controllers/PhoenixUserController';
+import TextController from './controllers/TextController';
 import { connect as mongooseConnect, disconnect as mongooseDisconnect } from 'mongoose';
 import sleep from './util/Sleep';
 import logger from './util/logger/Logger';

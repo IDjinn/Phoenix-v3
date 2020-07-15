@@ -35,14 +35,14 @@ export default class AutomodModule {
         if (!message.member || !message.guild || !message.guild.me)
             return false;
 
-        if (!message.content.match(Constants.DISCORD_INVITES_REGEX))
-            return false;
-
         if (server.getAutomod().invites.whitelist.includes(message.channel.id))
             return false;
 
         if (server.getAutomod().invites.blacklist.includes(message.channel.id) &&
             PermissionsModule.hasPermission(roles, server.getRoles(), RolePermissions.sendInivites))
+            return false;
+
+        if (!message.content.match(Constants.DISCORD_INVITES_REGEX))
             return false;
 
         message.delete().catch();
@@ -54,14 +54,14 @@ export default class AutomodModule {
         if (!message.member || !message.guild || !message.guild.me)
             return false;
 
-        if (!message.content.match(Constants.LINKS_REGEX))
-            return false;
-
         if (server.getAutomod().invites.whitelist.includes(message.channel.id))
             return false;
 
         if (server.getAutomod().invites.blacklist.includes(message.channel.id) &&
             PermissionsModule.hasPermission(roles, server.getRoles(), RolePermissions.sendInivites))
+            return false;
+
+        if (!message.content.match(Constants.LINKS_REGEX))
             return false;
 
         message.delete().catch();

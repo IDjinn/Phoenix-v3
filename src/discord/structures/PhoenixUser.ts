@@ -1,6 +1,6 @@
 import { User } from "discord.js";
 import PhoenixUserSchema, { IPhoenixUser } from "../schemas/PhoenixUserSchema";
-import { Language } from "../managers/TextController";
+import { Language } from "../controllers/TextController";
 import Phoenix from "../Phoenix";
 
 export default class PhoenixUser {

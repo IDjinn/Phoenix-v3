@@ -5,9 +5,9 @@ import { IRole } from '../modules/PermissionsModule';
 import { ICounter } from '../modules/CounterModule';
 import { ILevelModule } from '../modules/LevelModule';
 import { IWelcome } from '../modules/WelcomeModule';
-import { Language } from '../managers/TextController';
+import { Language } from '../controllers/TextController';
 
-const ServerSchema = new Schema({
+const ServerSchema = new Schema<IServer>({
     _id: String,
     prefix: {
         type: String,

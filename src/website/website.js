@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const routes = require('./routes');
 const config = require('../../../config.json');
+const cookieParser = require('cookie-parser');
 
 class Website {
     constructor() {
@@ -10,6 +11,7 @@ class Website {
         this.app.set('views', `${__dirname}/views`);
         this.app.set('view engine', 'ejs');
         this.app.use(bodyParser.json());
+        this.app.use(cookieParser());
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use('/public', express.static(`${__dirname}/public`/*, { maxAge: 7 * 24 * 60 * 60 * 1000 }*/));
         this.app.use(routes);

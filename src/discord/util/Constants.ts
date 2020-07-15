@@ -6,5 +6,6 @@ export default class Constants {
     public static CAPS_LOCK_REGEX = /([A-Z])\1{2,}/gi;
     public static DISCORD_INVITES_REGEX = /discord(?:app\.com\/invite|\.gg(?:\/invite)?)\/([\w-]{2,255})/gi;
     public static LINKS_REGEX = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
-    public static VERSION = '0.0.1 - ALPHA'
+    public static EMOJIS_REGEX = /<(?::a)|(?::)[a-zA-Z]+:(\d+)>/g;
+    public static VERSION = '0.0.1 - ALPHA';
 }

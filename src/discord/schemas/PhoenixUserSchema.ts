@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
-import { Language } from '../managers/TextController';
+import { Language } from '../controllers/TextController';
 
-const PhoenixUserSchema = new Schema({
+const PhoenixUserSchema = new Schema<IPhoenixUser>({
     id: { type: String, required: true },
     level: { type: Number, default: 1 },
     xp: { type: Number, default: 0 },

@@ -27,7 +27,6 @@ var Server = require('../../structures/Server').default;
 
 //Util
 var EmbedFactory = require('../../util/EmbedFactory').default;
-var Permissions = require('../../util/Permissions').default;
 var sleep = require('../../util/Sleep').default;
 var Constants = require('../../util/Constants').default;
 
@@ -75,14 +74,14 @@ export default class EvalCommand extends AbstractCommand {
                 return message.channel.send(SimpleEmbed('Você precisa colocar algum código para ser executado!'));
             
             const code = args.join(' ');
-            const evaled = cleanEvaledCode(inspect(eval(`(async () => {${phoenixEval}\n${code}})()`)));
-            message.reply(EmbedWithTitle('Sucesso', `Entrada \`\`\`js\n${message.cleanContent}\`\`\`\n\nSaída:\`\`\`js\n${evaled.length > 1900 ? evaled.slice(0, 1900) : evaled}\`\`\``));
+            const evaled = cleanEvaledCode(inspect(eval(`${phoenixEval}\n${code}`)));
+            message.reply(EmbedWithTitle('Sucesso', `Entrada \`\`\`js\n${message.cleanContent}\`\`\`\nSaída:\`\`\`js\n${evaled.length > 1900 ? evaled.slice(0, 1900) : evaled}\`\`\``));
             for (let i = 1900; i < evaled.length; i += 1900) {
                 sleep(200);
                 message.channel.send(SimpleEmbed(`\`\`\`js\n${evaled.slice(i, i + 1900)}\`\`\``));
             }
         } catch (error) {
-            message.reply(EmbedWithTitle('Sucesso', `Entrada \`\`\`js\n${message.cleanContent}\`\`\`\n\nSaída:\`\`\`js\n${error.length > 1900 ? error.slice(0, 1900) : error}\`\`\``));
+            message.reply(EmbedWithTitle('Erro', `Entrada \`\`\`js\n${message.cleanContent}\`\`\`\nSaída:\`\`\`js\n${error.length > 1900 ? error.slice(0, 1900) : error}\`\`\``));
             for (let i = 1900; i < error.length; i += 1900) {
                 sleep(200);
                 message.channel.send(SimpleEmbed(`\`\`\`js\n${error.slice(i, i + 1900)}\`\`\``));

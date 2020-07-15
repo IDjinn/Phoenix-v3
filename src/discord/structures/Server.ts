@@ -6,9 +6,9 @@ import { Guild, Collection } from "discord.js";
 import { ILevelModule } from "../modules/LevelModule";
 import { ICounter } from "../modules/CounterModule";
 import { IWelcome } from "../modules/WelcomeModule";
-import { Language } from "../managers/TextController";
+import { Language } from "../controllers/TextController";
 import Phoenix from "../Phoenix";
-import { ICommands } from "../managers/CommandController";
+import { ICommands } from "../controllers/CommandController";
 
 export default class Server {
     public readonly id: string;

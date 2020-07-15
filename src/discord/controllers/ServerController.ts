@@ -11,7 +11,14 @@ export default class ServerController {
         this.servers.clear();
         ServerSchema.find({}).then((servers: any[]) => {
             if (servers)
-                Promise.all(servers.map(serverData => this.createServer(serverData, Phoenix.getClient().guilds.cache.get(serverData._id)))).catch(logger.error);
+                Promise.all(servers.map(serverData => {
+                    const guild = Phoenix.getClient().guilds.cache.get(serverData._id);
+                    if (!guild) {
+                        ServerSchema.deleteMany({ _id: serverData._id });
+                        return;
+                    }
+                    this.createServer(serverData, guild);
+                })).catch(logger.error);
         }).catch(logger.error);
     }
 
@@ -20,13 +27,10 @@ export default class ServerController {
         this.servers.save();*/
     }
 
-    public createServer(serverData: any, guild?: Guild): Server {
-        if (serverData && guild instanceof Guild) {
-            const server = new Server(guild, serverData);
-            this.servers.set(serverData._id, server);
-            return server;
-        }
-        throw new Error(`Guild from ServerData ${serverData._id} === null //delete?`);
+    public createServer(serverData: any, guild: Guild): Server {
+        const server = new Server(guild, serverData);
+        this.servers.set(serverData._id, server);
+        return server;
     }
 
     public getServer(id: string) : Server | undefined {
@@ -40,7 +44,7 @@ export default class ServerController {
         
         const dbServer = await ServerSchema.findOne({ id: id });
         if (dbServer)
-            return this.createServer(dbServer);
+            return this.createServer(dbServer, guild);
         
         const serverData = new ServerSchema({ _id: id }).save() as any;
         this.servers.set(id, new Server(guild, serverData));

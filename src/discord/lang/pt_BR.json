@@ -36,11 +36,22 @@
     },
     "command-error": {
         "my-mention": "Olá, sou o Phoenix e nesse servidor meu prefixo é `{0}`.",
+        "await-cooldown": "Opa, pera aí! Você precisa aguardar o seu cooldown de `{0}` acabar para poder executar algum comando novamente.",
         "disabled": "Esse comando está desativado ou para uso apenas do criador.",
         "missing-permissions": "Você não tem as seguintes permissões para executar esse comando: `{0}`.",
         "missing-bot-permissions": "Eu não tenho as seguintes permissões para executar esse comando: `{0}`.",
         "missing-server-permissions": "Você não tem as seguintes permições customizadas para executar esse comando: `{0}`.",
-        "runtime-error": "Erro enquanto executava esse comando: {0!invites}"
+        "runtime-error": "Erro enquanto executava esse comando: {0!invites}",
+        "missing-member-argument": "Você precisa mencionar um membro para executar esse comando.",
+        "missing-user-argument": "Você precisa mencionar um usuário para executar esse comando.",
+        "missing-channel-argument": "Você precisa mencionar um canal para executar esse comando.",
+        "missing-role-argument": "Você precisa mencionar um cargo para executar esse comando.",
+        "missing-emoji-argument": "Você precisa mencionar um emoji para executar esse comando.",
+        "member-not-found": "Não consegui encontrar nenhum membro chamado de `{0!invites}`!",
+        "user-not-found": "Não consegui encontrar nenhum usuário chamado de `{0!invites}`!",
+        "channel-not-found": "Não consegui encontrar nenhum canal chamado de `{0!invites}`!",
+        "role-not-found": "Não consegui encontrar nenhum cargo chamado de `{0!invites}`!",
+        "emoji-not-found": "Não consegui encontrar nenhum emoji emoji de `{0!invites}`!"
     },
     "commands": {
         "warn": {
@@ -148,6 +159,12 @@
             "aliases": [],
             "usage": "{0}ping",
             "sucess": "Pong! {0}ms."
+        },
+        "reload":{
+            "name": "reload",
+            "description": "Beep Boop.",
+            "aliases": [],
+            "usage": "{0}reload [target]"
         }
     }
 }

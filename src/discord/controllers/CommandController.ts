@@ -1,4 +1,4 @@
-import AbstractCommand from "../structures/AbstractCommand";
+import AbstractCommand, { CooldownType } from "../structures/AbstractCommand";
 import PingCommand from "../commands/others/Ping";
 import { Message, Collection, TextChannel } from "discord.js";
 import Phoenix from "../Phoenix";
@@ -20,11 +20,15 @@ import ClearCommand from "../commands/moderator/Clear";
 import ReloadCommand from "../commands/owner/Reload";
 import logger from "../util/logger/Logger";
 import AsyncLock from 'async-lock';
+import ConfigCommand from "../commands/administrator/Config";
+import CommandContext from "../structures/CommandContext";
+import Constants from "../util/Constants";
 
 export default class CommandController {
     private commands = new Collection<string, AbstractCommand>();
     private aliases = new Collection<string, string>();
-    //private cooldown =new Collection<string, number>();
+    private cooldown = new Collection<string, number>();
+    private blacklist = new Set();
     private lock = new AsyncLock();
     public init() {
         this.addCommand(new PingCommand());
@@ -41,6 +45,7 @@ export default class CommandController {
         this.addCommand(new IAmCommand());
         this.addCommand(new ClearCommand());
         this.addCommand(new ReloadCommand());
+        this.addCommand(new ConfigCommand());
     }
     public destroy() {
         this.commands.clear();
@@ -49,6 +54,9 @@ export default class CommandController {
 
     public handledCommand(message: Message, server: Server, phoenixUser: PhoenixUser): boolean {
         if (!message.guild || !message.guild.me || !message.member || !server || !phoenixUser)
+            return false;
+        
+        if (this.lock.isBusy(message.author.id)) //User already executing one command.
             return false;
         
         if (message.content.startsWith('> ')) //Ignore quotes
@@ -81,41 +89,71 @@ export default class CommandController {
         
         const command = args.shift()!.toLowerCase();
         const cmd = this.commands.get(command) || this.commands.get(this.aliases.get(command) + '');
-        if (cmd instanceof AbstractCommand) {/*
-            const cooldown = this.cooldown.get(message.author.id);
-            const cooldownTime = cooldown ? (cooldown - Date.now()) : 0;
-            if (cooldownTime > 0)
-                message.reply('You are in cooldown, need await ' + cooldownTime + 'ms');
-            //todo implements cooldown*/
-            if (!cmd.enabledForMemberId(message.member.id))
-                message.channel.send(phoenixUser.t('command-error.disabled')).catch();
-            else if (!cmd.memberHasPermissions(message.channel as TextChannel, message.member))
-                message.channel.send(phoenixUser.t('command-error.missing-permissions')).catch();
-            else if (!cmd.memberHasRolePermissions(message.member, server))
-                message.channel.send(phoenixUser.t('command-error.missing-server-permissions')).catch();
-            else if (!cmd.botHasPermissions(message.channel as TextChannel))
-                message.channel.send(phoenixUser.t('command-error.missing-bot-permissions')).catch();
-            else if (this.lock.isBusy(message.author.id)) //User already executing one command.
-                return false;
-            else {
-                try {
-                    if (cmd.subCommands.length > 0 && args.length > 0) {
-                        const subCommand = args[0].toLowerCase();
-                        const subCommandsMethods = cmd.subCommands.filter(command => command.methodName.toLowerCase() === subCommand || (command.methodAliases ? command.methodAliases.includes(subCommand) : false));
-                        if (subCommandsMethods.length > 0 && typeof cmd[subCommandsMethods[0].methodName] === 'function') {
-                            this.lock.acquire(message.author.id, async () => cmd[subCommandsMethods[0].methodName]({ message, args: args.slice(1), server, phoenixUser }));
-                            return true;
+        if (cmd instanceof AbstractCommand) {
+            const ctx = new CommandContext(message, phoenixUser, server);
+            this.lock.acquire(message.author.id, async () => {
+                if (await this.needAwaitCooldown(ctx, cmd.cooldownType))
+                    return false;
+                else if (!cmd.enabledForContext(ctx.author.id))
+                    await ctx.replyT('command-error.disabled').catch();
+                else if (!cmd.memberHasPermissions(ctx.channel as TextChannel, ctx.member))
+                    await ctx.replyT('command-error.missing-permissions');
+                else if (!cmd.memberHasRolePermissions(ctx.member, server))
+                    await ctx.replyT('command-error.missing-server-permissions');
+                else if (!cmd.botHasPermissions(ctx.channel as TextChannel))
+                    await ctx.replyT('command-error.missing-bot-permissions');
+                else {
+                    try {
+                        if (cmd.subCommands.length > 0 && args.length > 0) {
+                            const subCommand = args[0].toLowerCase();
+                            const subCommandsMethods = cmd.subCommands.filter(command => command.methodName.toLowerCase() === subCommand || (command.methodAliases ? command.methodAliases.includes(subCommand) : false));
+                            if (subCommandsMethods.length > 0 && typeof cmd[subCommandsMethods[0].methodName] === 'function') {
+                                await cmd[subCommandsMethods[0].methodName]({ message, args: args.slice(1), server, phoenixUser, ctx });
+                                return true;
+                            }
                         }
+                        //this.lock.acquire(message.author.id, () => cmd.run({ message, args, server, phoenixUser, ctx }));
+                        await cmd.run({ message, args, server, phoenixUser, ctx });
+                        return true;
+                    } catch (error) {
+                        await ctx.replyT('command-error.runtime-error', error);
+                        logger.error('Command runtime error: ', error);
                     }
-                    this.lock.acquire(message.author.id, async () => cmd.run({ message, args, server, phoenixUser }));
-                    //this.cooldown.set(message.author.id, Date.now() + 3_500);
-                    return true;
-                } catch (error) {
-                    message.reply(phoenixUser.t('command-error.runtime-error', error)).catch();
-                    logger.error('Command runtime error', error);
                 }
-            }
+                return true;
+            });
         }
+        return false;
+    }
+
+    private async needAwaitCooldown(ctx: CommandContext, cooldownType: CooldownType) {
+        if (Constants.OWNERS_LIST.includes(ctx.author.id))
+            return false; // Owners not need await cooldowns.
+        
+        let awaiterID;
+        switch(cooldownType){
+            case CooldownType.AUTHOR:
+                awaiterID = ctx.author.id;
+                break;
+            case CooldownType.CHANNEL:
+                awaiterID = ctx.channel.id;
+                break;
+            case CooldownType.GUILD:
+                awaiterID = ctx.guild.id;
+                break;
+            case CooldownType.CLIENT:
+                awaiterID = ctx.client.user?.id;
+        }
+        const cooldown = this.cooldown.get(awaiterID + '');
+        const cooldownTime = cooldown ? (cooldown - Date.now()) : 0;
+        if (cooldownTime <= 0) {
+            this.blacklist.delete(awaiterID);
+            return false;
+        }
+
+        if (!this.blacklist.has(awaiterID))
+            await ctx.replyT('command-error.await-cooldown', (cooldownTime / 1000).toFixed(1) + 's');
+        this.blacklist.add(awaiterID);
         return true;
     }
 

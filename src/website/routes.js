@@ -56,7 +56,8 @@ routes.get('/invite', (req, res) => {
 
 routes.get('/guilds', (req, res) => {
     try {
-        const { userInfo, guilds } = cache.get(req.query.token);
+        const token = req.cookies['token'];
+        const { userInfo, guilds } = cache.get(token);
         if (!userInfo || !guilds)
             return res.json({ code: 404, message: 'af' });//todo remover isso
         return res.render('guilds', { userInfo, guilds });
@@ -66,7 +67,16 @@ routes.get('/guilds', (req, res) => {
 });
 
 routes.get('/dashboard/:guild/index', (req, res) => {
-    return res.redirect(phoenix.INVITE);
+    const token = req.cookies['token'];
+    if (token && cache.has(token)) {
+        const { userInfo, guilds } = cache.get(token);
+        if (!userInfo || !guilds)
+            return res.json({ code: 404, message: 'parece que n existe nd aq' });//todo remover isso
+        if(guilds[reqz])
+        console.log(userInfo, guilds)
+        return res.send('ok');
+    }
+    return res.redirect(403, '/index');
 });
 
 routes.get('/api/discord/callback', async (req, res) => {
@@ -80,12 +90,12 @@ routes.get('/api/discord/callback', async (req, res) => {
             headers: {
                 authorization: `${info.token_type} ${info.access_token}`,
             },
-        }).then((userResponse) => userResponse?.json());
+        }).then((userResponse) => userResponse ? userResponse.json() : userResponse);
         let guildsInfo = await fetch('https://discordapp.com/api/users/@me/guilds', {
             headers: {
                 authorization: `${info.token_type} ${info.access_token}`,
             },
-        }).then((guildsResponse) => guildsResponse?.json());
+        }).then((guildsResponse) => guildsResponse ? guildsResponse.json() : guildsResponse);
     
         //make one array
         guildsInfo = isArray(guildsInfo) ? guildsInfo : [guildsInfo];
@@ -93,9 +103,9 @@ routes.get('/api/discord/callback', async (req, res) => {
         const encrypt = md5(userInfo.id + code);
         if (cache.has(encrypt)) cache.delete(encrypt);
         cache.set(encrypt, { userInfo, guilds: guildsInfo.filter(g => g.owner || new Permissions(g.permissions).has('MANAGE_GUILD')) });
-        return res.redirect('../../guilds?token=' + encrypt);
+        return res.cookie('token', encrypt).redirect('../../guilds');
     } catch (error) {
-        return res.status(500).json({code: 500, message: 'error', error: error.toString()})
+        return res.status(500).json({ code: 500, message: 'error', error: error.toString() })
     }
 });
 
