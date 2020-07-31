@@ -9,7 +9,7 @@ export default class TextController {
     private texts = new Collection<Language, any>();
     private format = stringFormatCreate({
         invites: str => typeof str === 'string' ? str.replace(Constants.DISCORD_INVITES_REGEX, '*') : str,
-        links: str => typeof str === 'string' ?  str.replace(Constants.DISCORD_INVITES_REGEX, '*').replace(Constants.LINKS_REGEX, '*') : str
+        links: str => typeof str === 'string' ? str.replace(Constants.DISCORD_INVITES_REGEX, '*').replace(Constants.LINKS_REGEX, '*') : str
     });
     public init() {
         const languagesPath = pathJoin(__dirname, '../lang');
@@ -34,7 +34,7 @@ export default class TextController {
         }
         catch (error) {
             logger.error(`Error while trying find the key ${key} from language ${this.parseLanguageToString(lang)}: `, error);
-            return 'undefined';
+            return `{${lang}-${key}}`;
         }
     }
 

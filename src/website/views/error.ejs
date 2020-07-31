@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        setTimeout(() => window.location.replace('/'), 1_500);
+    </script>
+    <title><%= error.code %> - <%=error.title%></title>
+</head>
+
+<body>
+    <h1><%= error.code %> - <%=error.title%></h1>
+    <p><%= error.message %></p>
+    <br>
+    <br>
+    <p>You'll redirected in fews seconds to home page.</p>
+</body>
+
+</html>

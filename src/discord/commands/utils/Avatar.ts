@@ -12,9 +12,6 @@ export default class AvatarCommand extends AbstractCommand {
 
     public async run({ message, ctx }: ICommandParameters) {
         const member = ctx.getMember(false, true);
-        if (!member)
-            return;
-        
         return message.reply(SimpleEmbed(`${member.displayName}'s Avatar`).setImage(member.user.displayAvatarURL())).catch();
     }
 }

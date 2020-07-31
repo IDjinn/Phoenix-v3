@@ -1,4 +1,4 @@
-import AbstractCommand, { ICommandParameters, CooldownType } from "../../structures/AbstractCommand";
+import AbstractCommand, { ICommandParameters } from "../../structures/AbstractCommand";
 
 export default class ClearCommand extends AbstractCommand {
     constructor() {
@@ -8,7 +8,7 @@ export default class ClearCommand extends AbstractCommand {
             permissionsNeed: ['MANAGE_MESSAGES'],
             botPermissionsNeed: ['MANAGE_MESSAGES'],
             cooldown: 4_000,
-            cooldownType: CooldownType.CHANNEL
+            cooldownType: 'CHANNEL'
         });
     }
 

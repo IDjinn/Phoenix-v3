@@ -22,12 +22,12 @@ export default abstract class AbstractCommand {
     public readonly enabled: boolean;
 
     constructor(props: ICommandProps) {
-        this.name = props.name;
-        this.category = props.category;
+        this.name = props.name.toLowerCase();
+        this.category = props.category.toLowerCase();
         this.description = `commands.${this.name}.description`;
         this.aliases = [];
         this.cooldown = props.cooldown || 3_500;
-        this.cooldownType = props.cooldownType || CooldownType.AUTHOR;
+        this.cooldownType = props.cooldownType || 'AUTHOR';
         this.subCommands = props.subCommands || [];
         this.permissionsNeed = props.permissionsNeed || [];
         this.botPermissionsNeed = props.botPermissionsNeed || [];
@@ -42,14 +42,14 @@ export default abstract class AbstractCommand {
     public memberHasPermissions(channel: GuildChannel, member: GuildMember): boolean {
         if (this.permissionsNeed.length == 0)
             return true;
-        
+
         return member.permissionsIn(channel.id).has(this.permissionsNeed);
     }
 
     public botHasPermissions(channel: GuildChannel): boolean {
         if (!channel.guild || !channel.guild.me)
             return false;
-        
+
         return this.memberHasPermissions(channel, channel.guild.me);
     }
 
@@ -91,14 +91,9 @@ export interface ICommandParameters {
     ctx: CommandContext;
 }
 
-export interface ISubcommand{
+export interface ISubcommand {
     methodName: string;
     methodAliases?: string[];
 }
 
-export enum CooldownType {
-    AUTHOR,
-    CHANNEL,
-    GUILD,
-    CLIENT
-}
+export type CooldownType = 'AUTHOR' | 'CHANNEL' | 'GUILD' | 'CLIENT';

@@ -1,17 +1,17 @@
-import AbstractCommand, {ICommandParameters } from "../../structures/AbstractCommand";
+import AbstractCommand, { ICommandParameters } from "../../structures/AbstractCommand";
 import AutomodModule from "../../modules/AutomodModule";
 
-export default class MuteCommand extends AbstractCommand{
+export default class MuteCommand extends AbstractCommand {
     constructor() {
         super({
             name: 'mute',
             category: 'moderator',
-            enabled: false
+            onlyOwner: true
         });
     }
-    public run({ message, server, phoenixUser, args }: ICommandParameters) {
-        if (message.member && message.guild && message.guild.me)
-            AutomodModule.mute(message.member, message.guild.me, phoenixUser, server, args.join(' '));
-        return message.channel.send('a');
+    public run({ ctx }: ICommandParameters) {
+        const member = ctx.getMember();
+        return AutomodModule.mute(member, ctx.member, ctx.phoenixUser, ctx.server, ctx.argsLeft().join(' '));
+        // return message.channel.send('a');
     }
 }

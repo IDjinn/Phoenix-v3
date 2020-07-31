@@ -3,24 +3,6 @@ body {
     background-color: #23272A;
 }
 
-div#guild{
-    margin-left: 45px;
-    text-align: center;
-    float: left;
-}
-
-div#guild img {
-    border-radius: 100%;
-}
-
-div#guild a {
-    font-size: unset;
-    background-color: #E91E63;
-    padding: 5px 10px 5px 10px;
-    border-radius: 5px;
-    color: white;
-}
-
 div#guilds {
     position: absolute;
     top: 50%;
@@ -28,3 +10,53 @@ div#guilds {
     margin-right: -50%;
     transform: translate(-50%, -50%)
 }
+
+div#guilds div{
+    margin: 15px;
+    width: 150px;
+    height: 225px;
+    text-align: center;
+    background-color: #18191c;
+    float: left;
+    border-radius: 10px;
+}
+
+div#guilds div p {
+    margin: 5px 10px 5px 10px;
+}
+
+
+div#guilds div button {
+    background-color: #7289da;
+    border-color: #7289da;
+    border-radius: 5px;
+    height: 30px;
+    width: 80px;
+    outline: 0;
+    margin: 5px 0px 0px 0px;
+}
+
+div#guilds div button:last-child{
+    background-color: #E91E63;
+    border-color: #E91E63;
+}
+
+div#guilds div button a {
+    text-decoration: none;
+    color: #dcddde;
+}
+
+div#guilds div img {
+    border-radius: 100%;
+    margin-top: 15px;
+}
+
+/*
+
+div#guilds div a {
+    font-size: unset;
+    background-color: #E91E63;
+    padding: 5px 10px 5px 10px;
+    border-radius: 5px;
+    color: white;
+}*/

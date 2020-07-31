@@ -7,7 +7,8 @@ export default class CommandsCommand extends AbstractCommand {
     constructor() {
         super({
             name: 'commands',
-            category: 'utils'
+            category: 'utils',
+            botPermissionsNeed: ['EMBED_LINKS']
         });
     }
 

@@ -11,14 +11,16 @@
 <body>
     <div id="app">
         <ul id="nav-bar">
+            <li id="phoenix-logo"><%= t('nav-bar.buttons.phoenix-logo') %></li>
             <li><a href="/invite"><%= t('nav-bar.buttons.invite') %></a></li>
             <li><a href="/status"><%= t('nav-bar.buttons.status') %></a></li>
             <li><a href="/premium"><%= t('nav-bar.buttons.premium') %></a></li>
             <li><a href="/support"><%= t('nav-bar.buttons.support') %></a></li>
             <li><a href="/commands"><%= t('nav-bar.buttons.commands') %></a></li>
             <li><a href="/commands"><%= t('nav-bar.buttons.commands') %></a></li>
-            <% if(!user) { %> 
-            <li><a href="https://discordapp.com/api/oauth2/authorize?client_id=503239059775422491&redirect_uri=http%3A%2F%2F127.0.0.1%3A3000%2Fapi%2Fdiscord%2Fcallback&response_type=code&scope=identify%20guilds" id="right"><%= t('nav-bar.buttons.login') %></a></li>
+            <% if(!user) { %>
+            <li><a href="https://discordapp.com/api/oauth2/authorize?client_id=503239059775422491&redirect_uri=http%3A%2F%2F127.0.0.1%3A3000%2Fapi%2Fdiscord%2Fcallback&response_type=code&scope=identify%20guilds"
+                    id="right"><%= t('nav-bar.buttons.login') %></a></li>
             <% } else { %>
             <li><a href="/logoff" id="right"><%= t('nav-bar.buttons.logoff') %></a></li>
             <li><a href="/dashboard" id="right"><%= t('nav-bar.buttons.dashboard') %></a></li>
@@ -27,12 +29,10 @@
         <main id="main">
             <div id="introduction-texts">
                 <p id="short-description"><%= t('pages.index.short-description') %></p>
-                <button class="invite-button"><%= t('pages.index.panel-button') %> </button>
-                <button class="invite-button"><%= t('pages.index.invite-button') %> </button>
+                <button><%= t('pages.index.panel-button') %> </button>
+                <button><%= t('pages.index.invite-button') %> </button>
             </div>
-            <br>
-            <p><%= t('pages.index.long-description') %> </p>
-    </div>
+        </main>
     </div>
 </body>
 

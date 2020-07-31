@@ -3,6 +3,7 @@
     "default-page-title": "Index",
     "nav-bar": {
         "buttons": {
+            "phoenix-logo": "PHOENIX",
             "invite": "Invite",
             "status": "Status",
             "premium": "Premium",
@@ -15,8 +16,7 @@
     },
     "pages": {
         "index": {
-            "logn-description": "AAAAAA",
-            "short-description": "algo aq",
+            "short-description": "Consequat deserunt sint dolore do cillum elit veniam enim voluptate reprehenderit.",
             "panel-button": "Manage",
             "invite-button": "Add"
         }

@@ -806,10 +806,10 @@ dir-glob@^2.2.2:
   dependencies:
     path-type "^3.0.0"
 
-discord.js-collector@^1.3.4:
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/discord.js-collector/-/discord.js-collector-1.3.4.tgz#0f3f146aca642a73534a4e87850232d5b3d7972a"
-  integrity sha512-7L635FDNEZrSdNHeuhkct/LZP9JVqAGZyFWe9ZYIz1Ptpl4kEEsKXDxkA/Q6dODkGUVS9oWIjk13pcRZACP0uQ==
+discord.js-collector@^1.3.5:
+  version "1.3.5"
+  resolved "https://registry.yarnpkg.com/discord.js-collector/-/discord.js-collector-1.3.5.tgz#dbd1e8fb4e5cc63409d0eb6ccadc4b8955c56c2e"
+  integrity sha512-ThwnEWTHnh8PjZSI/WllKuzVaCvGfU2iV/99Jo5FhcNkkK8j0ejcSHXMRZx/GlBvmTYtV6j6hBljw8TU0v0+rQ==
 
 discord.js@^12.0.2:
   version "12.0.2"

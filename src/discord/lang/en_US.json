@@ -36,7 +36,12 @@
     },
     "command-error": {
         "my-mention": "Hello there, my name is Phoenix and my prefix in this server is `{0}`.",
-        "await-cooldown": "Hey, calm down! You need await the end of your `{0}` cooldown to can execute other command again.",
+        "await-cooldown": {
+            "author": "Hey, calm down! You need await the end of your `{0}` cooldown to can execute other command again.",
+            "channel": "Hey, calm down! You need await the end of channel `{0}` cooldown to can execute other command again.",
+            "guild": "Hey, calm down! You need await the end of guild `{0}` cooldown to can execute other command again.",
+            "client": "Hey, calm down! You need await the end of global `{0}` cooldown to can execute other command again."
+        },
         "disabled": "This command is disabled, or only for creator use.",
         "missing-permissions": "You do not have these permissions need to run this command: `{0}`.",
         "missing-bot-permissions": "I do not have these permissions need to run this command: `{0}`.",
@@ -121,10 +126,6 @@
             "description": "Give/Take one role to all members.",
             "aliases": [],
             "usage": "{0}massrole <role> [give/take]",
-            "errors": {
-                "no-role": "You need mention the role or use it Id.",
-                "invalid-role": "It's a invalid role."
-            },
             "sucess": "You successfully {0} role to `{1}` members.",
             "operations":{
                 "give": "give",

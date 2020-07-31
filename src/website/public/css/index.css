@@ -1,26 +1,54 @@
+/*@import 'theme.css';*/
+html {
+  --primary-dark-color: #23272A
+  --secundary-dark-color: #2C2F33
+  --white-color: #ffffff
+  --gray-color: #99AAB5
+  --primary-blue-color: #7289DA
+  --text-normal:#dcddde;
+  --text-muted:#72767d;
+  --text-link:#00b0f4;
+  --background-primary:#36393f;
+  --background-secondary:#2f3136;
+}
+
 body {
-  background-color: #23272A;
+  background-color: var(--background-primary);
+  margin: 0px;
+  height: 100vh;
+}
+
+div#app{
+  height: 100%;
+}
+
+main{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 90%;
 }
 
 ul#nav-bar {
-    background-color: #2C2F33;
+    background-color: var(--background-secondary);
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #333;
 }
 
 ul#nav-bar li {
-    float: left;
+  float: left;
+  display: block;
+  color: var(--text-normal);
+  text-align: center;
+  padding: 14px 16px;
 }
 
 ul#nav-bar li a{
-  display: block;
-  color: white;
-  text-align: center;
-  padding: 14px 16px;
   text-decoration: none;
+  color: var(--text-normal);
 }
 
 ul#nav-bar li a#right{
@@ -28,5 +56,34 @@ ul#nav-bar li a#right{
 }
 
 main#main div#introduction-texts {
-  float: right;
+  max-width: 35%;
+  height: 150px;
+  background-color: var(--background-secondary);
+  font-size: 25px;
+  min-width: 300px;
+  padding: 5px;
+  text-align: center;
+  justify-content: center;
+  color: var(--text-normal);
+  border-radius: 5px;
+}
+
+div#introduction-texts button{
+  margin: 5px;
+  height: 45px;
+  width: 75px;
+  color: var(--text-normal);
+  background-color: var(--text-muted);
+  border-radius: 5px;
+  outline: none;
+}
+
+div#introduction-texts button > button{
+  background-color: #ff0000;
+}
+
+#phoenix-logo {
+  font-size: 20px;
+  margin: 0px 15px 0px 15px;
+  font-family: monospace;
 }

@@ -10,17 +10,25 @@
 
 <body>
     <p>seus servidores</p>
-    <div id="guilds">
-        <% if(guilds)  for(const guild of guilds) { %>
+    <div id="guilds"> <% if(guilds)  
+        for(const guild of guilds) { %>
         <div id="guild">
             <% if(guild.icon) { %>
-                <img src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>.jpg?size=64">
+            <img src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>.jpg?size=64">
             <% } else { %>
-                <img src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>.jpg?size=64">
+            <img src="https://cdn.discordapp.com/icons/515688359373438978/3f4da4742bcc0e64e74863c5f856d8dc.jpg?size=64">
             <% } %>
-            <p><%= guild.name %></p>
-            <a href="dashboard/<%= guild.id %>/index">Manage</a>
+            <p>
+            <% if(guild.name.length > 15) { %>
+                <%= guild.name.slice(0, 15) + '...' %>
+            <%} else{%>
+                <%= guild.name %>
+            <% } %></p>
+            <button><a href="dashboard/<%= guild.id %>/index">Manage</a></button>
+            <button><a href="dashboard/leave/<%= guild.id %>">Leave</a></button>
         </div>
+        <% } else { %>
+        <p>Parece que você não tem servidores...</p>
         <% } %>
     </div>
 </body>

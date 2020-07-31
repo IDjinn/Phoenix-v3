@@ -1,4 +1,4 @@
-import { Message, Guild, GuildMember, User, TextChannel,DMChannel, Client, MessageMentions } from "discord.js";
+import { Message, Guild, GuildMember, User, TextChannel,DMChannel, Client, MessageMentions, Role, GuildEmoji } from "discord.js";
 import PhoenixUser from "./PhoenixUser";
 import Server from "./Server";
 import Constants from "../util/Constants";
@@ -78,7 +78,7 @@ export default class CommandContext extends GuildContext {
         const member = this.guild.members.cache.get(query + '') || this.guild.members.cache.find(member => member.displayName == query) || selfMember ? this.member : null;
         if (!member && !nullable)
             throw this.t('command-error.member-not-found', query);
-        return member;
+        return member! as GuildMember;
     }
 
     public getUser(nullable = false, crossServer = false, selfAuthor = false) {
@@ -97,7 +97,7 @@ export default class CommandContext extends GuildContext {
 
         if (!user && !nullable)
             throw this.t('command-error.user-not-found', query);
-        return user;
+        return user! as User;
     }
 
     public getChannel(nullable = false, selfChannel = false) {
@@ -112,7 +112,7 @@ export default class CommandContext extends GuildContext {
         const channel = this.guild.channels.cache.get(query + '') || this.guild.channels.cache.find(channel => channel.name.toLowerCase() == query) || selfChannel ? this.message.channel : null;
         if (!channel && !nullable)
             throw this.t('command-error.channel-not-found', query);
-        return channel;
+        return channel! as TextChannel | DMChannel;
     }
 
     public getRole(nullable = false) {
@@ -125,13 +125,13 @@ export default class CommandContext extends GuildContext {
         const role = this.guild.roles.cache.get(query + '') || this.guild.roles.cache.find(role => role.name.toLowerCase() == query);
         if (!role && !nullable)
             throw this.t('command-error.role-not-found', query);
-        return role;
+        return role! as Role;
     }
 
     public getEmoji(nullable = false, crossServer = false) {
         const regexArray = Constants.EMOJIS_REGEX.exec(this.args[0])
         const query = (regexArray && regexArray.length > 1 ? regexArray[1].replace(':a:', '').replace(':', '') : null) || this.args.shift()?.toLowerCase();
-        console.log(query)
+
         if (!query && !nullable)
             throw this.t('command-error.missing-emoji-argument');
         
@@ -141,7 +141,7 @@ export default class CommandContext extends GuildContext {
         
         if (!emoji && !nullable)
             throw this.t('command-error.emoji-not-found', query);
-        return emoji;
+        return emoji! as GuildEmoji;
     }
 
     public async replyT(key: string, ...args: any) {

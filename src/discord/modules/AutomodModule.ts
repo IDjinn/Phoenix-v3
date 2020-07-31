@@ -72,7 +72,7 @@ export default class AutomodModule {
     public static hasDupChars(message: Message, server: Server, roles: Role[]): boolean {
         if (!message.member || !message.guild || !message.guild.me)
             return false;
-            
+
         if (PermissionsModule.hasPermission(roles, server.getRoles(), RolePermissions.ignoreDupChars))
             return false;
 
@@ -95,7 +95,7 @@ export default class AutomodModule {
     public static hasCapsLock(message: Message, server: Server, roles: Role[]): boolean {
         if (!message.member || !message.guild || !message.guild.me)
             return false;
-            
+
         if (PermissionsModule.hasPermission(roles, server.getRoles(), RolePermissions.ignoreCapsLock))
             return false;
 
@@ -118,7 +118,7 @@ export default class AutomodModule {
     public static hasMassMention(message: Message, server: Server, memberRoles: Role[]): boolean {
         if (!message.member || !message.guild || !message.guild.me)
             return false;
-            
+
         if (PermissionsModule.hasPermission(memberRoles, server.getRoles(), RolePermissions.ignoreCapsLock))
             return false;
 
@@ -135,13 +135,13 @@ export default class AutomodModule {
     public static async punishment(server: Server, member: GuildMember, punisher: GuildMember, reason: string, iAutomodAction: IAutomodAction) {
         const channel = member.guild.channels.cache.get(server.getAutomod().warnsChannel);
         const user = await Phoenix.getPhoenixUserController().getOrCreateUser(member.user.id, member.user);
-;        //const user = Phoenix.getPhoenixUserController().getOrCreateUser(member.id, member.user);
+        ;        //const user = Phoenix.getPhoenixUserController().getOrCreateUser(member.id, member.user);
         if ((channel instanceof TextChannel || channel instanceof NewsChannel) && server && user) {
             if (iAutomodAction) {
                 switch (iAutomodAction.action) {
                     case 'BAN': {
                         if (member.bannable) {
-                            return member.ban({reason}).catch((error: DiscordAPIError) => {
+                            return member.ban({ reason }).catch((error: DiscordAPIError) => {
                                 channel.send(EmbedWithTitle(server.t('automod:warns.embed-title-error', reason), server.t('automod:warns.erros.discord-api-error', error.message, punisher.toString(), punisher.user.username, punisher.user.discriminator))).catch();
                             });
                         }
@@ -159,7 +159,7 @@ export default class AutomodModule {
                             return channel.send(EmbedWithTitle(server.t('automod:warns.embed-title-alert'), server.t('automod:warns.erros.missing-permissions', member.toString(), member.user.username, member.user.discriminator, member.id, reason, punisher.toString(), punisher.user.username, punisher.user.discriminator, punisher.id))).catch();
                         }
                     }
-                    case 'MUTE': 
+                    case 'MUTE':
                         this.mute(member, punisher, user, server, reason);
                         break;
                     default:
@@ -204,7 +204,7 @@ export default class AutomodModule {
             member.roles.add(role).catch();
             member.guild.channels.cache.map(async channel => await channel.updateOverwrite(role, { SEND_MESSAGES: false }).catch());
             server.muteRole = role.id;
-            ServerSchema.findOneAndUpdate({ id: server.id }, { muteRole: role.id });
+            ServerSchema.findOneAndUpdate({ _id: server.id }, { muteRole: role.id });
         }).catch();
     }
 }

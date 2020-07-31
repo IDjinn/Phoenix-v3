@@ -16,7 +16,6 @@ import MuteCommand from "../commands/moderator/Mute";
 import MassRoleCommand from "../commands/administrator/MassRole";
 import IAmCommand from "../commands/fun/IAm";
 import ClearCommand from "../commands/moderator/Clear";
-//import PermissionsModule, { RolePermissions } from "../modules/PermissionsModule";
 import ReloadCommand from "../commands/owner/Reload";
 import logger from "../util/logger/Logger";
 import AsyncLock from 'async-lock';
@@ -55,17 +54,17 @@ export default class CommandController {
     public handledCommand(message: Message, server: Server, phoenixUser: PhoenixUser): boolean {
         if (!message.guild || !message.guild.me || !message.member || !server || !phoenixUser)
             return false;
-        
+
         if (this.lock.isBusy(message.author.id)) //User already executing one command.
             return false;
-        
+
         if (message.content.startsWith('> ')) //Ignore quotes
             return false;
-        
+
         if (!message.guild.me.permissionsIn(message.channel).has('SEND_MESSAGES'))
             return false; // If i cannot have permissions to sent message, i do not process commands
 
-        let usingPrefix = '';
+        let usingPrefix = null;
         for (const thisPrefix of [server.prefix, Phoenix.getConfig().defaultPrefix, `<@!${message.guild.me.id}> `]) {
             if (message.content.startsWith(thisPrefix)) {
                 usingPrefix = thisPrefix;
@@ -86,7 +85,7 @@ export default class CommandController {
         const args = message.content.slice(usingPrefix.length).split(' ');
         if (args.length === 0)
             return false;
-        
+
         const command = args.shift()!.toLowerCase();
         const cmd = this.commands.get(command) || this.commands.get(this.aliases.get(command) + '');
         if (cmd instanceof AbstractCommand) {
@@ -95,7 +94,7 @@ export default class CommandController {
                 if (await this.needAwaitCooldown(ctx, cmd.cooldownType))
                     return false;
                 else if (!cmd.enabledForContext(ctx.author.id))
-                    await ctx.replyT('command-error.disabled').catch();
+                    await ctx.replyT('command-error.disabled');
                 else if (!cmd.memberHasPermissions(ctx.channel as TextChannel, ctx.member))
                     await ctx.replyT('command-error.missing-permissions');
                 else if (!cmd.memberHasRolePermissions(ctx.member, server))
@@ -112,15 +111,15 @@ export default class CommandController {
                                 return true;
                             }
                         }
-                        //this.lock.acquire(message.author.id, () => cmd.run({ message, args, server, phoenixUser, ctx }));
                         await cmd.run({ message, args, server, phoenixUser, ctx });
                         return true;
                     } catch (error) {
                         await ctx.replyT('command-error.runtime-error', error);
                         logger.error('Command runtime error: ', error);
+                        console.error(error);
                     }
                 }
-                return true;
+                return false;
             });
         }
         return false;
@@ -129,43 +128,44 @@ export default class CommandController {
     private async needAwaitCooldown(ctx: CommandContext, cooldownType: CooldownType) {
         if (Constants.OWNERS_LIST.includes(ctx.author.id))
             return false; // Owners not need await cooldowns.
-        
+
         let awaiterID;
-        switch(cooldownType){
-            case CooldownType.AUTHOR:
+        switch (cooldownType) {
+            case 'AUTHOR':
                 awaiterID = ctx.author.id;
                 break;
-            case CooldownType.CHANNEL:
+            case 'CHANNEL':
                 awaiterID = ctx.channel.id;
                 break;
-            case CooldownType.GUILD:
+            case 'GUILD':
                 awaiterID = ctx.guild.id;
                 break;
-            case CooldownType.CLIENT:
-                awaiterID = ctx.client.user?.id;
+            case 'CLIENT':
+                awaiterID = ctx.client.user!.id;
         }
-        const cooldown = this.cooldown.get(awaiterID + '');
+        const cooldown = this.cooldown.get(awaiterID);
         const cooldownTime = cooldown ? (cooldown - Date.now()) : 0;
         if (cooldownTime <= 0) {
             this.blacklist.delete(awaiterID);
+            this.cooldown.delete(awaiterID);
             return false;
         }
 
-        if (!this.blacklist.has(awaiterID))
-            await ctx.replyT('command-error.await-cooldown', (cooldownTime / 1000).toFixed(1) + 's');
-        this.blacklist.add(awaiterID);
+        if (!this.blacklist.has(awaiterID)) {
+            // TODO: convert seconds to moment date. moment(cooldownTime).format('DD/');
+            await ctx.replyT(`command-error.await-cooldown.${cooldownType.toLowerCase()}`, (cooldownTime / 1000).toFixed(1) + 's');
+            this.blacklist.add(awaiterID);
+        }
         return true;
     }
 
     public addCommand(command: AbstractCommand) {
-        this.commands.set(command.name.toLowerCase(), command);
+        this.commands.set(command.name, command);
         const aliases = Phoenix.getTextController().allT(`commands.${command.name}.name`);
-        if (aliases.length > 0) {
-            aliases.forEach(aliase => {
-                if (aliase !== command.name)
-                    this.aliases.set(aliase.toLowerCase(), command.name.toLowerCase());
-            });
-        }
+        aliases.forEach(aliase => {
+            if (aliase !== command.name)
+                this.aliases.set(aliase.toLowerCase(), command.name);
+        });
     }
 
     public removeCommand(command: AbstractCommand): boolean {
@@ -181,7 +181,7 @@ export default class CommandController {
     }
 }
 
-export interface ICommands{
+export interface ICommands {
     enabled: boolean;
     whitelist: string[];
     blacklist: string[];

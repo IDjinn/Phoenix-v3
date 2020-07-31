@@ -1,5 +1,5 @@
 import { ILogger } from "../modules/LoggerModule";
-import { IServer } from "../schemas/ServerSchema";
+import ServerSchema, { IServer } from "../schemas/ServerSchema";
 import { IRole } from "../modules/PermissionsModule";
 import { IAutomod } from "../modules/AutomodModule";
 import { Guild, Collection } from "discord.js";
@@ -71,5 +71,36 @@ export default class Server {
 
     public getGuild(): Guild {
         return this.guild;
+    }
+
+
+    public async setLogger(newConfig: ILogger) {
+        await ServerSchema.findOneAndUpdate({ _id: this.id }, { loggger: newConfig });
+        this.logger = newConfig;
+    }
+
+    public async setRoles(newConfig: IRole[]) {
+        await ServerSchema.findOneAndUpdate({ _id: this.id }, { roles: newConfig });
+        this.roles = newConfig;
+    }
+
+    public async setAutomod(newConfig: IAutomod) {
+        await ServerSchema.findOneAndUpdate({ _id: this.id }, { automod: newConfig });
+        this.automod = newConfig;
+    }
+
+    public async setLevel(newConfig: ILevelModule) {
+        await ServerSchema.findOneAndUpdate({ _id: this.id }, { level: newConfig });
+        this.level = newConfig;
+    }
+
+    public async setCounter(newConfig: ICounter) {
+        await ServerSchema.findOneAndUpdate({ _id: this.id }, { counter: newConfig });
+        this.counter = newConfig;
+    }
+
+    public async setWelcome(newConfig: IWelcome) {
+        await ServerSchema.findOneAndUpdate({ _id: this.id }, { welcome: newConfig });
+        this.welcome = newConfig;
     }
 }

@@ -8,7 +8,7 @@ export default class PingCommand extends AbstractCommand {
             category: 'others',
         });
     }
-    public async run({ message, phoenixUser }: ICommandParameters) {
-        return message.channel.send(phoenixUser.t('commands.ping.sucess', Phoenix.getClient().ws.ping.toFixed(0)));
+    public async run({ ctx }: ICommandParameters) {
+        return ctx.replyT('commands.ping.sucess', Phoenix.getClient().ws.ping.toFixed(0));
     }
 }
